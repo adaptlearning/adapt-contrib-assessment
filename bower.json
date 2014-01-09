@@ -1,0 +1,14 @@
+{
+  "name": "adapt-contrib-assessment",
+  "homepage": "https://github.com/adaptlearning/adapt-contrib-assessment",
+  "authors": [
+    "Kevin Corry <kevinc@learningpool.com>"
+  ],
+  "description": "A basic assessment fixed to articles",
+  "main": "/js/adapt-contrib-assessment.js",
+  "keywords": [
+    "adapt-plugin",
+    "adapt-extension"
+  ],
+  "license": "GPLv3"
+}
