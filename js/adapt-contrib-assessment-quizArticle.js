@@ -23,7 +23,8 @@ define(function(require) {
         },
 
         assessmentComplete: function() {     
-            var showPercentage = this.model.get('_assessment')._showPercentage;
+            var isPercentage = this.model.get('_assessment')._isPercentageBased;
+            var scoreToPass = this.model.get('_assessment')._scoreToPass;
             
             this.showFeedback = true;
 
@@ -31,9 +32,23 @@ define(function(require) {
                 {
                     title: this.model.get('_assessment')._completionMessage._title,
                     message: this.getFeedbackMessage(),
-                    score: showPercentage ? this.getScoreAsPercent() + '%' : this.getScore()
+                    score: isPercentage ? this.getScoreAsPercent() + '%' : this.getScore()
                 }
             );
+
+            if (isPercentage) {
+                if (this.getScoreAsPercent() >= scoreToPass) {
+                    console.log('You have passed');
+                } else {
+                    console.log('You have failed');
+                }
+            } else {
+                if (this.getScore() >= scoreToPass) {
+                    console.log('You have passed');
+                } else {
+                    console.log('You have failed');
+                }                
+            }
         },
 
         getFeedbackMessage: function() {
