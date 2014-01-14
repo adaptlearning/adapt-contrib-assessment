@@ -1,0 +1,26 @@
+"_assessment": {
+    "_isPercentageBased" : true,
+    "_scoreToPass" : 60,
+    "_completionMessage" : {
+        "_title" : "You have finished the assessment",
+        "_message": "You have scored [SCORE] out of [MAXSCORE].  [FEEDBACK]"
+    },
+    "_bands": [
+        {
+            "_score": 0,
+            "_feedback": "You must try harder"
+        },
+        {
+            "_score": 25,
+            "_feedback": "I think you can do better than this"
+        },
+        {
+            "_score": 50,
+            "_feedback": "Good effort, you're getting there..."
+        },
+        {
+            "_score": 75,
+            "_feedback": "Excellent!"
+        }
+    ]
+}
