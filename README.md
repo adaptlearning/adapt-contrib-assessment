@@ -10,25 +10,25 @@ A [sample JSON](https://github.com/adaptlearning/adapt-contrib-assessment/exampl
     "_isPercentageBased" : true,
     "_scoreToPass" : 60,
     "_completionMessage" : {
-        "_title" : "You have finished the assessment",
-        "_message": "You have scored [SCORE] out of [MAXSCORE].  [FEEDBACK]"
+        "title" : "You have finished the assessment",
+        "message": "You have scored [SCORE] out of [MAXSCORE].  [FEEDBACK]"
     },
     "_bands": [
         {
             "_score": 0,
-            "_feedback": "You must try harder"
+            "feedback": "You must try harder"
         },
         {
             "_score": 25,
-            "_feedback": "I think you can do better than this"
+            "feedback": "I think you can do better than this"
         },
         {
             "_score": 50,
-            "_feedback": "Good effort, you're getting there..."
+            "feedback": "Good effort, you're getting there..."
         },
         {
             "_score": 75,
-            "_feedback": "Excellent!"
+            "feedback": "Excellent!"
         }
     ]
 }
@@ -40,6 +40,6 @@ A description of attributes is as follows:
 | ------------- |:-------------|:-----|
 | _isPercentageBased        | bool |Set this to *true* if the assessment should work on percentages, or *false* for otherwise|
 | _scoreToPass         | int      | This is the 'pass' mark for the assessment.  If _isPercentageBased is set to *true* this will be a percentage, e.g. 60 would equal 60% |
-| _completionMessage            | object | An object containing _title and _message string values.  Note that _message can contain the following placeholders: [SCORE], [MAXSCORE] and [FEEDBACK] |
-| _bands          | object array | An array of objects whose purpose is to define the score banding.  The attributes required for each object are _score and _feedback
+| _completionMessage            | object | An object containing *title* and *message* string values.  Note that *message* can contain the following placeholders: [SCORE], [MAXSCORE] and [FEEDBACK] |
+| _bands          | object array | An array of objects whose purpose is to define the score banding.  The attributes required for each object are _score and *feedback*
 

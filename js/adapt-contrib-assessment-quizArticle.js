@@ -30,7 +30,7 @@ define(function(require) {
 
             Adapt.trigger('questionView:showFeedback', 
                 {
-                    title: this.model.get('_assessment')._completionMessage._title,
+                    title: this.model.get('_assessment')._completionMessage.title,
                     message: this.getFeedbackMessage(),
                     score: isPercentage ? this.getScoreAsPercent() + '%' : this.getScore()
                 }
@@ -52,7 +52,7 @@ define(function(require) {
         },
 
         getFeedbackMessage: function() {
-            var feedback = (this.model.get('_assessment')._completionMessage._message);
+            var feedback = (this.model.get('_assessment')._completionMessage.message);
 
             feedback = feedback.replace("[SCORE]", this.getScore());
             feedback = feedback.replace("[MAXSCORE]", this.getMaxScore().toString());
@@ -86,8 +86,8 @@ define(function(require) {
             var maxScore = 0;
 
             _.each(this.getQuestionComponents(), function(component) {
-                if (component.get('_score')) {
-                    maxScore += component.get('_score');
+                if (component.get('_questionWeight')) {
+                    maxScore += component.get('_questionWeight');
                 }
             });
 
@@ -109,7 +109,7 @@ define(function(require) {
             
             for (var i = (bands.length - 1); i >= 0; i--) {
                 if (percent >= bands[i]._score) {
-                    return bands[i]._feedback;
+                    return bands[i].feedback;
                 }
             }
         }
@@ -117,7 +117,6 @@ define(function(require) {
     });
 
     Adapt.on('articleView:postRender', function(view) {
-        console.log('articleView:postRender')
         if (view.model.get('_assessment')) {
             new AssessmentView({model:view.model});
         }
