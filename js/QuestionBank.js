@@ -1,22 +1,10 @@
-(function(){
-
-    /**
-     * Constructor
-     * @param
-     */
-    var QuestionBank = function(id, numQuestions){
+define(function(require) {
     
-        this.initialise(id, numQuestions);
-    };
+    var Adapt = require('require');
 
-    // set the 'class'
-    var p = QuestionBank.prototype;
+    var QuestionBank = {};
 
-    /**
-     * Initialises the vars
-     * @param 
-     */
-    p.initialise = function(id, numQuestions){
+    QuestionBank.prototype.initialise = function(id, numQuestions){
        //console.log('QuestionBank.initialize: '); 
         this._id = id;
         this._numQuestions = numQuestions;   
@@ -25,16 +13,16 @@
         this.unUsedQuestions = undefined;
     };
     
-    p.getID = function(){ 
+    QuestionBank.prototype.getID = function(){ 
         return this._id; 
     };
     
-    p.addBlock = function(block){
+    QuestionBank.prototype.addBlock = function(block){
         //if(console) console.log("QuestionBank::addScreen " + block.id + " added to Bank ID: " + this._id);  
         this.questions.push(block);    
     };
     
-    p.getRandomQuestions = function(){
+    QuestionBank.prototype.getRandomQuestions = function(){
         
         var questions = [];
         
@@ -42,11 +30,11 @@
             var question = this.getRandomQuestion();
             if (question !== undefined) questions.push(question);
         }
-			
+            
         return questions;
     };
     
-    p.getRandomQuestion = function() {			
+    QuestionBank.prototype.getRandomQuestion = function() {          
         if (this.unUsedQuestions === undefined) {
             this.unUsedQuestions = this.questions.slice(0);
         }        
@@ -66,5 +54,6 @@
         return question;
     }
 
-    Adapt.QuestionBank = QuestionBank;
-}());
+    return QuestionBank;
+
+});
