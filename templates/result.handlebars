@@ -1,0 +1,40 @@
+<div class="inner">
+    {{#if title}}
+    <div class="title">
+        <h4 class="inner">
+            {{{title}}}
+        </h4>
+    </div>
+    {{/if}}
+    {{#if body}}
+    <div class="body">
+        <p class="inner">
+            {{{body}}}
+        </p>
+    </div>
+    {{/if}}
+    <div class="result">
+        <div class="inner">
+            <div class="scoreText"></div>
+            <div class="feedbackText">
+            {{#if result.feedbackText}}
+                {{{result.feedbackText}}}
+            {{else}}
+                {{#if quizNotFinishedText}}
+                    {{quizNotFinishedText}}
+                {{else}}
+                    quizNotFinishedText is unset
+                {{/if}}
+            {{/if}}
+            </div>
+            <div class="reviewText">{{#if result.reviewText}}{{result.reviewText}}{{/if}}</div>
+            <ul class="reviewTopics">
+                {{#if result.reviewTopics}}
+                    {{#each result.reviewTopics}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                {{/if}}
+            </ul>
+        </div>
+    </div>
+</div>

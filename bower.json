@@ -1,0 +1,14 @@
+{
+  "name": "adapt-contrib-assessment",
+  "homepage": "https://github.com/adaptlearning/adapt-contrib-assessment",
+  "authors": [
+    "Brian Quinn <brian@learningpool.com>"
+  ],
+  "description": "A basic assessment for the Adapt Framework which attaches to an 'article' object to group various question components and provide a score with feedback",
+  "main": "/js/adapt-contrib-assessment.js",
+  "keywords": [
+    "adapt-plugin",
+    "adapt-extension"
+  ],
+  "license": "GPLv3"
+}
