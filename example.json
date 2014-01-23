@@ -5,6 +5,10 @@
         "title" : "You have finished the assessment",
         "message": "You have scored [SCORE] out of [MAXSCORE].  [FEEDBACK]"
     },
+    "_multipleAttemptsFeedback": {
+        "title": "Assessment feedback",
+        "message": "Luckily for you, there's another attempt waiting for you. Please press the reset button"
+    },
     "_bands": [
         {
             "_score": 0,
