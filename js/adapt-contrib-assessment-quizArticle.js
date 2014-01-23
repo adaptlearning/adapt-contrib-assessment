@@ -6,21 +6,21 @@ define(function(require) {
         initialize: function() {
             this.listenTo(this.model, 'change:_isComplete', this.assessmentComplete);
             _.each(this.getQuestionComponents(), function(assessmentQuestionComponent) {
-                this.listenTo(assessmentQuestionComponent, 'change:_isSubmitted', this.questionComplete);
+                this.listenTo(assessmentQuestionComponent, 'change:_isSubmitted', this.onQuestionComplete);
             }, this);
 
             this.setUpQuiz();
         },
 
-        questionComplete: function(questionModel) {
+        onQuestionComplete: function(questionModel) {
             if (questionModel.get('_isSubmitted')) {
                 if (questionModel.get('_attempts') > 1 && questionModel.get('_attemptsLeft') > 0) {
-                    this.showAssessmentMultipleAttemptsFeedback();
+                    this.showMultipleAttemptsAssessmentFeedback();
                 }
             }
         },
 
-        showAssessmentMultipleAttemptsFeedback: function() {
+        showMultipleAttemptsAssessmentFeedback: function() {
             Adapt.trigger('questionView:showFeedback', 
                 {
                     title: this.model.get('_assessment')._multipleAttemptsFeedback.title,
