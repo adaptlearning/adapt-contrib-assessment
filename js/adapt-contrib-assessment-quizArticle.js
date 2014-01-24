@@ -5,8 +5,28 @@ define(function(require) {
     var AssessmentView = Backbone.View.extend({
         initialize: function() {
             this.listenTo(this.model, 'change:_isComplete', this.assessmentComplete);
+            _.each(this.getQuestionComponents(), function(assessmentQuestionComponent) {
+                this.listenTo(assessmentQuestionComponent, 'change:_isSubmitted', this.onQuestionComplete);
+            }, this);
 
             this.setUpQuiz();
+        },
+
+        onQuestionComplete: function(questionModel) {
+            if (questionModel.get('_isSubmitted')) {
+                if (questionModel.get('_attempts') > 1 && questionModel.get('_attemptsLeft') > 0) {
+                    this.showMultipleAttemptsAssessmentFeedback();
+                }
+            }
+        },
+
+        showMultipleAttemptsAssessmentFeedback: function() {
+            Adapt.trigger('questionView:showFeedback', 
+                {
+                    title: this.model.get('_assessment')._multipleAttemptsFeedback.title,
+                    message: this.model.get('_assessment')._multipleAttemptsFeedback.message
+                }
+            );
         },
 
         getQuestionComponents: function() {
