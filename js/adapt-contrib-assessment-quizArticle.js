@@ -45,7 +45,7 @@ define(function(require) {
                 isPass = (score >= scoreToPass) ? true : false;
             }
 
-            Adapt.trigger('assessment:complete', {pass: isPass, score: score, scoreAsPercent: scoreAsPercent});
+            Adapt.trigger('assessment:complete', {isPass: isPass, score: score, scoreAsPercent: scoreAsPercent});
         },
 
         getFeedbackMessage: function() {
