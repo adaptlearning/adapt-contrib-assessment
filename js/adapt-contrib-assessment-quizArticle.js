@@ -66,6 +66,10 @@ define(function(require) {
                 }
                 event.preventDefault();
             }, this));
+
+            _.each(this.getQuestionComponents(), function(component) {
+                component.set('_isEnabledOnRevisit', false);
+            });
         },
         
         getScore: function() {
