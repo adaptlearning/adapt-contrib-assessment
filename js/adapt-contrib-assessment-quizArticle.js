@@ -5,7 +5,7 @@ define(function(require) {
     var AssessmentView = Backbone.View.extend({
         initialize: function() {
             this.listenTo(this.model, 'change:_isComplete', this.assessmentComplete);
-
+            this.listenTo(Adapt, 'remove', this.removeAssessment);
             this.setUpQuiz();
         },
 
@@ -23,32 +23,27 @@ define(function(require) {
         },
 
         assessmentComplete: function() {     
-            var isPercentage = this.model.get('_assessment')._isPercentageBased;
+            var isPercentageBased = this.model.get('_assessment')._isPercentageBased;
             var scoreToPass = this.model.get('_assessment')._scoreToPass;
-            
-            this.showFeedback = true;
+            var score = this.getScore();
+            var scoreAsPercent = this.getScoreAsPercent();
+            var isPass = false;
 
             Adapt.trigger('questionView:showFeedback', 
                 {
                     title: this.model.get('_assessment')._completionMessage.title,
                     message: this.getFeedbackMessage(),
-                    score: isPercentage ? this.getScoreAsPercent() + '%' : this.getScore()
+                    score: isPercentageBased ? scoreAsPercent + '%' : score
                 }
             );
 
-            if (isPercentage) {
-                if (this.getScoreAsPercent() >= scoreToPass) {
-                    console.log('You have passed');
-                } else {
-                    console.log('You have failed');
-                }
+            if (isPercentageBased) {
+                isPass = (scoreAsPercent >= scoreToPass) ? true : false; 
             } else {
-                if (this.getScore() >= scoreToPass) {
-                    console.log('You have passed');
-                } else {
-                    console.log('You have failed');
-                }                
+                isPass = (score >= scoreToPass) ? true : false;
             }
+
+            Adapt.trigger('assessment:complete', {isPass: isPass, score: score, scoreAsPercent: scoreAsPercent});
         },
 
         getFeedbackMessage: function() {
@@ -64,10 +59,13 @@ define(function(require) {
 
         setUpQuiz: function() {
             this.model.get('_assessment').score = 0;
-
-            Adapt.mediator.on('questionView:feedback', function(event) {
+            this.showFeedback = false;
+            Adapt.mediator.on('questionView:feedback', _.bind(function(event) {
+                if (this.showFeedback) {
+                    return;
+                }
                 event.preventDefault();
-            });
+            }, this));
         },
         
         getScore: function() {
@@ -112,6 +110,11 @@ define(function(require) {
                     return bands[i].feedback;
                 }
             }
+        },
+
+        removeAssessment: function() {
+            this.showFeedback = true;
+            this.remove();
         }
         
     });
