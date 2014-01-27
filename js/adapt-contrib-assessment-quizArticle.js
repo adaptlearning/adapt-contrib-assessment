@@ -5,7 +5,7 @@ define(function(require) {
     var AssessmentView = Backbone.View.extend({
         initialize: function() {
             this.listenTo(this.model, 'change:_isComplete', this.assessmentComplete);
-
+            this.listenTo(Adapt, 'remove', this.removeAssessment);
             this.setUpQuiz();
         },
 
@@ -28,8 +28,6 @@ define(function(require) {
             var score = this.getScore();
             var scoreAsPercent = this.getScoreAsPercent();
             var isPass = false;
-
-            this.showFeedback = true;
 
             Adapt.trigger('questionView:showFeedback', 
                 {
@@ -61,10 +59,13 @@ define(function(require) {
 
         setUpQuiz: function() {
             this.model.get('_assessment').score = 0;
-
-            Adapt.mediator.on('questionView:feedback', function(event) {
+            this.showFeedback = false;
+            Adapt.mediator.on('questionView:feedback', _.bind(function(event) {
+                if (this.showFeedback) {
+                    return;
+                }
                 event.preventDefault();
-            });
+            }, this));
         },
         
         getScore: function() {
@@ -109,6 +110,11 @@ define(function(require) {
                     return bands[i].feedback;
                 }
             }
+        },
+
+        removeAssessment: function() {
+            this.showFeedback = true;
+            this.remove();
         }
         
     });
