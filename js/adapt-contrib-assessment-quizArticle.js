@@ -34,14 +34,12 @@ define(function(require) {
             var score = this.getScore();
             var scoreAsPercent = this.getScoreAsPercent();
             var isPass = false;
-
-            Adapt.trigger('questionView:showFeedback', 
-                {
-                    title: this.model.get('_assessment')._completionMessage.title,
-                    message: this.getFeedbackMessage(),
-                    score: isPercentageBased ? scoreAsPercent + '%' : score
-                }
-            );
+            this.setFeedbackMessage();
+            this.model.set({
+                'feedbackTitle': this.model.get('_assessment')._completionMessage.title, 
+                'score': isPercentageBased ? scoreAsPercent + '%' : score
+            });
+            Adapt.trigger('questionView:showFeedback', this);
 
             if (isPercentageBased) {
                 isPass = (scoreAsPercent >= scoreToPass) ? true : false; 
@@ -52,7 +50,7 @@ define(function(require) {
             Adapt.trigger('assessment:complete', {isPass: isPass, score: score, scoreAsPercent: scoreAsPercent});
         },
 
-        getFeedbackMessage: function() {
+        setFeedbackMessage: function() {
             var feedback = (this.model.get('_assessment')._completionMessage.message);
 
             feedback = feedback.replace("[SCORE]", this.getScore());
@@ -60,21 +58,14 @@ define(function(require) {
             feedback = feedback.replace("[PERCENT]", this.getScoreAsPercent().toString());
             feedback = feedback.replace("[FEEDBACK]", this.getBandedFeedback().toString());
 
-            return feedback;
+            this.model.set('feedbackMessage', feedback);
         },
 
         setUpQuiz: function() {
             this.model.get('_assessment').score = 0;
-            this.showFeedback = false;
-            Adapt.mediator.on('questionView:feedback', _.bind(function(event) {
-                if (this.showFeedback) {
-                    return;
-                }
-                event.preventDefault();
-            }, this));
 
             _.each(this.getQuestionComponents(), function(component) {
-                component.set('_isEnabledOnRevisit', false);
+                component.set({'_isEnabledOnRevisit': false, '_canShowFeedback': false}, {pluginName: "_assessment"});
             });
         },
         
@@ -123,7 +114,6 @@ define(function(require) {
         },
 
         removeAssessment: function() {
-            this.showFeedback = true;
             this.remove();
         }
         
