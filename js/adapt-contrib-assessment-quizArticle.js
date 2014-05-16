@@ -63,7 +63,7 @@ define(function(require) {
 
         setUpQuiz: function() {
             this.model.get('_assessment').score = 0;
-
+            $('.' + this.model.get('_id')).addClass('assessment');
             _.each(this.getQuestionComponents(), function(component) {
                 component.set({'_isEnabledOnRevisit': false, '_canShowFeedback': false}, {pluginName: "_assessment"});
             });
