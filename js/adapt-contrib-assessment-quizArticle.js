@@ -120,7 +120,7 @@ define(function(require) {
     });
 
     Adapt.on('articleView:postRender', function(view) {
-        if (view.model.get('_assessment')) {
+        if (view.model.get('_assessment') && view.model.get('_assessment')._isEnabled) {
             new AssessmentView({model:view.model});
         }
     });

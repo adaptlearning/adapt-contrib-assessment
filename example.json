@@ -1,4 +1,5 @@
 "_assessment": {
+    "_isEnabled":true,
     "_isPercentageBased" : true,
     "_scoreToPass" : 60,
     "_completionMessage" : {
