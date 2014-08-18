@@ -124,5 +124,5 @@ define(function(require) {
             new AssessmentView({model:view.model});
         }
     });
-
+    return AssessmentView;
 });
