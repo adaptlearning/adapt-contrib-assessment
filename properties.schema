@@ -26,15 +26,18 @@
               "properties":{
                 "_isEnabled": {
                   "type":"boolean",
-                  "required":true
+                  "required":true,
+                  "title": "Enabled"
                 },
                 "_isPercentageBased": {
                   "type":"boolean",
-                  "required":true
+                  "required":true,
+                  "title": "Percentage based"
                 },
                 "_scoreToPass": {
                   "type":"number",
-                  "required":false
+                  "required":false,
+                  "title": "Pass mark"
                 },
                 "_completionMessage": {
                   "type":"object",
@@ -42,28 +45,35 @@
                   "properties":{
                     "message": {
                       "type":"string",
-                      "required":false
+                      "required":false,
+                      "title": "Completion message"
                     },
                     "title": {
                       "type":"string",
-                      "required":false
+                      "required":false,
+                      "title": "Completion title"
                     }
                   }
                 },
                 "_bands": {
                   "type":"array",
                   "required":false,
+                  "title": "Feedback bands",
                   "items": {
                     "type":"object",
                     "required":false,
                     "properties":{
                       "_score": {
                         "type":"number",
-                        "required":true
+                        "required":true,
+                        "title": "Score",
+                        "minLength": 1
                       },
                       "feedback": {
                         "type":"string",
-                        "required":true
+                        "required":true,
+                        "title": "Feedback",
+                        "minLength": 1
                       }
                     }
                   }
