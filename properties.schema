@@ -1,0 +1,93 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "required":false,
+  "properties":{
+    "pluginLocations": {
+      "type":"object",
+      "required":true,
+      "properties":{
+        "config": {
+          "type":"object"
+        },
+        "course": {
+          "type":"object"
+        },
+        "contentobject": {
+          "type":"object"
+        },
+        "article": {
+          "type":"object",
+          "properties":{
+            "_assessment": {
+              "type":"object",
+              "required":false,
+              "properties":{
+                "_isEnabled": {
+                  "type":"boolean",
+                  "required":true,
+                  "title": "Enabled"
+                },
+                "_isPercentageBased": {
+                  "type":"boolean",
+                  "required":true,
+                  "title": "Percentage based"
+                },
+                "_scoreToPass": {
+                  "type":"number",
+                  "required":false,
+                  "title": "Pass mark"
+                },
+                "_completionMessage": {
+                  "type":"object",
+                  "required":false,
+                  "properties":{
+                    "message": {
+                      "type":"string",
+                      "required":false,
+                      "title": "Completion message"
+                    },
+                    "title": {
+                      "type":"string",
+                      "required":false,
+                      "title": "Completion title"
+                    }
+                  }
+                },
+                "_bands": {
+                  "type":"array",
+                  "required":false,
+                  "title": "Feedback bands",
+                  "items": {
+                    "type":"object",
+                    "required":false,
+                    "properties":{
+                      "_score": {
+                        "type":"number",
+                        "required":true,
+                        "title": "Score"
+                      },
+                      "feedback": {
+                        "type":"string",
+                        "required":true,
+                        "title": "Feedback",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "block": {
+          "type":"object"
+        },
+        "component": {
+          "type":"object"
+        }
+      }
+    }
+  }
+}
