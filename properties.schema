@@ -27,33 +27,24 @@
                 "_isEnabled": {
                   "type":"boolean",
                   "required":true,
-                  "title": "Enabled"
+                  "title": "Enabled",
+                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "validators": []
                 },
                 "_isPercentageBased": {
                   "type":"boolean",
                   "required":true,
-                  "title": "Percentage based"
+                  "title": "Percentage based",
+                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "validators": []
                 },
                 "_scoreToPass": {
                   "type":"number",
                   "required":false,
-                  "title": "Pass mark"
-                },
-                "_completionMessage": {
-                  "type":"object",
-                  "required":false,
-                  "properties":{
-                    "message": {
-                      "type":"string",
-                      "required":false,
-                      "title": "Completion message"
-                    },
-                    "title": {
-                      "type":"string",
-                      "required":false,
-                      "title": "Completion title"
-                    }
-                  }
+                  "title": "Pass mark",
+                  "inputType": "Number",
+                  "default": 60,
+                  "validators": ["number", "required"]
                 },
                 "_bands": {
                   "type":"array",
@@ -62,18 +53,49 @@
                   "items": {
                     "type":"object",
                     "required":false,
+                    "title": "Items",
                     "properties":{
                       "_score": {
                         "type":"number",
                         "required":true,
-                        "title": "Score"
+                        "title": "Score",
+                        "minLength": 1,
+                        "default": "",
+                        "inputType": "Number",
+                        "validators": ["required", "number"]
                       },
                       "feedback": {
                         "type":"string",
                         "required":true,
                         "title": "Feedback",
-                        "minLength": 1
+                        "minLength": 1,
+                        "default": "",
+                        "inputType": "TextArea",
+                        "validators": ["required"]
                       }
+                    }
+                  }
+                },
+                "_completionMessage": {
+                  "type":"object",
+                  "required":false,
+                  "legend": "Completion Message",
+                  "properties":{
+                    "message": {
+                      "type":"string",
+                      "required":false,
+                      "title": "Message",
+                      "default": "",
+                      "inputType": "TextArea",
+                      "validators": []
+                    },
+                    "title": {
+                      "type":"string",
+                      "required":false,
+                      "default": "",
+                      "title": "Completion title",
+                      "inputType": "Text",
+                      "validators": []
                     }
                   }
                 }
