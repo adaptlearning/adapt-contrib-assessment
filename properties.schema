@@ -23,6 +23,7 @@
             "_assessment": {
               "type":"object",
               "required":false,
+              "legend": "Assessment",
               "properties":{
                 "_isEnabled": {
                   "type":"boolean",
