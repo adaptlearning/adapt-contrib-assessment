@@ -7,6 +7,7 @@ A [sample JSON](https://github.com/adaptlearning/adapt-contrib-assessment/blob/m
 
 ```json
 "_assessment": {
+    "_isEnabled" : true,
     "_isPercentageBased" : true,
     "_scoreToPass" : 60,
     "_completionMessage" : {
