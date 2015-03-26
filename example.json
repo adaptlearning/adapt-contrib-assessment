@@ -1,27 +1,48 @@
 "_assessment": {
     "_isEnabled":true,
+    "_isResetOnRevisit": true,
+    "_canShowFeedback": false,
+    "_startBlockCount": 0,
+    "_endBlockCount": 1,
+     "_assessmentPageLevelProgress": {
+        "_incrementalMarking": true,
+        "_showMarking": true,
+        "_showProgress": true
+    },
+    "_banks": {
+        "_isEnabled": false,
+        "_split": "2,2"
+    },
+    "_randomisation": {
+        "_isEnabled": true,
+        "_blockCount": 4
+    },
     "_isPercentageBased" : true,
-    "_scoreToPass" : 60,
+    "_scoreToPass" : 75,
     "_completionMessage" : {
         "title" : "You have finished the assessment",
-        "message": "You have scored [SCORE] out of [MAXSCORE].  [FEEDBACK]"
+        "message": "You scored [SCORE] out of [MAXSCORE].  [FEEDBACK]"
     },
     "_bands": [
         {
             "_score": 0,
-            "feedback": "You must try harder"
+            "feedback": "Your score was below 25%. Why not have another try? Below is a list of areas you might want to study first.",
+            "_showAssociatedLearning": true
         },
         {
             "_score": 25,
-            "feedback": "I think you can do better than this"
+            "feedback": "Your score was below 50%. Why not have another try? Below is a list of areas you might want to study first.",
+            "_showAssociatedLearning": true
         },
         {
             "_score": 50,
-            "feedback": "Good effort, you're getting there..."
+            "feedback": "Good effort, but you're score was under 75%. Let's try again? Below is a list of areas you might want to study first.",
+            "_showAssociatedLearning": true
         },
         {
             "_score": 75,
-            "feedback": "Excellent!"
+            "feedback": "Great work. You passed the assessment article quiz.",
+            "_showAssociatedLearning": false
         }
     ]
 }
