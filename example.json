@@ -1,24 +1,24 @@
-"_assessment": {
+ //article.json
+ "_assessment": {
     "_isEnabled":true,
-    "_isResetOnRevisit": true,
+    "_id": "Assessment 1",
+    "_isResetOnRevisit": "hard",
     "_canShowFeedback": false,
-    "_startBlockCount": 0,
-    "_endBlockCount": 1,
-     "_assessmentPageLevelProgress": {
-        "_incrementalMarking": true,
-        "_showMarking": true,
-        "_showProgress": true
-    },
+    "_isPercentageBased" : true,
+    "_scoreToPass" : 75,
+    "_attempts": 2,
+    "_postScoreToLMS": true,
+    "_assessmentWeight": 1,
     "_banks": {
-        "_isEnabled": false,
-        "_split": "2,2"
+        "_isEnabled": true,
+        "_uniqueQuestions": true,
+        "_split": "2,1",
+        "_randomizeBankQuestionOrder": false
     },
     "_randomisation": {
         "_isEnabled": true,
-        "_blockCount": 4
+        "_blockCount": 1
     },
-    "_isPercentageBased" : true,
-    "_scoreToPass" : 75,
     "_completionMessage" : {
         "title" : "You have finished the assessment",
         "message": "You scored [SCORE] out of [MAXSCORE].  [FEEDBACK]"
@@ -26,23 +26,25 @@
     "_bands": [
         {
             "_score": 0,
-            "feedback": "Your score was below 25%. Why not have another try? Below is a list of areas you might want to study first.",
-            "_showAssociatedLearning": true
+            "feedback": "Your score was below 25%. Why not have another try? Below is a list of areas you might want to study first."
         },
         {
             "_score": 25,
-            "feedback": "Your score was below 50%. Why not have another try? Below is a list of areas you might want to study first.",
-            "_showAssociatedLearning": true
+            "feedback": "Your score was below 50%. Why not have another try? Below is a list of areas you might want to study first."
         },
         {
             "_score": 50,
-            "feedback": "Good effort, but you're score was under 75%. Let's try again? Below is a list of areas you might want to study first.",
-            "_showAssociatedLearning": true
+            "feedback": "Good effort, but you're score was under 75%. Let's try again? Below is a list of areas you might want to study first."
         },
         {
             "_score": 75,
-            "feedback": "Great work. You passed the assessment article quiz.",
-            "_showAssociatedLearning": false
+            "feedback": "Great work. You passed the assessment article quiz."
         }
     ]
+}
+
+//course.json
+"_assessments": {
+    "_isPercentageBased": true,
+    "_scoreToPass": 75
 }
