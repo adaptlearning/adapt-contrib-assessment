@@ -85,7 +85,7 @@ A description of the attributes is as follows:
     </thead>
     <tr valign="top">
         <td><i>assessments:register</i></td>
-        <td>Triggered when an assessment is registered, between ```app:dataReady``` and ```adapt:initialize``` </td>
+        <td>Triggered when an assessment is registered, between app:dataReady and adapt:initialize events </td>
         <td>stateObject, assessmentModel</td>
     </tr>
     <tr valign="top">
@@ -129,7 +129,7 @@ A description of the stateObject returned by some events is as follows:
 | :-------------------------|:-------------|:-----|
 | id                        | string       | The unique id of the assessment |
 | type                      | string       | The assessment type (to allow for future assessment types, currently 'article-assessment' only) |
-| pageId                    | string       | The page to which the assessment belongs, used to reset the assessment before a pageView:preRender event |
+| pageId                    | string       | The page to which the assessment belongs (used to reset the assessment before a pageView:preRender event) |
 | isEnabled                 | bool         | Returns a boolean signifying if the assessment is enabled |
 | isComplete                | bool         | Returns a boolean signifying if the assessment is complete |
 | isPercentageBased         | bool         | Returns a boolean signifying if the assessment scoreToPass is percentage based |
@@ -149,14 +149,14 @@ A description of the stateObject returned by some events is as follows:
 
 ###Globals
 
-Adapt.assessment is globally available.    
+```Adapt.assessment``` is globally available.    
  
 A description of its public functions is as follows:
 
 | Function                  | Type                         | Description|
 | :-------------------------|:-----------------------------|:-----|
-| register(assessmentModel) | N/A                          | Registers the assessment for use with the postToLMS and get features |
-| get([id])                 | object array assessmentModel or object assessmentModel | Returns the assessmentModel by assessment id or returns an array of all models |
+| register(assessmentModel) | N/A                          | Registers the assessment for use with the postToLMS feature and the `Adapt.assessment.get` function |
+| get([id])                 | object array assessmentModel / object assessmentModel | Returns the assessmentModel by assessment id or returns an array of all models |
 
 
 ###AssessmentModel  
