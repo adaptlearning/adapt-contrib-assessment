@@ -7,38 +7,38 @@ define([
 
 		postRender: function() {
             AdaptArticleView.prototype.postRender.call(this);
-            if (this.model.isAssessmentEnabled()) this.setupEventListeners();
+            if (this.model.isAssessmentEnabled()) this._setupEventListeners();
         },
 
-        setupEventListeners: function() {
-        	this.listenTo(Adapt, "assessments:complete", this.onAssessmentComplete);
-        	this.listenTo(Adapt, "assessments:reset", this.onAssessmentReset);
-        	this.listenTo(Adapt, "remove", this.onRemove);
+        _setupEventListeners: function() {
+        	this.listenTo(Adapt, "assessments:complete", this._onAssessmentComplete);
+        	this.listenTo(Adapt, "assessments:reset", this._onAssessmentReset);
+        	this.listenTo(Adapt, "remove", this._onRemove);
         },
 
-        removeEventListeners: function() {
-        	this.stopListening(Adapt, "assessments:complete", this.onAssessmentComplete);
-        	this.stopListening(Adapt, "assessments:reset", this.onAssessmentReset);
+        _removeEventListeners: function() {
+        	this.stopListening(Adapt, "assessments:complete", this._onAssessmentComplete);
+        	this.stopListening(Adapt, "assessments:reset", this._onAssessmentReset);
         },
 
-		onAssessmentComplete: function(stateModel) {
-			if (stateModel.id != this.model.get("_assessment")._id) return;
+		_onAssessmentComplete: function(state, model) {
+			if (state.id != this.model.get("_assessment")._id) return;
 
-			console.log("assessment complete", stateModel);
+			console.log("assessment complete", state, model);
 
 			this.setCompletionStatus();
 			
 		},
 
-		onAssessmentReset: function(stateModel) {
-			if (stateModel.id != this.model.get("_assessment")._id) return;
+		_onAssessmentReset: function(state, model) {
+			if (state.id != this.model.get("_assessment")._id) return;
 
-			console.log("assessment reset", stateModel);
+			console.log("assessment reset", state, model);
 
 		},
 
-		onRemove: function() {
-			this.removeEventListeners();
+		_onRemove: function() {
+			this._removeEventListeners();
 		}
 
 	};

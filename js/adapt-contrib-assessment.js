@@ -7,70 +7,86 @@ define([
 		Here we setup a registry for all assessments
 	*/
 
+	var assessmentsConfigDefaults = {
+        "_postScoreToLMS": true,
+        "_isPercentageBased": true,
+        "_scoreToPass": 100
+    };
+
 	Adapt.assessment = _.extend({
+
+	//Private functions
+
 		_assessments: _.extend([], {
-			_byArticleId: {},
 			_byPageId: {},
-			_byAssessmentId: {},
-			_stateModels: {}
+			_byAssessmentId: {}
 		}),
 
 		initialize: function() {
-			this.listenTo(Adapt, "assessments:complete", this.onAssessmentsComplete);
-			this.listenTo(Adapt, "router:location", this.checkResetAssessmentsOnRevisit);
+			this.listenTo(Adapt, "assessments:complete", this._onAssessmentsComplete);
+			this.listenTo(Adapt, "router:location", this._checkResetAssessmentsOnRevisit);
 		},
 
-		addArticleAssessment: function(articleModel, completedModel) {
-			this._assessments._byArticleId[articleModel.get("_id")] = articleModel;
+		_onAssessmentsComplete: function(state) {
+			var assessmentId = state.id;
 
-			if (this._assessments._byPageId[articleModel.get("_parentId")] === undefined) {
-				this._assessments._byPageId[articleModel.get("_parentId")] = [];
+			state.isComplete = true;
+
+			if (assessmentId === undefined) return;
+
+			if (!this._getStateByAssessmentId(assessmentId)) {
+				console.warn("assessments: state was not registered when assessment was created");
 			}
-			this._assessments._byPageId[articleModel.get("_parentId")].push(articleModel);
 
-			this._assessments._byAssessmentId[articleModel.get("_assessment")._id] = articleModel;
-			this._assessments._stateModels[articleModel.get("_assessment")._id] = completedModel
+			this._checkCourseComplete();
 
-			this._assessments.push(articleModel);
-		},
-
-		getByArticleId: function(articleId) {
-			return this._assessments._byArticleId[id];
-		},
-
-		getByPageId: function(pageId) {
-			return this._assessments._byPageId[pageId];
-		},
-
-		getByAssessmentId: function(assessmentId) {
-			return this._assessments._byAssessmentId[assessmentId];
-		},
-
-		onAssessmentsComplete: function(stateModel) {
-
-			stateModel.isComplete = true;
-			if (stateModel.id === undefined) return;
-
-			if (!this._stateModels[stateModel.id]) {
-				console.warn("assessments: stateModel was not registered when assessment was created");
-			}
-			this._stateModels[stateModel.id] = stateModel
-
-			this.checkCourseComplete();
-
-			this.checkAssessmentsComplete();
+			this._checkAssessmentsComplete();
 
 			//need to add spoor assessment state saving
 
 		},
 
-		checkAssessmentsComplete: function() {
+		_checkResetAssessmentsOnRevisit: function(toObject) {
+			/* 
+				Here we hijack router:location to reorganise the assessment blocks 
+				this must happen before trickle listens to block completion
+			*/
+			if (toObject._contentType !== "page") return;
+
+			//initialize assessment on page visit before pageView:preRender (and trickle)
+			var pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
+			if (pageAssessmentModels === undefined) return;
+
+			for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
+				var pageAssessmentModel = pageAssessmentModels[i];
+				pageAssessmentModel.reset();
+			}
+
+		},
+
+		_checkCourseComplete: function() {
+			// if the assessment is complete, and all non-assessment blocks are complete - then
+			// all required course content has been viewed - set course to complete
+			var nonAssessmentBlockModels = new Backbone.Collection(Adapt.blocks.where({_isPartOfAssessment: undefined}));
+			var incompleteBlocks = nonAssessmentBlockModels.where({_isComplete: false});
+
+			var areAllNonAssessmentBlocksComplete = (incompleteBlocks.length === 0);
+			if (!areAllNonAssessmentBlocksComplete) return false;
+
+			Adapt.course.set('_isComplete', true);
+
+			return true;
+		},
+
+		_checkAssessmentsComplete: function() {
 			var allAssessmentsComplete = true;
 			var assessmentToPostBack = 0;
-			for (var id in this._stateModels) {
-				var stateModel = this._stateModels[id];
-				if (!stateModel.postScoreToLMS) continue;
-				if (!stateModel.isComplete) {
+			var states = this._getStatesByAssessmentId();
+
+			for (var id in states) {
+				var state = states[id];
+				if (!state.postScoreToLMS) continue;
+				if (!state.isComplete) {
 					allAssessmentsComplete = false;
 					break;
 				}
@@ -79,13 +95,13 @@ define([
 
 			if (!allAssessmentsComplete || assessmentToPostBack === 0) return false;
 
-			this.postScoreToLMS();
+			this._postScoreToLMS();
 
 			return true;
 		},
 
-		postScoreToLMS: function() {
-			var assessmentsConfig = Adapt.course.get("_assessment");
+		_postScoreToLMS: function() {
+			var assessmentsConfig = this._getAssessmentsConfig();
 
 			if (assessmentsConfig._postScoreToLMS === false) return;
 
@@ -93,11 +109,13 @@ define([
 			var maxScore = 0;
 			var isPass = true;
 
-			for (var id in this._stateModels) {
-				var stateModel = this._stateModels[id];
-				maxScore += stateModel.maxScore / stateModel.assessmentWeight;
-				score += stateModel.score / stateModel.assessmentWeight;
-				isPass = isPass === false ? false : stateModel.isPass;
+			var states = this._getStatesByAssessmentId();
+
+			for (var id in states) {
+				var state = states[id];
+				maxScore += state.maxScore / state.assessmentWeight;
+				score += state.score / state.assessmentWeight;
+				isPass = isPass === false ? false : state.isPass;
 			}
 
 			
@@ -116,41 +134,70 @@ define([
 				isPass: isPass,
 				scoreAsPercent: scoreAsPercent
 			});
-		},
+		},	
 
-		checkCourseComplete: function() {
-			// if the assessment is complete, and all non-assessment blocks are complete - then
-			// all required course content has been viewed - set course to complete
-			var nonAssessmentBlockModels = new Backbone.Collection(Adapt.blocks.where({_isPartOfAssessment: undefined}));
-			var incompleteBlocks = nonAssessmentBlockModels.where({_isComplete: false});
+		_getAssessmentsConfig: function () {
+			var assessmentsConfig = Adapt.course.get("_assessment");
 
-			var areAllNonAssessmentBlocksComplete = (incompleteBlocks.length === 0);
-			if (!areAllNonAssessmentBlocksComplete) return false;
-
-			Adapt.course.set('_isComplete', true);
-
-			return true;
-		},
-
-		checkResetAssessmentsOnRevisit: function(toObject) {
-			/* 
-				Here we hijack router:location to reorganise the assessment blocks 
-				this must happen before trickle listens to block completion
-			*/
-			if (toObject._contentType !== "page") return;
-
-			//initialize assessment on page visit before pageView:preRender (and trickle)
-			var pageAssessmentModels = this.getByPageId(toObject._currentId);
-			if (pageAssessmentModels === undefined) return;
-
-			for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
-				var pageAssessmentModel = pageAssessmentModels[i];
-				pageAssessmentModel.reset();
+			if (assessmentsConfig === undefined) {
+				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults);
+			} else {
+				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, assessmentsConfig);
 			}
 
-		}
+			return assessmentsConfig;
+		},
+
+		_getAssessmentByPageId: function(pageId) {
+			return this._assessments._byPageId[pageId];
+		},
+
+		_getStateByAssessmentId: function(assessmentId) {
+			return this._assessments._byAssessmentId[assessmentId].getState();
+		},
+
+		_getStatesByAssessmentId: function() {
+			var states = {};
+			for (var i = 0, l = this._assessments.length; i < l; i++) {
+				var assessmentModel = this._assessments[i];
+				var state = assessmentModel.getState();
+				states[state.id] = state;
+			}
+			return states;
+		},
+
+
+	//Public functions
+
+		register: function(assessmentModel) {
+			var state = assessmentModel.getState();
+			var assessmentId = state.id;
+			var pageId = state.pageId;
+
+			if (this._assessments._byPageId[pageId] === undefined) {
+				this._assessments._byPageId[pageId] = [];
+			}
+			this._assessments._byPageId[pageId].push(assessmentModel);
+
+			if (assessmentId) {
+				this._assessments._byAssessmentId[assessmentId] = assessmentModel;
+			}
+
+			this._assessments.push(assessmentModel);
+
+			Adapt.trigger("assessments:register", state, assessmentModel);
+		},
+
+		get: function(id) {
+			if (id === undefined) {
+				return this._assessments.slice(0);
+			} else {
+				return this._assessments._byAssessmentId[id];
+			}
+		},
 
 	}, Backbone.Events);
+
 	Adapt.assessment.initialize();
 
 });

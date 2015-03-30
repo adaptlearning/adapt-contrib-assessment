@@ -34,7 +34,7 @@ define([
 			var returnValue = ArticleModelInitialize.apply(this, arguments);
 
 			//initialize assessment article
-			this.postInitialize();
+			this._postInitialize();
 
 			return returnValue;
 		}
