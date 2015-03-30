@@ -8,10 +8,12 @@ define([
 	*/
 
 	Adapt.assessment = _.extend({
-		_byArticleId: {},
-		_byPageId: {},
-		_byAssessmentId: {},
-		_stateModels: {},
+		_assessments: _.extend([], {
+			_byArticleId: {},
+			_byPageId: {},
+			_byAssessmentId: {},
+			_stateModels: {}
+		}),
 
 		initialize: function() {
 			this.listenTo(Adapt, "assessments:complete", this.onAssessmentsComplete);
@@ -19,32 +21,32 @@ define([
 		},
 
 		addArticleAssessment: function(articleModel, completedModel) {
-			this._byArticleId[articleModel.get("_id")] = articleModel;
+			this._assessments._byArticleId[articleModel.get("_id")] = articleModel;
 
-			if (this._byPageId[articleModel.get("_parentId")] === undefined) {
-				this._byPageId[articleModel.get("_parentId")] = [];
+			if (this._assessments._byPageId[articleModel.get("_parentId")] === undefined) {
+				this._assessments._byPageId[articleModel.get("_parentId")] = [];
 			}
-			this._byPageId[articleModel.get("_parentId")].push(articleModel);
+			this._assessments._byPageId[articleModel.get("_parentId")].push(articleModel);
 
-			this._byAssessmentId[articleModel.get("_assessment")._id] = articleModel;
-			this._stateModels[articleModel.get("_assessment")._id] = completedModel
+			this._assessments._byAssessmentId[articleModel.get("_assessment")._id] = articleModel;
+			this._assessments._stateModels[articleModel.get("_assessment")._id] = completedModel
 
+			this._assessments.push(articleModel);
 		},
 
 		getByArticleId: function(articleId) {
-			return this._byArticleId[id];
+			return this._assessments._byArticleId[id];
 		},
 
 		getByPageId: function(pageId) {
-			return this._byPageId[pageId];
+			return this._assessments._byPageId[pageId];
 		},
 
 		getByAssessmentId: function(assessmentId) {
-			return this._byAssessmentId[assessmentId];
+			return this._assessments._byAssessmentId[assessmentId];
 		},
 
 		onAssessmentsComplete: function(stateModel) {
-			console.log("stateModel", stateModel);
 
 			stateModel.isComplete = true;
 			if (stateModel.id === undefined) return;
@@ -54,7 +56,7 @@ define([
 			}
 			this._stateModels[stateModel.id] = stateModel
 
-			this.checkCourseCompletion();
+			this.checkCourseComplete();
 
 			this.checkAssessmentsComplete();
 
@@ -83,6 +85,10 @@ define([
 		},
 
 		postScoreToLMS: function() {
+			var assessmentsConfig = Adapt.course.get("_assessment");
+
+			if (assessmentsConfig._postScoreToLMS === false) return;
+
 			var score = 0;
 			var maxScore = 0;
 			var isPass = true;
@@ -94,11 +100,11 @@ define([
 				isPass = isPass === false ? false : stateModel.isPass;
 			}
 
-			var assessmentsConfig = Adapt.course.get("_assessments");
+			
 			var scoreAsPercent = (score / maxScore) * 100;
 
-			if (assessmentsConfig._scoreToPass) {
-				if (assessmentsConfig._isPercentageBased) {
+			if (assessmentsConfig._scoreToPass || 100) {
+				if (assessmentsConfig._isPercentageBased || true) {
 					if (assessmentsConfig._scoreToPass >= scoreAsPercent) isPass = true;
 				} else {
 					if (assessmentsConfig._scoreToPass >= score) isPass = true;
@@ -112,7 +118,7 @@ define([
 			});
 		},
 
-		checkCourseCompletion: function() {
+		checkCourseComplete: function() {
 			// if the assessment is complete, and all non-assessment blocks are complete - then
 			// all required course content has been viewed - set course to complete
 			var nonAssessmentBlockModels = new Backbone.Collection(Adapt.blocks.where({_isPartOfAssessment: undefined}));
@@ -139,7 +145,7 @@ define([
 
 			for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
 				var pageAssessmentModel = pageAssessmentModels[i];
-				pageAssessmentModel.checkResetAssessment();
+				pageAssessmentModel.reset();
 			}
 
 		}

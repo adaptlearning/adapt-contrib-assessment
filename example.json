@@ -1,50 +1,33 @@
- //article.json
- "_assessment": {
-    "_isEnabled":true,
-    "_id": "Assessment 1",
-    "_isResetOnRevisit": "hard",
-    "_canShowFeedback": false,
-    "_isPercentageBased" : true,
-    "_scoreToPass" : 75,
-    "_attempts": 2,
-    "_postScoreToLMS": true,
-    "_assessmentWeight": 1,
-    "_banks": {
-        "_isEnabled": true,
-        "_uniqueQuestions": true,
-        "_split": "2,1",
-        "_randomizeBankQuestionOrder": false
-    },
-    "_randomisation": {
-        "_isEnabled": true,
-        "_blockCount": 1
-    },
-    "_completionMessage" : {
-        "title" : "You have finished the assessment",
-        "message": "You scored [SCORE] out of [MAXSCORE].  [FEEDBACK]"
-    },
-    "_bands": [
-        {
-            "_score": 0,
-            "feedback": "Your score was below 25%. Why not have another try? Below is a list of areas you might want to study first."
+    //article.json
+    "_assessment": {
+        "_isEnabled":true,
+        "_id": "Assessment 1",
+        "_banks": {
+            "_isEnabled": true,
+            "_uniqueQuestions": true,
+            "_split": "2,1",
+            "_randomizeBankQuestionOrder": false
         },
-        {
-            "_score": 25,
-            "feedback": "Your score was below 50%. Why not have another try? Below is a list of areas you might want to study first."
+        "_randomisation": {
+            "_isEnabled": true,
+            "_blockCount": 1
         },
-        {
-            "_score": 50,
-            "feedback": "Good effort, but you're score was under 75%. Let's try again? Below is a list of areas you might want to study first."
+        "_questions": {
+            "_isResetOnRevisit": "hard",
+            "_canShowFeedback": false
         },
-        {
-            "_score": 75,
-            "feedback": "Great work. You passed the assessment article quiz."
-        }
-    ]
-}
+        "_isPercentageBased" : true,
+        "_scoreToPass" : 75,
+        "_postScoreToLMS": true,
+        "_assessmentWeight": 1,
+        "_isResetOnRevisit": false,
+        "_isReloadPageOnReset": true,
+        "_attempts": 2
+    }
 
-//course.json
-"_assessments": {
-    "_isPercentageBased": true,
-    "_scoreToPass": 75
-}
+    //course.json
+    "_assessment": {
+        "_postScoreToLMS": true,
+        "_isPercentageBased": true,
+        "_scoreToPass": 75
+    }

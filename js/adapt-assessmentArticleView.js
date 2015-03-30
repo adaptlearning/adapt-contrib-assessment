@@ -11,20 +11,34 @@ define([
         },
 
         setupEventListeners: function() {
-        	this.listenTo(Adapt, "assessment:complete", this.onAssessmentComplete);
+        	this.listenTo(Adapt, "assessments:complete", this.onAssessmentComplete);
+        	this.listenTo(Adapt, "assessments:reset", this.onAssessmentReset);
+        	this.listenTo(Adapt, "remove", this.onRemove);
         },
 
         removeEventListeners: function() {
-        	this.stopListening(Adapt, "assessment:complete", this.onAssessmentComplete);
+        	this.stopListening(Adapt, "assessments:complete", this.onAssessmentComplete);
+        	this.stopListening(Adapt, "assessments:reset", this.onAssessmentReset);
         },
 
-		onAssessmentComplete: function() {
-			console.log("assessment:onAssessmentComplete", this.model);
+		onAssessmentComplete: function(stateModel) {
+			if (stateModel.id != this.model.get("_assessment")._id) return;
 
-			this.removeEventListeners();
+			console.log("assessment complete", stateModel);
 
 			this.setCompletionStatus();
 			
+		},
+
+		onAssessmentReset: function(stateModel) {
+			if (stateModel.id != this.model.get("_assessment")._id) return;
+
+			console.log("assessment reset", stateModel);
+
+		},
+
+		onRemove: function() {
+			this.removeEventListeners();
 		}
 
 	};

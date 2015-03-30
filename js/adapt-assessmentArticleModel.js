@@ -63,13 +63,20 @@ define([
 			return false;
 		},
 
-		checkResetAssessment: function() {
+		reset: function(force) {
 			var assessmentConfig = this.get("_assessment");
-			if (this.get("_assessmentCompleteInSession") && !assessmentConfig._isResetOnRevisit) return false;
-			
-			if (!this.isAttemptsLeft()) return;
+			this._resetFromLocation = Adapt.location._currentId;
 
-			this.setAssessmentData();
+			if ((this.get("_assessmentCompleteInSession") && !assessmentConfig._isResetOnRevisit && !assessmentConfig._isReloadPageOnReset) && !force) return false;
+			
+			if (!this.isAttemptsLeft() && !force) return;
+
+			Adapt.trigger('assessments:reset', this.getStateModel());
+
+			this.setupAssessmentData();
+			this.checkReloadPage();
+
+			delete this._resetFromLocation;
 
 			return true;
 		},
@@ -95,10 +102,8 @@ define([
 			return true;
 		},	
 
-		setAssessmentData: function() {
+		setupAssessmentData: function() {
 			var assessmentConfig = this.get("_assessment");
-
-			console.log("assessment:setAssessmentData", this);
 
 			this.set("_numberOfQuestionsAnswered", 0);
 			this.getChildren().models = this._originalChildModels;
@@ -107,10 +112,8 @@ define([
 			var quizModels;
 			if (!this.get("_attemptInProgress")) {
 				if(assessmentConfig._banks && assessmentConfig._banks._isEnabled && assessmentConfig._banks._split.length > 1) {
-					console.log("setting up banked assessment")
 					quizModels = this.setupBankedAssessment();				
 				} else if(assessmentConfig._randomisation && assessmentConfig._randomisation._isEnabled) {
-					console.log("setting up randomized assessment")
 					quizModels = this.setupRandomisedAssessment();
 				}
 				this.set("_attemptInProgress", true);
@@ -138,8 +141,6 @@ define([
 		setupBankedAssessment: function() {
 			var assessmentConfig = this.get("_assessment");
 
-			console.log("assessment:setupBankedAssessment", this);
-			
 			this.setupBanks();
 
 			//get random questions from banks
@@ -181,13 +182,11 @@ define([
 				var bankId = blockModel.get('_quizBankID');
 				this._questionBanks[bankId].addBlock(blockModel);
 			}
-			console.log(this._questionBanks);
+
 		},
 
 		setupRandomisedAssessment: function() {
 			var assessmentConfig = this.get("_assessment");
-
-			console.log("assessment:setupRandomisedAssessment", this);
 
 			var randomisationModel = assessmentConfig._randomisation;
 			var blockModels = this.getChildren().models;
@@ -199,13 +198,27 @@ define([
 			return questionModels;
 		},
 
+		checkReloadPage: function() {
+			var assessmentConfig = this.get("_assessment");
+			if (assessmentConfig._isReloadPageOnReset === false) return;
+
+			var parentId = this.getParent().get("_id");
+			var currentLocation = Adapt.location._currentId;
+
+			//check if in assessment and should rerender page
+			if (currentLocation != parentId) return;
+			if (this._resetFromLocation == parentId && !this.get("_isReady")) return;
+
+			Backbone.history.navigate("#/id/"+Adapt.location._currentId, { replace:true, trigger: true });
+		},
+
 		resetQuestions: function() {
 			var assessmentConfig = this.get("_assessment");
 			var questionComponents = this._currentQuestionComponents;
 
 			for (var i = 0, l = questionComponents.length; i < l; i++) {
 				var question = questionComponents[i];
-				question.reset(assessmentConfig._isResetOnRevisit, true);
+				question.reset(assessmentConfig._questions._isResetOnRevisit, true);
 			}
 		},
 
@@ -216,7 +229,7 @@ define([
 			for (var i = 0, l = questionComponents.length; i < l; i++) {
 				var question = questionComponents[i];
 				question.set({
-					'_canShowFeedback': assessmentConfig._canShowFeedback
+					'_canShowFeedback': assessmentConfig._questions._canShowFeedback
 				}, { pluginName: "_assessment" });
 			}
 
@@ -254,8 +267,6 @@ define([
 			numberOfQuestionsAnswered++;
 			this.set("_numberOfQuestionsAnswered", numberOfQuestionsAnswered);
 
-			console.log("assessment:questionCompleted", questionModel);
-
 			this.checkAssessmentComplete();
 		},
 
@@ -274,8 +285,6 @@ define([
 			this.set("_attemptInProgress", false);
 			this.spendAttempt();
 
-			console.log("assessment-model onAssessmentComplete");
-
 			var scoreAsPercent = this.getScoreAsPercent();
 
 			this.set({
@@ -285,8 +294,6 @@ define([
 
 			this.removeQuestionListeners();		
 			
-			//Adapt.course.set('_isAssessmentAttemptComplete', true);
-
 			Adapt.trigger('assessments:complete', this.getStateModel());
 		},
 
@@ -374,6 +381,10 @@ define([
 				allQuestions: allQuestions,
 				allBanks: allBanks
 			};
+		},
+
+		getAttemptsLeft: function() {
+			return this._attemptsLeft;
 		},
 
 		onRemove: function() {
