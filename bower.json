@@ -1,9 +1,10 @@
 {
   "name": "adapt-contrib-assessment",
-  "version": "0.0.2",
+  "version": "2.0.0",
   "homepage": "https://github.com/adaptlearning/adapt-contrib-assessment",
   "authors": [
-    "Brian Quinn <brian@learningpool.com>"
+    "Brian Quinn <brian@learningpool.com>",
+    "Oliver Foster <oliver.foster@kineo.com>"
   ],
   "displayName" : "Assessment",
   "extension" : "assessment",
