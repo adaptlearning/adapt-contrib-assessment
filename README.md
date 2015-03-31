@@ -52,6 +52,15 @@ A description of the attributes is as follows:
 | _isReloadPageOnReset      | bool         | Controls if the page should refresh when the assessment is reset whilst visible |
 | _attempts                 | int          | Controls the number of attempts available to the user. 0 = infinite |
   
+
+  
+####block.json
+
+```json
+    "_quizBankID": "1",
+```
+
+Add the ```_quizBankID``` attribute to your blocks in order to organise the assessment article's blocks into banks. According to the ```_assessment._banks._split``` attribute from the assessment's article, a value of ```'2,1'``` in ```_assessment._banks._split``` would pick 2 questions from bank 1 and and one question from bank 2. Quiz bank id's are a 1 index string value. 
   
   
 ####course.json
