@@ -108,11 +108,13 @@ define([
 			var score = 0;
 			var maxScore = 0;
 			var isPass = true;
+			var totalAssessments = 0;
 
 			var states = this._getStatesByAssessmentId();
 
 			for (var id in states) {
 				var state = states[id];
+				totalAssessments++;
 				maxScore += state.maxScore / state.assessmentWeight;
 				score += state.score / state.assessmentWeight;
 				isPass = isPass === false ? false : state.isPass;
@@ -130,9 +132,15 @@ define([
 			}
 
 			//post completion to spoor
-			Adapt.trigger("assessment:complete", {
-				isPass: isPass,
-				scoreAsPercent: scoreAsPercent
+			_.defer(function() {
+				Adapt.trigger("assessment:complete", {
+					isPercentageBased: assessmentsConfig._isPercentageBased,
+					isPass: isPass,
+					scoreAsPercent: scoreAsPercent,
+					maxScore: maxScore,
+					score: score,
+					assessments: totalAssessments
+				});
 			});
 		},	
 
