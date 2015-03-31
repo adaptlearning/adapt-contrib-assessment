@@ -33,8 +33,7 @@ define([
 				'_currentQuestionComponents': null,
 				"_originalChildModels": null,
 				"_questionBanks": null,
-				"_forceResetOnRevisit": false,
-				"_resetFromLocation": null
+				"_forceResetOnRevisit": false
 			});
 
 			this.set({
@@ -336,22 +335,22 @@ define([
 		},
 
 		_checkReloadPage: function() {
-			var assessmentConfig = this._getAssessmentConfig();
-			if (assessmentConfig._isReloadPageOnReset === false) return false;
+			if (!this.canResetInPage()) return false;
 
 			var parentId = this.getParent().get("_id");
 			var currentLocation = Adapt.location._currentId;
 
 			//check if on assessment page and should rerender page
 			if (currentLocation != parentId) return false;
-			if (this._resetFromLocation == parentId && 
-				!this.get("_isReady")) return false;
+			if (!this.get("_isReady")) return false;
 
+			return true;
+		},
+
+		_reloadPage: function() {
 			this._forceResetOnRevisit = true;
 
 			Backbone.history.navigate("#/id/"+Adapt.location._currentId, { replace:true, trigger: true });
-
-			return true;
 		},
 
 		_resetQuestions: function() {
@@ -392,27 +391,36 @@ define([
 			return false;
 		},
 
+		canResetInPage: function() {
+			var assessmentConfig = this._getAssessmentConfig();
+			if (assessmentConfig._isReloadPageOnReset === false) return false;
+			return true;
+		},
+
 		reset: function(force) {
 			var assessmentConfig = this._getAssessmentConfig();
-			this._resetFromLocation = Adapt.location._currentId;
 
 			//check if forcing reset
-			force = this._forceResetOnRevisit ? this._forceResetOnRevisit : force;
+			force = this._forceResetOnRevisit || force;
 			this._forceResetOnRevisit = false;
 
+			var isPageReload = this._checkReloadPage();
+
 			//stop resetting if not complete or not allowed
-			if ((this.get("_assessmentCompleteInSession") && 
+			if (this.get("_assessmentCompleteInSession") && 
 					!assessmentConfig._isResetOnRevisit && 
-					!assessmentConfig._isReloadPageOnReset) && 
-				!force) return false;
+					!isPageReload && 
+					!force) return false;
 			
 			//stop resetting if no attempts left
 			if (!this._isAttemptsLeft() && !force) return false;
 
-			if (!this._checkReloadPage()) {
+			if (!isPageReload) {
 				//only perform this section when not attempting to reload the page
 				this._setupAssessmentData();
 				Adapt.trigger('assessments:reset', this.getState(), this);
+			} else {
+				this._reloadPage();
 			}
 
 			return true;

@@ -101,29 +101,13 @@ A description of the attributes is as follows:
     <tr valign="top">
         <td><i>assessment:complete</i></td>
         <td>Triggered when the user submits the last question of the last assessment and the score is to be posted back to the LMS </td>
-        <td>
-            <table>
-                <tr>
-                    <td>isPass</td>
-                    <td>bool</td>
-                </tr>
-                <tr>
-                    <td>score</td>
-                    <td>int</td>
-                </tr>
-                <tr>
-                    <td>scoreAsPercent</td>
-                    <td>int</td>
-                </tr>
-            </table>
-        
-        </td>        
+        <td>stateObject</td>        
     </tr>
 </table>
 
 ####stateObject
 
-A description of the stateObject returned by some events is as follows:
+A description of the stateObject returned by the assessments:events is as follows:
 
 | Attribute                 | Type         | Description|
 | :-------------------------|:-------------|:-----|
@@ -146,6 +130,19 @@ A description of the stateObject returned by some events is as follows:
 | lastAttemptScoreAsPercent | int          | Returns the last attempt score |
 | questions                 | object array | Contains an array of question objects { _id: string, _isCorrect: bool, title: string, displayTitle: string } |
   
+  
+A description of the stateObject returned by the assessment:complete event is as follows:  
+  
+| Attribute                 | Type         | Description|
+| :-------------------------|:-------------|:-----|
+| isPercentageBased         | bool         | Returns a boolean signifying if the assessment scoreToPass is percentage based |
+| scoreToPass               | int          | Defines the threshold score to signify a pass |
+| score                     | int          | Returns the current score of the assessment |
+| scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (maxScore/score) * 100 |
+| maxScore                  | int          | Returns the maximum attainable score |
+| isPass                    | bool         | Returns a boolean signifying if the assessment is passed |
+| assessments               | int          | Signifies the number of assessments passed to post back to the LMS |
+ 
 
 ###Globals
 
@@ -168,7 +165,8 @@ A description of the AssessmentModel's public functions is as follows:
 | Function                  | Type               | Description|
 | :-------------------------|:-------------------|:-----|
 | isAssessmentEnabled()     | bool               | Returns if the assessment is enabled |
-| reset([force])            | bool               | Resets or forces the reset of an assessment (will reload the page if _isReloadPageOnReset: true and on assessment page) |
+| canResetInPage()          | bool               | Returns if the assessment can be reset from within the page (_isReloadPageOnReset must be *true*) |
+| reset([force])            | bool               | Resets or forces the reset of an assessment (will reload the page if _isReloadPageOnReset: *true* and on assessment page) |
 | getState()                | object StateObject | Returns the stateObject for the assessment |
 
 
