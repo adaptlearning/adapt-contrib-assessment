@@ -8,16 +8,16 @@ define([
 	var assessmentConfigDefaults = {
         "_isEnabled":true,
         "_questions": {
-            "_isResetOnRevisit": "hard",
+            "_resetType": "hard",
             "_canShowFeedback": false
         },
         "_isPercentageBased" : true,
         "_scoreToPass" : 100,
-        "_postScoreToLMS": true,
+        "_postScoreToLms": true,
         "_assessmentWeight": 1,
         "_isResetOnRevisit": true,
-        "_isReloadPageOnReset": true,
-        "_attempts": 0
+        "_reloadPageOnReset": true,
+        "_attempts": "infinite"
     };
 
 	var AssessmentModel = {
@@ -36,13 +36,23 @@ define([
 				"_forceResetOnRevisit": false
 			});
 
+			var attemptsLeft;
+			switch (assessmentConfig._attempts) {
+			case "infinite": case 0: case undefined:
+				 attemptsLeft = "infinite";
+				break;
+			default:
+				attemptsLeft = assessmentConfig._attempts;
+				break;
+			}
+
 			this.set({
 				'_currentQuestionComponentIds': [],
 				'_assessmentCompleteInSession': false,
 				'_attemptInProgress': false, 
 				'_numberOfQuestionsAnswered': 0,
 				'_lastAttemptScoreAsPercent': 0,
-				"_attemptsLeft": assessmentConfig._attempts > 0 ? assessmentConfig._attempts : true,
+				"_attemptsLeft": attemptsLeft,
 				"_attemptsSpent": 0
 			});
 
@@ -148,7 +158,7 @@ define([
 			}
 
 			//if overall question order should be randomized
-			if (assessmentConfig._banks._randomizeBankQuestionOrder) {
+			if (assessmentConfig._banks._randomisation) {
 				questionModels = _.shuffle(questionModels);
 			}
 
@@ -170,7 +180,7 @@ define([
 				var questionBank = new QuestionBank(bankId, 
 												this.get("_id"), 
 												bank, 
-												assessmentConfig._banks._uniqueQuestions);
+												true);
 
 				this._questionBanks[bankId] = questionBank;
 			}
@@ -209,12 +219,6 @@ define([
 				}, { pluginName: "_assessment" });
 			}
 
-			//TODO: figure this out in results component
-			/*var componentsCollection = new Backbone.Collection(this.allChildComponents);
-			var resultsComponent = componentsCollection.findWhere({_component: "results"});
-			if(resultsComponent) {
-				resultsComponent.set({'_isResetOnRevisit': this.get('_isResetOnRevisit')}, {pluginName:"_assessment"});
-			}*/
 		},
 
 		_setupQuestionListeners: function() {
@@ -274,8 +278,7 @@ define([
 		_isAttemptsLeft: function() {
 			var assessmentConfig = this._getAssessmentConfig();
 
-			var isAttemptsEnabled = assessmentConfig._attempts && 
-										assessmentConfig._attempts > 0;
+			var isAttemptsEnabled = assessmentConfig._attempts && assessmentConfig._attempts != "infinite";
 
 			if (!isAttemptsEnabled) return true;
 
@@ -291,7 +294,7 @@ define([
 			attemptsSpent++;
 			this.set("_attemptsSpent", attemptsSpent);
 
-			if (this.get('_attempts') === 0) return true;
+			if (this.get('_attempts') == "infinite") return true;
 
 			var attemptsLeft = this.get('_attemptsLeft');
 			attemptsLeft--;
@@ -359,7 +362,7 @@ define([
 
 			for (var i = 0, l = questionComponents.length; i < l; i++) {
 				var question = questionComponents[i];
-				question.reset(assessmentConfig._questions._isResetOnRevisit, true);
+				question.reset(assessmentConfig._questions._resetType, true);
 			}
 		},
 
@@ -393,7 +396,7 @@ define([
 
 		canResetInPage: function() {
 			var assessmentConfig = this._getAssessmentConfig();
-			if (assessmentConfig._isReloadPageOnReset === false) return false;
+			if (assessmentConfig._reloadPageOnReset === false) return false;
 			return true;
 		},
 
@@ -474,7 +477,7 @@ define([
 				scoreAsPercent: scoreAsPercent,
 				maxScore: maxScore,
 				isPass: isPass,
-				postScoreToLMS: assessmentConfig._postScoreToLMS,
+				postScoreToLms: assessmentConfig._postScoreToLms,
 				assessmentWeight: assessmentConfig._assessmentWeight,
 				attempts: assessmentConfig._attempts,
 				attemptsSpent: this.get("_attemptsSpent"),

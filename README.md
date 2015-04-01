@@ -15,22 +15,20 @@ A [sample JSON](https://github.com/adaptlearning/adapt-contrib-assessment/blob/m
     "_scoreToPass" : 75,
     "_banks": {
         "_isEnabled": true,
-        "_uniqueQuestions": true,
         "_split": "2,1",
-        "_randomizeBankQuestionOrder": false
+        "_randomisation": true
     },
     "_randomisation": {
-        "_isEnabled": true,
+        "_isEnabled": false,
         "_blockCount": 1
     },
     "_questions": {
         "_isResetOnRevisit": "hard",
         "_canShowFeedback": false
     },
-    "_postScoreToLMS": true,
+    "_postScoreToLms": true,
     "_assessmentWeight": 1,
     "_isResetOnRevisit": false,
-    "_isReloadPageOnReset": true,
     "_attempts": 2
 }
 ```
@@ -46,11 +44,10 @@ A description of the attributes is as follows:
 | _banks                    | object       | Contains attributes for controlling which questions the user should receive based on a series of banks/question buckets (use either _banks or _randomisation) |
 | _randomisation            | object       | Contains attributes for controlling how many random questions the user should receive (use either _banks or _randomisation) |
 | _questions                | object       | Contains attributes for overriding question component behaviours |
-| _postScoreToLMS           | bool         | To signify that the score should be sent to the LMS (as a percentage) |
-| _assessmentWeight         | int          | If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100% |
+| _postScoreToLms           | bool         | To signify that the score should be sent to the Lms (as a percentage) |
+| _assessmentWeight         | int          | If there are multiple assessments in the course, this value controls the proportion of the Lms score which is attributed to this assessment. 1 = 100% |
 | _isResetOnRevisit         | bool         | Controls if the assessment chould automatically reset (up to the number of available attempts) when a user revisits the page |
-| _isReloadPageOnReset      | bool         | Controls if the page should refresh when the assessment is reset whilst visible |
-| _attempts                 | int          | Controls the number of attempts available to the user. 0 = infinite |
+| _attempts                 | int / string | Controls the number of attempts available to the user. "infinite" = infinite attempts |
   
 
   
@@ -69,7 +66,7 @@ Add the ```_quizBankID``` attribute to your blocks in order to organise the asse
 "_assessment": {
     "_isPercentageBased": true,
     "_scoreToPass": 75,
-    "_postScoreToLMS": true
+    "_postTotalScoreToLms": true
 }
 ```
 
@@ -80,7 +77,7 @@ A description of the attributes is as follows:
 | :-------------------------|:-------------|:-----|
 | _isPercentageBased        | bool         | Set this to *true* if the scoreToPass attribute should work on percentages, or *false* for otherwise |
 | _scoreToPass              | int          | This is the 'pass' mark for the assessment.  If _isPercentageBased is set to *true* this will be a percentage, e.g. 60 would equal 60% |
-| _postScoreToLMS           | bool         | To signify that the score should be sent to the LMS (as a percentage) |
+| _postTotalScoreToLms           | bool         | To signify that the total score should be sent to the Lms (as a percentage) |
 
 
 
@@ -109,7 +106,7 @@ A description of the attributes is as follows:
     </tr>
     <tr valign="top">
         <td><i>assessment:complete</i></td>
-        <td>Triggered when the user submits the last question of the last assessment and the score is to be posted back to the LMS </td>
+        <td>Triggered when the user submits the last question of the last assessment and the score is to be posted back to the Lms </td>
         <td>stateObject</td>        
     </tr>
 </table>
@@ -131,8 +128,8 @@ A description of the stateObject returned by the assessments:events is as follow
 | scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (maxScore/score) * 100 |
 | maxScore                  | int          | Returns the maximum attainable score |
 | isPass                    | bool         | Returns a boolean signifying if the assessment is passed |
-| postScoreToLMS            | bool         | Signifys that the assessment score will be posted to the LMS |
-| assessmentWeight          | int          | Signifys the portion of the total LMS score which is derived from this assessment, (1 = 100%) |
+| postScoreToLms            | bool         | Signifys that the assessment score will be posted to the Lms |
+| assessmentWeight          | int          | Signifys the portion of the total Lms score which is derived from this assessment, (1 = 100%) |
 | attempts                  | int          | The total number of attempts specified by the configuration (0 = infinite) |
 | attemptsSpent             | int          | The total number of attempts spent by the user |
 | attemptsLeft              | int / bool   | The total number of attempts remaining for the user or true if attempts=infinite |
@@ -150,7 +147,7 @@ A description of the stateObject returned by the assessment:complete event is as
 | scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (maxScore/score) * 100 |
 | maxScore                  | int          | Returns the maximum attainable score |
 | isPass                    | bool         | Returns a boolean signifying if the assessment is passed |
-| assessments               | int          | Signifies the number of assessments passed to post back to the LMS |
+| assessments               | int          | Signifies the number of assessments passed to post back to the Lms |
  
 
 ###Globals
@@ -161,7 +158,7 @@ A description of its public functions is as follows:
 
 | Function                  | Type                         | Description|
 | :-------------------------|:-----------------------------|:-----|
-| register(assessmentModel) | N/A                          | Registers the assessment for use with the postToLMS feature and the `Adapt.assessment.get` function |
+| register(assessmentModel) | N/A                          | Registers the assessment for use with the postToLms feature and the `Adapt.assessment.get` function |
 | get([id])                 | object array assessmentModel / object assessmentModel | Returns the assessmentModel by assessment id or returns an array of all models |
 
 
