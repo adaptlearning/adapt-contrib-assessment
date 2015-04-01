@@ -23,7 +23,7 @@ A [sample JSON](https://github.com/adaptlearning/adapt-contrib-assessment/blob/m
         "_blockCount": 1
     },
     "_questions": {
-        "_isResetOnRevisit": "hard",
+        "_resetType": "hard",
         "_canShowFeedback": false
     },
     "_postScoreToLms": true,
@@ -171,8 +171,8 @@ A description of the AssessmentModel's public functions is as follows:
 | Function                  | Type               | Description|
 | :-------------------------|:-------------------|:-----|
 | isAssessmentEnabled()     | bool               | Returns if the assessment is enabled |
-| canResetInPage()          | bool               | Returns if the assessment can be reset from within the page (_isReloadPageOnReset must be *true*) |
-| reset([force])            | bool               | Resets or forces the reset of an assessment (will reload the page if _isReloadPageOnReset: *true* and on assessment page) |
+| canResetInPage()          | bool               | Returns if the assessment can be reset from within the page |
+| reset([force])            | bool               | Resets or forces the reset of an assessment (will reload the page if on assessment page) |
 | getState()                | object StateObject | Returns the stateObject for the assessment |
 
 
