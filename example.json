@@ -1,27 +1,31 @@
-"_assessment": {
-    "_isEnabled":true,
-    "_isPercentageBased" : true,
-    "_scoreToPass" : 60,
-    "_completionMessage" : {
-        "title" : "You have finished the assessment",
-        "message": "You have scored [SCORE] out of [MAXSCORE].  [FEEDBACK]"
-    },
-    "_bands": [
-        {
-            "_score": 0,
-            "feedback": "You must try harder"
+    //article.json
+    "_assessment": {
+        "_isEnabled":true,
+        "_id": "Assessment 1",
+        "_banks": {
+            "_isEnabled": true,
+            "_split": "2,1",
+            "_randomisation": false
         },
-        {
-            "_score": 25,
-            "feedback": "I think you can do better than this"
+        "_randomisation": {
+            "_isEnabled": true,
+            "_blockCount": 1
         },
-        {
-            "_score": 50,
-            "feedback": "Good effort, you're getting there..."
+        "_questions": {
+            "_resetType": "hard",
+            "_canShowFeedback": false
         },
-        {
-            "_score": 75,
-            "feedback": "Excellent!"
-        }
-    ]
-}
+        "_isPercentageBased" : true,
+        "_scoreToPass" : 75,
+        "_postScoreToLms": true,
+        "_assessmentWeight": 1,
+        "_isResetOnRevisit": false,
+        "_attempts": 2
+    }
+
+    //course.json
+    "_assessment": {
+        "_postTotalScoreToLms": true,
+        "_isPercentageBased": true,
+        "_scoreToPass": 75
+    }

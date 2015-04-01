@@ -1,11 +1,8 @@
 {
   "name": "adapt-contrib-assessment",
-  "version": "0.0.2",
+  "version": "2.0.0",
   "description": "A simple core contributed assessment component",
-  "main": "",
-  "scripts": {
-    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
-  },
+  "main": "/js/adapt-contrib-assessment.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/adaptlearning/adapt-contrib-assessment.git"
@@ -14,10 +11,5 @@
   "license": "GPL v3",
   "bugs": {
     "url": "https://github.com/adaptlearning/adapt-contrib-assessment/issues"
-  },
-  "devDependencies": {
-    "karma": "0.10",
-    "karma-mocha": "0.1.0",
-    "karma-expect": "1.1.0"
   }
 }
