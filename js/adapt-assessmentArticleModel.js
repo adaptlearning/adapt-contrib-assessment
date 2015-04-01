@@ -39,7 +39,7 @@ define([
 			var attemptsLeft;
 			switch (assessmentConfig._attempts) {
 			case "infinite": case 0: case undefined:
-				 attemptsLeft = "infinite":
+				 attemptsLeft = "infinite";
 				break;
 			default:
 				attemptsLeft = assessmentConfig._attempts;
@@ -278,7 +278,7 @@ define([
 		_isAttemptsLeft: function() {
 			var assessmentConfig = this._getAssessmentConfig();
 
-			var isAttemptsEnabled = assessmentConfig._attempts && assessmentConfig._attempts != "infinite");
+			var isAttemptsEnabled = assessmentConfig._attempts && assessmentConfig._attempts != "infinite";
 
 			if (!isAttemptsEnabled) return true;
 

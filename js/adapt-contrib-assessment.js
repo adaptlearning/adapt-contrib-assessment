@@ -117,7 +117,7 @@ define([
 				});
 				Adapt.course.set("_assessment", assessmentsConfig);
 			}
-		}
+		},
 
 		_postScoreToLms: function() {
 			var assessmentsConfig = this._getAssessmentsConfig();
