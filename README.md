@@ -47,7 +47,7 @@ A description of the attributes is as follows:
 | _postScoreToLms           | bool         | To signify that the score should be sent to the Lms (as a percentage) |
 | _assessmentWeight         | int          | If there are multiple assessments in the course, this value controls the proportion of the Lms score which is attributed to this assessment. 1 = 100% |
 | _isResetOnRevisit         | bool         | Controls if the assessment chould automatically reset (up to the number of available attempts) when a user revisits the page |
-| _attempts                 | int          | Controls the number of attempts available to the user. 0 = infinite |
+| _attempts                 | int / string | Controls the number of attempts available to the user. "infinite" = infinite attempts |
   
 
   
