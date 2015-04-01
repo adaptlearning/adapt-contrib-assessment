@@ -29,7 +29,6 @@ A [sample JSON](https://github.com/adaptlearning/adapt-contrib-assessment/blob/m
     "_postScoreToLms": true,
     "_assessmentWeight": 1,
     "_isResetOnRevisit": false,
-    "_isReloadPageOnReset": true,
     "_attempts": 2
 }
 ```
@@ -48,7 +47,6 @@ A description of the attributes is as follows:
 | _postScoreToLms           | bool         | To signify that the score should be sent to the Lms (as a percentage) |
 | _assessmentWeight         | int          | If there are multiple assessments in the course, this value controls the proportion of the Lms score which is attributed to this assessment. 1 = 100% |
 | _isResetOnRevisit         | bool         | Controls if the assessment chould automatically reset (up to the number of available attempts) when a user revisits the page |
-| _isReloadPageOnReset      | bool         | Controls if the page should refresh when the assessment is reset whilst visible |
 | _attempts                 | int          | Controls the number of attempts available to the user. 0 = infinite |
   
 

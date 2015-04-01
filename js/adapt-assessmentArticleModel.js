@@ -396,7 +396,7 @@ define([
 
 		canResetInPage: function() {
 			var assessmentConfig = this._getAssessmentConfig();
-			if (assessmentConfig._isReloadPageOnReset === false) return false;
+			if (assessmentConfig._reloadPageOnReset === false) return false;
 			return true;
 		},
 
