@@ -8,7 +8,7 @@ define([
 	*/
 
 	var assessmentsConfigDefaults = {
-        "_postScoreToLMS": true,
+        "_postTotalScoreToLms": true,
         "_isPercentageBased": true,
         "_scoreToPass": 100
     };
@@ -83,27 +83,46 @@ define([
 			var assessmentToPostBack = 0;
 			var states = this._getStatesByAssessmentId();
 
+			var assessmentStates = [];
+
 			for (var id in states) {
 				var state = states[id];
-				if (!state.postScoreToLMS) continue;
+				if (!state.postScoreToLms) continue;
 				if (!state.isComplete) {
 					allAssessmentsComplete = false;
 					break;
 				}
 				assessmentToPostBack++;
+				assessmentStates.push(state);
 			}
 
 			if (!allAssessmentsComplete || assessmentToPostBack === 0) return false;
 
-			this._postScoreToLMS();
+			if (assessmentToPostBack === 1) {
+				this._setupSingleAssessmentConfiguration(assessmentStates[0]);
+			}
+
+			this._postScoreToLms();
 
 			return true;
 		},
 
-		_postScoreToLMS: function() {
+		_setupSingleAssessmentConfiguration: function(assessmentState) {
+			var assessmentsConfig = Adapt.course.get("_assessment");
+			if (assessmentsConfig === undefined) {
+				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, {
+					"_postTotalScoreToLms": assessmentState.postScoreToLms,
+					"_isPercentageBased": assessmentState.isPercentageBased,
+        			"_scoreToPass": assessmentState.scoreToPass
+				});
+				Adapt.course.set("_assessment", assessmentsConfig);
+			}
+		}
+
+		_postScoreToLms: function() {
 			var assessmentsConfig = this._getAssessmentsConfig();
 
-			if (assessmentsConfig._postScoreToLMS === false) return;
+			if (assessmentsConfig._postTotalScoreToLms === false) return;
 
 			var score = 0;
 			var maxScore = 0;
