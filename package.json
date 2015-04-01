@@ -2,7 +2,7 @@
   "name": "adapt-contrib-assessment",
   "version": "2.0.0",
   "description": "A simple core contributed assessment component",
-  "main": "",
+  "main": "/js/adapt-contrib-assessment.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/adaptlearning/adapt-contrib-assessment.git"
