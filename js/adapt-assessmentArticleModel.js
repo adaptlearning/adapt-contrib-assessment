@@ -93,7 +93,7 @@ define([
 													Adapt.course.get('_isAssessmentPassed');
 			if (!resetArticleCompletionStatus) return;
 			
-			this.setCompletionStatus();
+			this._setCompletionStatus();
 		},
 
 		_onDataReady: function() {
@@ -279,7 +279,7 @@ define([
 
 			this._removeQuestionListeners();
 
-			this.setCompletionStatus();
+			this._setCompletionStatus();
 			
 			Adapt.trigger('assessments:complete', this.getState(), this);
 		},
@@ -393,6 +393,13 @@ define([
 			}
 
 			return assessmentConfig;
+		},
+
+		_setCompletionStatus: function() {
+			this.set({
+				"_isComplete": true,
+				"_isInteractionComplete": true,
+			});
 		},
 
 	//Public Functions
