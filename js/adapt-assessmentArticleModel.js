@@ -277,7 +277,9 @@ define([
 				'_assessmentCompleteInSession': true,
 			});
 
-			this._removeQuestionListeners();		
+			this._removeQuestionListeners();
+
+			this.setCompletionStatus();
 			
 			Adapt.trigger('assessments:complete', this.getState(), this);
 		},
