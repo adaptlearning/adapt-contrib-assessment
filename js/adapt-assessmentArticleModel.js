@@ -101,15 +101,16 @@ define([
 			Adapt.assessment.register(this);
 		},
 
-		_setupAssessmentData: function() {
+		_setupAssessmentData: function(force) {
 			var assessmentConfig = this._getAssessmentConfig();
+			var state = this.getState();
+			var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass)
+								|| force == true;
 
-			this.set("_numberOfQuestionsAnswered", 0);
-			this.getChildren().models = this._originalChildModels;
-			
-			
 			var quizModels;
-			if (!this.get("_attemptInProgress")) {
+			if (shouldResetAssessment) {
+				this.set("_numberOfQuestionsAnswered", 0);
+				this.getChildren().models = this._originalChildModels;
 				if(assessmentConfig._banks && 
 						assessmentConfig._banks._isEnabled && 
 						assessmentConfig._banks._split.length > 1) {
@@ -120,7 +121,6 @@ define([
 
 					quizModels = this._setupRandomisedAssessment();
 				}
-				this.set("_attemptInProgress", true);
 			}
 
 			if (!quizModels) {
@@ -137,11 +137,18 @@ define([
 			var currentQuestionsCollection = new Backbone.Collection(this._currentQuestionComponents);
 			this.set("_currentQuestionComponentIds", currentQuestionsCollection.pluck("_id"));
 
-			this._resetQuestions();
-			this._overrideQuestionFeedbackAttributes();
+			var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) 
+										|| force == true;
 
-			this._setupQuestionListeners();
+			if (shouldResetAssessment || shouldResetQuestions) {
+				this._resetQuestions();
+				this.set("_attemptInProgress", true);
+				Adapt.trigger('assessments:reset', this.getState(), this);
+			}
 			
+			this._overrideQuestionFeedbackAttributes();
+			this._setupQuestionListeners();
+
 		},
 
 		_setupBankedAssessment: function() {
@@ -403,8 +410,8 @@ define([
 		reset: function(force) {
 			var assessmentConfig = this._getAssessmentConfig();
 
-			//check if forcing reset
-			force = this._forceResetOnRevisit || force;
+			//check if forcing reset via page revisit or force parameter
+			force = this._forceResetOnRevisit || force == true;
 			this._forceResetOnRevisit = false;
 
 			var isPageReload = this._checkReloadPage();
@@ -420,8 +427,7 @@ define([
 
 			if (!isPageReload) {
 				//only perform this section when not attempting to reload the page
-				this._setupAssessmentData();
-				Adapt.trigger('assessments:reset', this.getState(), this);
+				this._setupAssessmentData(force);
 			} else {
 				this._reloadPage();
 			}
