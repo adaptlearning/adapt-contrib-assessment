@@ -38,9 +38,11 @@ define([
 				console.warn("assessments: state was not registered when assessment was created");
 			}
 
+			this._checkAssessmentsComplete();
+
 			this._checkCourseComplete();
 
-			this._checkAssessmentsComplete();
+			
 
 			//need to add spoor assessment state saving
 
