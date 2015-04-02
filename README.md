@@ -5,6 +5,8 @@ A basic assessment for the Adapt Framework which attaches to an 'article' object
 
 A [sample JSON](https://github.com/adaptlearning/adapt-contrib-assessment/blob/master/example.json) is given below which can be added to an article:
 
+NOTE: Please only include question blocks inside the assessment article. The article's children blocks may get randomised when the assessment attempt begins (depending on your settings), effecting the order of the blocks. Please put results components in a separate article + block.
+
 ####article.json
 
 ```json
