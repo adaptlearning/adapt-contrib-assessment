@@ -38,7 +38,7 @@ define([
 
 			var attemptsLeft;
 			switch (assessmentConfig._attempts) {
-			case "infinite": case 0: case undefined: case "-1": case null:
+			case "infinite": case 0: case undefined: case -1: case null:
 				 attemptsLeft = "infinite";
 				break;
 			default:
