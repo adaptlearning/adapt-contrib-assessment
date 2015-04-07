@@ -146,9 +146,9 @@ define([
 
 			if (assessmentsConfig._scoreToPass || 100) {
 				if (assessmentsConfig._isPercentageBased || true) {
-					if (assessmentsConfig._scoreToPass >= scoreAsPercent) isPass = true;
+					if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
 				} else {
-					if (assessmentsConfig._scoreToPass >= score) isPass = true;
+					if (score >= assessmentsConfig._scoreToPass) isPass = true;
 				}
 			}
 
