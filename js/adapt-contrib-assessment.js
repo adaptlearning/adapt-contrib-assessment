@@ -124,7 +124,7 @@ define([
 			}
 
 			
-			var scoreAsPercent = (score / maxScore) * 100;
+			var scoreAsPercent = Math.round(score / maxScore) * 100;
 
 			if (assessmentsConfig._scoreToPass || 100) {
 				if (assessmentsConfig._isPercentageBased || true) {
