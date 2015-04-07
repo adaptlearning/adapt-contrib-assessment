@@ -134,7 +134,6 @@ define([
 				}
 			}
 
-			console.log("Post score to lms");
 			//post completion to spoor
 			_.defer(function() {
 				Adapt.trigger("assessment:complete", {
