@@ -278,8 +278,6 @@ define([
 			});
 
 			this._removeQuestionListeners();
-
-			this._setCompletionStatus();
 			
 			Adapt.trigger('assessments:complete', this.getState(), this);
 		},
@@ -401,6 +399,7 @@ define([
 				"_isInteractionComplete": true,
 			});
 		},
+
 
 	//Public Functions
 

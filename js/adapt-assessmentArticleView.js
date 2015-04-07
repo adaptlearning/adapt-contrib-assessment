@@ -26,8 +26,6 @@ define([
 
 			console.log("assessment complete", state, model);
 
-			this.setCompletionStatus();
-			
 		},
 
 		_onAssessmentReset: function(state, model) {

@@ -40,10 +40,6 @@ define([
 
 			this._checkAssessmentsComplete();
 
-			this._checkCourseComplete();
-
-			
-
 			//need to add spoor assessment state saving
 
 		},
@@ -64,20 +60,6 @@ define([
 				pageAssessmentModel.reset();
 			}
 
-		},
-
-		_checkCourseComplete: function() {
-			// if the assessment is complete, and all non-assessment blocks are complete - then
-			// all required course content has been viewed - set course to complete
-			var nonAssessmentBlockModels = new Backbone.Collection(Adapt.blocks.where({_isPartOfAssessment: undefined}));
-			var incompleteBlocks = nonAssessmentBlockModels.where({_isComplete: false});
-
-			var areAllNonAssessmentBlocksComplete = (incompleteBlocks.length === 0);
-			if (!areAllNonAssessmentBlocksComplete) return false;
-
-			Adapt.course.set('_isComplete', true);
-
-			return true;
 		},
 
 		_checkAssessmentsComplete: function() {
@@ -152,6 +134,7 @@ define([
 				}
 			}
 
+			console.log("Post score to lms");
 			//post completion to spoor
 			_.defer(function() {
 				Adapt.trigger("assessment:complete", {
