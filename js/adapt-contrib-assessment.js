@@ -104,7 +104,7 @@ define([
 		},
 
 		_postScoreToLms: function() {
-			var assessmentsConfig = this._getAssessmentsConfig();
+			var assessmentsConfig = this.getAssessmentsConfig();
 
 			if (assessmentsConfig._postTotalScoreToLms === false) return;
 
@@ -146,18 +146,6 @@ define([
 				});
 			});
 		},	
-
-		_getAssessmentsConfig: function () {
-			var assessmentsConfig = Adapt.course.get("_assessment");
-
-			if (assessmentsConfig === undefined) {
-				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults);
-			} else {
-				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, assessmentsConfig);
-			}
-
-			return assessmentsConfig;
-		},
 
 		_getAssessmentByPageId: function(pageId) {
 			return this._assessments._byPageId[pageId];
@@ -205,6 +193,18 @@ define([
 			} else {
 				return this._assessments._byAssessmentId[id];
 			}
+		},
+
+		getAssessmentsConfig: function () {
+			var assessmentsConfig = Adapt.course.get("_assessment");
+
+			if (assessmentsConfig === undefined) {
+				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults);
+			} else {
+				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, assessmentsConfig);
+			}
+
+			return assessmentsConfig;
 		},
 
 	}, Backbone.Events);
