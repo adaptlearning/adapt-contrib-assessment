@@ -102,50 +102,17 @@ define([
 				Adapt.course.set("_assessment", assessmentsConfig);
 			}
 		},
-
+		
 		_postScoreToLms: function() {
-			var assessmentsConfig = this.getAssessmentsConfig();
-
+			var assessmentsConfig = this.getConfig();
 			if (assessmentsConfig._postTotalScoreToLms === false) return;
-
-			var score = 0;
-			var maxScore = 0;
-			var isPass = true;
-			var totalAssessments = 0;
-
-			var states = this._getStatesByAssessmentId();
-
-			for (var id in states) {
-				var state = states[id];
-				totalAssessments++;
-				maxScore += state.maxScore / state.assessmentWeight;
-				score += state.score / state.assessmentWeight;
-				isPass = isPass === false ? false : state.isPass;
-			}
-
 			
-			var scoreAsPercent = Math.round((score / maxScore) * 100);
-
-			if (assessmentsConfig._scoreToPass || 100) {
-				if (assessmentsConfig._isPercentageBased || true) {
-					if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
-				} else {
-					if (score >= assessmentsConfig._scoreToPass) isPass = true;
-				}
-			}
-
+			var completionState = this.getState();
 			//post completion to spoor
 			_.defer(function() {
-				Adapt.trigger("assessment:complete", {
-					isPercentageBased: assessmentsConfig._isPercentageBased,
-					isPass: isPass,
-					scoreAsPercent: scoreAsPercent,
-					maxScore: maxScore,
-					score: score,
-					assessments: totalAssessments
-				});
+				Adapt.trigger("assessment:complete", completionState);
 			});
-		},	
+		},
 
 		_getAssessmentByPageId: function(pageId) {
 			return this._assessments._byPageId[pageId];
@@ -195,7 +162,7 @@ define([
 			}
 		},
 
-		getAssessmentsConfig: function () {
+		getConfig: function () {
 			var assessmentsConfig = Adapt.course.get("_assessment");
 
 			if (assessmentsConfig === undefined) {
@@ -205,6 +172,45 @@ define([
 			}
 
 			return assessmentsConfig;
+		},
+		
+		getState: function() {
+			var assessmentsConfig = this.getConfig();
+
+			var score = 0;
+			var maxScore = 0;
+			var isPass = true;
+			var totalAssessments = 0;
+
+			var states = this._getStatesByAssessmentId();
+
+			for (var id in states) {
+				var state = states[id];
+				totalAssessments++;
+				maxScore += state.maxScore / state.assessmentWeight;
+				score += state.score / state.assessmentWeight;
+				isPass = isPass === false ? false : state.isPass;
+			}
+
+			
+			var scoreAsPercent = Math.round((score / maxScore) * 100);
+
+			if (assessmentsConfig._scoreToPass || 100) {
+				if (assessmentsConfig._isPercentageBased || true) {
+					if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
+				} else {
+					if (score >= assessmentsConfig._scoreToPass) isPass = true;
+				}
+			}
+
+			return {
+				isPercentageBased: assessmentsConfig._isPercentageBased,
+				isPass: isPass,
+				scoreAsPercent: scoreAsPercent,
+				maxScore: maxScore,
+				score: score,
+				assessments: totalAssessments
+			};
 		},
 
 	}, Backbone.Events);
