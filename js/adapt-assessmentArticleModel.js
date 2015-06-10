@@ -38,12 +38,12 @@ define([
 
 			var attemptsLeft;
 			switch (assessmentConfig._attempts) {
-			case "infinite": case 0: case undefined: case -1: case null:
-				 attemptsLeft = "infinite";
-				break;
-			default:
-				attemptsLeft = assessmentConfig._attempts;
-				break;
+				case "infinite": case 0: case undefined: case -1: case null:
+					 attemptsLeft = "infinite";
+					break;
+				default:
+					attemptsLeft = assessmentConfig._attempts;
+					break;
 			}
 
 			this.set({
@@ -52,6 +52,7 @@ define([
 				'_attemptInProgress': false, 
 				'_numberOfQuestionsAnswered': 0,
 				'_lastAttemptScoreAsPercent': 0,
+				"_attempts": attemptsLeft,
 				"_attemptsLeft": attemptsLeft,
 				"_attemptsSpent": 0
 			});
@@ -493,7 +494,7 @@ define([
 				isPass: isPass,
 				postScoreToLms: assessmentConfig._postScoreToLms,
 				assessmentWeight: assessmentConfig._assessmentWeight,
-				attempts: assessmentConfig._attempts,
+				attempts: this.get("_attempts"),
 				attemptsSpent: this.get("_attemptsSpent"),
 				attemptsLeft: this.get("_attemptsLeft"),
 				lastAttemptScoreAsPercent: this.get('_lastAttemptScoreAsPercent'),
