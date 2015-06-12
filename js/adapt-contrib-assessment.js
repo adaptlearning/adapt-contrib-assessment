@@ -38,9 +38,25 @@ define([
 				console.warn("assessments: state was not registered when assessment was created");
 			}
 
+			this.saveState();
+
 			this._checkAssessmentsComplete();
 
 			//need to add spoor assessment state saving
+
+		},
+
+		_restoreState: function(assessmentModel) {
+
+			if (!this._saveStateModel) {
+				this._saveStateModel = Adapt.offlineStorage.get("assessment");
+			}
+			if (this._saveStateModel) {
+				var state = assessmentModel.getState();
+				if (this._saveStateModel[state.id]) {
+					assessmentModel.setRestoreState(this._saveStateModel[state.id]);
+				}
+			}
 
 		},
 
@@ -151,6 +167,8 @@ define([
 
 			this._assessments.push(assessmentModel);
 
+			this._restoreState(assessmentModel);
+
 			Adapt.trigger("assessments:register", state, assessmentModel);
 		},
 
@@ -160,6 +178,17 @@ define([
 			} else {
 				return this._assessments._byAssessmentId[id];
 			}
+		},
+
+		saveState: function() {
+
+			this._saveStateModel = {};
+			for (var i = 0, assessmentModel; assessmentModel = this._assessments[i++];) {
+				var state = assessmentModel.getState();
+				this._saveStateModel[state.id] = assessmentModel.getSaveState();
+			}
+
+			Adapt.offlineStorage.set("assessment", this._saveStateModel);
 		},
 
 		getConfig: function () {
@@ -179,23 +208,28 @@ define([
 
 			var score = 0;
 			var maxScore = 0;
-			var isPass = true;
+			var isPass = false;
 			var totalAssessments = 0;
 
 			var states = this._getStatesByAssessmentId();
 
+			var assessmentsComplete = 0;
+
 			for (var id in states) {
 				var state = states[id];
+				if (!state.postScoreToLms) continue;
+				if (state.isComplete) assessmentsComplete++;
 				totalAssessments++;
 				maxScore += state.maxScore / state.assessmentWeight;
 				score += state.score / state.assessmentWeight;
 				isPass = isPass === false ? false : state.isPass;
 			}
 
+			var isComplete = assessmentsComplete == totalAssessments;
 			
 			var scoreAsPercent = Math.round((score / maxScore) * 100);
 
-			if (assessmentsConfig._scoreToPass || 100) {
+			if ((assessmentsConfig._scoreToPass || 100) && isComplete) {
 				if (assessmentsConfig._isPercentageBased || true) {
 					if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
 				} else {
@@ -204,11 +238,13 @@ define([
 			}
 
 			return {
+				isComplete: isComplete,
 				isPercentageBased: assessmentsConfig._isPercentageBased,
 				isPass: isPass,
 				scoreAsPercent: scoreAsPercent,
 				maxScore: maxScore,
 				score: score,
+				assessmentsComplete: assessmentsComplete,
 				assessments: totalAssessments
 			};
 		},

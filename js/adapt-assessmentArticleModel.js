@@ -50,6 +50,7 @@ define([
 				'_currentQuestionComponentIds': [],
 				'_assessmentCompleteInSession': false,
 				'_attemptInProgress': false, 
+				"_isAssessmentComplete": false,
 				'_numberOfQuestionsAnswered': 0,
 				'_lastAttemptScoreAsPercent': 0,
 				"_attempts": attemptsLeft,
@@ -73,7 +74,7 @@ define([
 			this._setAssessmentOwnershipOnChildrenModels();
 
 			//check if article is complete from previous session
-			this._restoreArticleState();
+			//this._restoreArticleState();
 		},
 
 		_setAssessmentOwnershipOnChildrenModels: function() {
@@ -85,17 +86,7 @@ define([
 				});
 			}
 		},
-
-		_restoreArticleState: function() {
-			// if assessment completed in a previous session 
-			// then set article model to complete
 		
-			var resetArticleCompletionStatus = !this.get('_isComplete') && 
-													Adapt.course.get('_isAssessmentPassed');
-			if (!resetArticleCompletionStatus) return;
-			
-			this._setCompletionStatus();
-		},
 
 		_onDataReady: function() {
 			//register assessment
@@ -111,6 +102,7 @@ define([
 			var quizModels;
 			if (shouldResetAssessment) {
 				this.set("_numberOfQuestionsAnswered", 0);
+				this.set("_isAssessmentComplete", false);
 				this.getChildren().models = this._originalChildModels;
 				if(assessmentConfig._banks && 
 						assessmentConfig._banks._isEnabled && 
@@ -149,6 +141,8 @@ define([
 			
 			this._overrideQuestionFeedbackAttributes();
 			this._setupQuestionListeners();
+
+			Adapt.assessment.saveState();
 
 		},
 
@@ -272,15 +266,61 @@ define([
 			this._spendAttempt();
 
 			var scoreAsPercent = this._getScoreAsPercent();
+			var score = this._getScore();
+			var maxScore = this._getMaxScore();
 
+			var questions = [];
+
+			var questionComponents = this._currentQuestionComponents;
+			for (var i = 0, l = questionComponents.length; i < l; i++) {
+				var questionComponent = questionComponents[i];
+
+				var questionModel = {
+					_id: questionComponent.get("_id"),
+					_isCorrect: questionComponent.get("_isCorrect")
+				};
+
+				//build array of questions
+				questions.push(questionModel);
+
+			}
+			
 			this.set({
+				'_scoreAsPercent': scoreAsPercent,
+				'_score': score,
+				'_maxScore': maxScore,
 				'_lastAttemptScoreAsPercent': scoreAsPercent,
 				'_assessmentCompleteInSession': true,
+				'_questions': questions,
+				'_isAssessmentComplete': true
 			});
+
+			this._checkIsPass();
 
 			this._removeQuestionListeners();
 			
 			Adapt.trigger('assessments:complete', this.getState(), this);
+		},
+
+		_checkIsPass: function() {
+			var assessmentConfig = this._getAssessmentConfig();
+
+			var isPercentageBased = assessmentConfig._isPercentageBased;
+			var scoreToPass = assessmentConfig._scoreToPass;
+
+			var scoreAsPercent = this.get("_scoreAsPercent");
+			var score = this.get("_score");
+
+			var isPass = false;
+			if (score && scoreAsPercent) {
+				if (isPercentageBased) {
+					isPass = (scoreAsPercent >= scoreToPass) ? true : false;
+				} else {
+					isPass = (score >= scoreToPass) ? true : false;
+				}
+			}
+
+			this.set("_isPass", isPass);
 		},
 
 		_isAttemptsLeft: function() {
@@ -444,62 +484,96 @@ define([
 			return true;
 		},
 
+		getSaveState: function() {
+			var state = this.getState();
+			var questions = state.questions;
+			var indexByIdQuestions = _.indexBy(questions, "_id");
+
+			for (var id in indexByIdQuestions) {
+				indexByIdQuestions[id] = indexByIdQuestions[id]._isCorrect
+			}
+
+			var saveState = [
+				state.isComplete ? 1:0,
+				state.attemptsSpent,
+				state.maxScore,
+				state.score,
+				indexByIdQuestions
+			];
+
+			return saveState;
+		},
+
+		setRestoreState: function(restoreState) {
+			var isComplete = restoreState[0] == 1 ? true : false;
+			var attempts = this.get("_attempts");
+			var attemptsSpent = restoreState[1];
+			var maxScore = restoreState[2];
+			var score = restoreState[3];
+			var scoreAsPercent;
+
+
+			this.set("_isAssessmentComplete", isComplete);
+			this.set("_assessmentCompleteInSession", isComplete);
+			this.set("_attemptsSpent", attemptsSpent )
+
+			if (attempts == "infinite") this.set("_attemptsLeft", "infinite");
+			else this.set("_attemptsLeft" , attempts - attemptsSpent);
+
+			this.set("_maxScore", maxScore || this._getMaxScore());
+			this.set("_score", score || 0);
+
+			if (score) {
+				scoreAsPercent = Math.floor( score / maxScore  * 100);
+			} else {
+				scoreAsPercent = 0;
+			}
+		
+			this.set("_scoreAsPercent", scoreAsPercent);
+			this.set("_lastAttemptScoreAsPercent", scoreAsPercent)
+
+			var indexByIdQuestions = restoreState[4];
+			var questions = [];
+			for (var id in indexByIdQuestions) {
+				questions.push({
+					_id: id,
+					_isCorrect: indexByIdQuestions[id]
+				});
+			}
+
+			this.set("_questions", questions);
+			this._checkIsPass();
+
+		},
+
 		getState: function() {
 			//return the current state of the assessment
 			//create snapshot of values so as not to create memory leaks
 			var assessmentConfig = this._getAssessmentConfig();
 
-			var isPercentageBased = assessmentConfig._isPercentageBased;
-			var scoreToPass = assessmentConfig._scoreToPass;
-			var score = this._getScore();
-			var scoreAsPercent = this._getScoreAsPercent();
-			var maxScore = this._getMaxScore();
-			
-			var isPass = false;
-			if (isPercentageBased) {
-				isPass = (scoreAsPercent >= scoreToPass) ? true : false;
-			} else {
-				isPass = (score >= scoreToPass) ? true : false;
-			}
-
-			var questions = [];
-
-			var questionComponents = this._currentQuestionComponents;
-			for (var i = 0, l = questionComponents.length; i < l; i++) {
-				var questionComponent = questionComponents[i];
-
-				var questionModel = {
-					_id: questionComponent.get("_id"),
-					_isCorrect: questionComponent.get("_isCorrect"),
-					title: questionComponent.get("title"),
-					displayTitle: questionComponent.get("displayTitle"),
-				};
-
-				//build array of questions
-				questions.push(questionModel);
-
-			}
-
-			return  {
+			var state = {
 				id: assessmentConfig._id,
 				type: "article-assessment",
 				pageId: this.getParent().get("_id"),
 				isEnabled: assessmentConfig._isEnabled,
-				isComplete: this.get("_isComplete"),
-				isPercentageBased: isPercentageBased,
-				scoreToPass: scoreToPass,
-				score: score,
-				scoreAsPercent: scoreAsPercent,
-				maxScore: maxScore,
-				isPass: isPass,
+				isComplete: this.get("_isAssessmentComplete"),
+				isPercentageBased: assessmentConfig._isPercentageBased,
+				scoreToPass: assessmentConfig._scoreToPass,
+				score: this.get("_score"),
+				scoreAsPercent: this.get("_scoreAsPercent"),
+				maxScore: this.get("_maxScore"),
+				isPass: this.get("_isPass"),
 				postScoreToLms: assessmentConfig._postScoreToLms,
 				assessmentWeight: assessmentConfig._assessmentWeight,
 				attempts: this.get("_attempts"),
 				attemptsSpent: this.get("_attemptsSpent"),
 				attemptsLeft: this.get("_attemptsLeft"),
+				attemptInProgress: this.get("_attemptInProgress"),
 				lastAttemptScoreAsPercent: this.get('_lastAttemptScoreAsPercent'),
-				questions: questions
+				questions: this.get("_questions")
 			};
+
+			return state;
 		}
 	};
 
