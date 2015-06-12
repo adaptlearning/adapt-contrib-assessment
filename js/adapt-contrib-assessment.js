@@ -46,7 +46,7 @@ define([
 
         },
 
-        _restoreState: function(assessmentModel) {
+        _restoreModelState: function(assessmentModel) {
 
             if (!this._saveStateModel) {
                 this._saveStateModel = Adapt.offlineStorage.get("assessment");
@@ -167,7 +167,7 @@ define([
 
             this._assessments.push(assessmentModel);
 
-            this._restoreState(assessmentModel);
+            this._restoreModelState(assessmentModel);
 
             Adapt.trigger("assessments:register", state, assessmentModel);
         },
