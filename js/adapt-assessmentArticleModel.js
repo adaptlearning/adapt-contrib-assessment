@@ -73,8 +73,6 @@ define([
 
             this._setAssessmentOwnershipOnChildrenModels();
 
-            //check if article is complete from previous session
-            //this._restoreArticleState();
         },
 
         _setAssessmentOwnershipOnChildrenModels: function() {
