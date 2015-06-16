@@ -1,220 +1,256 @@
 define([
-	'coreJS/adapt',
-	'./adapt-assessmentArticleExtension'
+    'coreJS/adapt',
+    './adapt-assessmentArticleExtension'
 ], function(Adapt) {
 
-	/*
-		Here we setup a registry for all assessments
-	*/
+    /*
+        Here we setup a registry for all assessments
+    */
 
-	var assessmentsConfigDefaults = {
+    var assessmentsConfigDefaults = {
         "_postTotalScoreToLms": true,
         "_isPercentageBased": true,
         "_scoreToPass": 100
     };
 
-	Adapt.assessment = _.extend({
+    Adapt.assessment = _.extend({
 
-	//Private functions
+    //Private functions
 
-		_assessments: _.extend([], {
-			_byPageId: {},
-			_byAssessmentId: {}
-		}),
+        _assessments: _.extend([], {
+            _byPageId: {},
+            _byAssessmentId: {}
+        }),
 
-		initialize: function() {
-			this.listenTo(Adapt, "assessments:complete", this._onAssessmentsComplete);
-			this.listenTo(Adapt, "router:location", this._checkResetAssessmentsOnRevisit);
-		},
+        initialize: function() {
+            this.listenTo(Adapt, "assessments:complete", this._onAssessmentsComplete);
+            this.listenTo(Adapt, "router:location", this._checkResetAssessmentsOnRevisit);
+        },
 
-		_onAssessmentsComplete: function(state) {
-			var assessmentId = state.id;
+        _onAssessmentsComplete: function(state) {
+            var assessmentId = state.id;
 
-			state.isComplete = true;
+            state.isComplete = true;
 
-			if (assessmentId === undefined) return;
+            if (assessmentId === undefined) return;
 
-			if (!this._getStateByAssessmentId(assessmentId)) {
-				console.warn("assessments: state was not registered when assessment was created");
-			}
+            if (!this._getStateByAssessmentId(assessmentId)) {
+                console.warn("assessments: state was not registered when assessment was created");
+            }
 
-			this._checkAssessmentsComplete();
+            this.saveState();
 
-			//need to add spoor assessment state saving
+            this._checkAssessmentsComplete();
 
-		},
+            //need to add spoor assessment state saving
 
-		_checkResetAssessmentsOnRevisit: function(toObject) {
-			/* 
-				Here we hijack router:location to reorganise the assessment blocks 
-				this must happen before trickle listens to block completion
-			*/
-			if (toObject._contentType !== "page") return;
+        },
 
-			//initialize assessment on page visit before pageView:preRender (and trickle)
-			var pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
-			if (pageAssessmentModels === undefined) return;
+        _restoreModelState: function(assessmentModel) {
 
-			for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
-				var pageAssessmentModel = pageAssessmentModels[i];
-				pageAssessmentModel.reset();
-			}
+            if (!this._saveStateModel) {
+                this._saveStateModel = Adapt.offlineStorage.get("assessment");
+            }
+            if (this._saveStateModel) {
+                var state = assessmentModel.getState();
+                if (this._saveStateModel[state.id]) {
+                    assessmentModel.setRestoreState(this._saveStateModel[state.id]);
+                }
+            }
 
-		},
+        },
 
-		_checkAssessmentsComplete: function() {
-			var allAssessmentsComplete = true;
-			var assessmentToPostBack = 0;
-			var states = this._getStatesByAssessmentId();
+        _checkResetAssessmentsOnRevisit: function(toObject) {
+            /* 
+                Here we hijack router:location to reorganise the assessment blocks 
+                this must happen before trickle listens to block completion
+            */
+            if (toObject._contentType !== "page") return;
 
-			var assessmentStates = [];
+            //initialize assessment on page visit before pageView:preRender (and trickle)
+            var pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
+            if (pageAssessmentModels === undefined) return;
 
-			for (var id in states) {
-				var state = states[id];
-				if (!state.postScoreToLms) continue;
-				if (!state.isComplete) {
-					allAssessmentsComplete = false;
-					break;
-				}
-				assessmentToPostBack++;
-				assessmentStates.push(state);
-			}
+            for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
+                var pageAssessmentModel = pageAssessmentModels[i];
+                pageAssessmentModel.reset();
+            }
 
-			if (!allAssessmentsComplete || assessmentToPostBack === 0) return false;
+        },
 
-			if (assessmentToPostBack === 1) {
-				this._setupSingleAssessmentConfiguration(assessmentStates[0]);
-			}
+        _checkAssessmentsComplete: function() {
+            var allAssessmentsComplete = true;
+            var assessmentToPostBack = 0;
+            var states = this._getStatesByAssessmentId();
 
-			this._postScoreToLms();
+            var assessmentStates = [];
 
-			return true;
-		},
+            for (var id in states) {
+                var state = states[id];
+                if (!state.postScoreToLms) continue;
+                if (!state.isComplete) {
+                    allAssessmentsComplete = false;
+                    break;
+                }
+                assessmentToPostBack++;
+                assessmentStates.push(state);
+            }
 
-		_setupSingleAssessmentConfiguration: function(assessmentState) {
-			var assessmentsConfig = Adapt.course.get("_assessment");
-			if (assessmentsConfig === undefined) {
-				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, {
-					"_postTotalScoreToLms": assessmentState.postScoreToLms,
-					"_isPercentageBased": assessmentState.isPercentageBased,
-        			"_scoreToPass": assessmentState.scoreToPass
-				});
-				Adapt.course.set("_assessment", assessmentsConfig);
-			}
-		},
-		
-		_postScoreToLms: function() {
-			var assessmentsConfig = this.getConfig();
-			if (assessmentsConfig._postTotalScoreToLms === false) return;
-			
-			var completionState = this.getState();
-			//post completion to spoor
-			_.defer(function() {
-				Adapt.trigger("assessment:complete", completionState);
-			});
-		},
+            if (!allAssessmentsComplete || assessmentToPostBack === 0) return false;
 
-		_getAssessmentByPageId: function(pageId) {
-			return this._assessments._byPageId[pageId];
-		},
+            if (assessmentToPostBack === 1) {
+                this._setupSingleAssessmentConfiguration(assessmentStates[0]);
+            }
 
-		_getStateByAssessmentId: function(assessmentId) {
-			return this._assessments._byAssessmentId[assessmentId].getState();
-		},
+            this._postScoreToLms();
 
-		_getStatesByAssessmentId: function() {
-			var states = {};
-			for (var i = 0, l = this._assessments.length; i < l; i++) {
-				var assessmentModel = this._assessments[i];
-				var state = assessmentModel.getState();
-				states[state.id] = state;
-			}
-			return states;
-		},
+            return true;
+        },
+
+        _setupSingleAssessmentConfiguration: function(assessmentState) {
+            var assessmentsConfig = Adapt.course.get("_assessment");
+            if (assessmentsConfig === undefined) {
+                assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, {
+                    "_postTotalScoreToLms": assessmentState.postScoreToLms,
+                    "_isPercentageBased": assessmentState.isPercentageBased,
+                    "_scoreToPass": assessmentState.scoreToPass
+                });
+                Adapt.course.set("_assessment", assessmentsConfig);
+            }
+        },
+        
+        _postScoreToLms: function() {
+            var assessmentsConfig = this.getConfig();
+            if (assessmentsConfig._postTotalScoreToLms === false) return;
+            
+            var completionState = this.getState();
+            //post completion to spoor
+            _.defer(function() {
+                Adapt.trigger("assessment:complete", completionState);
+            });
+        },
+
+        _getAssessmentByPageId: function(pageId) {
+            return this._assessments._byPageId[pageId];
+        },
+
+        _getStateByAssessmentId: function(assessmentId) {
+            return this._assessments._byAssessmentId[assessmentId].getState();
+        },
+
+        _getStatesByAssessmentId: function() {
+            var states = {};
+            for (var i = 0, l = this._assessments.length; i < l; i++) {
+                var assessmentModel = this._assessments[i];
+                var state = assessmentModel.getState();
+                states[state.id] = state;
+            }
+            return states;
+        },
 
 
-	//Public functions
+    //Public functions
 
-		register: function(assessmentModel) {
-			var state = assessmentModel.getState();
-			var assessmentId = state.id;
-			var pageId = state.pageId;
+        register: function(assessmentModel) {
+            var state = assessmentModel.getState();
+            var assessmentId = state.id;
+            var pageId = state.pageId;
 
-			if (this._assessments._byPageId[pageId] === undefined) {
-				this._assessments._byPageId[pageId] = [];
-			}
-			this._assessments._byPageId[pageId].push(assessmentModel);
+            if (this._assessments._byPageId[pageId] === undefined) {
+                this._assessments._byPageId[pageId] = [];
+            }
+            this._assessments._byPageId[pageId].push(assessmentModel);
 
-			if (assessmentId) {
-				this._assessments._byAssessmentId[assessmentId] = assessmentModel;
-			}
+            if (assessmentId) {
+                this._assessments._byAssessmentId[assessmentId] = assessmentModel;
+            }
 
-			this._assessments.push(assessmentModel);
+            this._assessments.push(assessmentModel);
 
-			Adapt.trigger("assessments:register", state, assessmentModel);
-		},
+            this._restoreModelState(assessmentModel);
 
-		get: function(id) {
-			if (id === undefined) {
-				return this._assessments.slice(0);
-			} else {
-				return this._assessments._byAssessmentId[id];
-			}
-		},
+            Adapt.trigger("assessments:register", state, assessmentModel);
+        },
 
-		getConfig: function () {
-			var assessmentsConfig = Adapt.course.get("_assessment");
+        get: function(id) {
+            if (id === undefined) {
+                return this._assessments.slice(0);
+            } else {
+                return this._assessments._byAssessmentId[id];
+            }
+        },
 
-			if (assessmentsConfig === undefined) {
-				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults);
-			} else {
-				assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, assessmentsConfig);
-			}
+        saveState: function() {
 
-			return assessmentsConfig;
-		},
-		
-		getState: function() {
-			var assessmentsConfig = this.getConfig();
+            this._saveStateModel = {};
+            for (var i = 0, assessmentModel; assessmentModel = this._assessments[i++];) {
+                var state = assessmentModel.getState();
+                this._saveStateModel[state.id] = assessmentModel.getSaveState();
+            }
 
-			var score = 0;
-			var maxScore = 0;
-			var isPass = true;
-			var totalAssessments = 0;
+            Adapt.offlineStorage.set("assessment", this._saveStateModel);
+        },
 
-			var states = this._getStatesByAssessmentId();
+        getConfig: function () {
+            var assessmentsConfig = Adapt.course.get("_assessment");
 
-			for (var id in states) {
-				var state = states[id];
-				totalAssessments++;
-				maxScore += state.maxScore / state.assessmentWeight;
-				score += state.score / state.assessmentWeight;
-				isPass = isPass === false ? false : state.isPass;
-			}
+            if (assessmentsConfig === undefined) {
+                assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults);
+            } else {
+                assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, assessmentsConfig);
+            }
 
-			
-			var scoreAsPercent = Math.round((score / maxScore) * 100);
+            return assessmentsConfig;
+        },
+        
+        getState: function() {
+            var assessmentsConfig = this.getConfig();
 
-			if (assessmentsConfig._scoreToPass || 100) {
-				if (assessmentsConfig._isPercentageBased || true) {
-					if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
-				} else {
-					if (score >= assessmentsConfig._scoreToPass) isPass = true;
-				}
-			}
+            var score = 0;
+            var maxScore = 0;
+            var isPass = false;
+            var totalAssessments = 0;
 
-			return {
-				isPercentageBased: assessmentsConfig._isPercentageBased,
-				isPass: isPass,
-				scoreAsPercent: scoreAsPercent,
-				maxScore: maxScore,
-				score: score,
-				assessments: totalAssessments
-			};
-		},
+            var states = this._getStatesByAssessmentId();
 
-	}, Backbone.Events);
+            var assessmentsComplete = 0;
 
-	Adapt.assessment.initialize();
+            for (var id in states) {
+                var state = states[id];
+                if (!state.postScoreToLms) continue;
+                if (state.isComplete) assessmentsComplete++;
+                totalAssessments++;
+                maxScore += state.maxScore / state.assessmentWeight;
+                score += state.score / state.assessmentWeight;
+                isPass = isPass === false ? false : state.isPass;
+            }
+
+            var isComplete = assessmentsComplete == totalAssessments;
+            
+            var scoreAsPercent = Math.round((score / maxScore) * 100);
+
+            if ((assessmentsConfig._scoreToPass || 100) && isComplete) {
+                if (assessmentsConfig._isPercentageBased || true) {
+                    if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
+                } else {
+                    if (score >= assessmentsConfig._scoreToPass) isPass = true;
+                }
+            }
+
+            return {
+                isComplete: isComplete,
+                isPercentageBased: assessmentsConfig._isPercentageBased,
+                isPass: isPass,
+                scoreAsPercent: scoreAsPercent,
+                maxScore: maxScore,
+                score: score,
+                assessmentsComplete: assessmentsComplete,
+                assessments: totalAssessments
+            };
+        },
+
+    }, Backbone.Events);
+
+    Adapt.assessment.initialize();
 
 });
