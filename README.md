@@ -5,7 +5,7 @@ A basic assessment for the Adapt Framework which attaches to an 'article' object
 
 A [sample JSON](https://github.com/adaptlearning/adapt-contrib-assessment/blob/master/example.json) is given below which can be added to an article:
 
-NOTE: Please only include question blocks inside the assessment article. The article's children blocks may get randomised when the assessment attempt begins (depending on your settings), effecting the order of the blocks. Please put results components in a separate article + block.
+NOTE: Please only include question blocks inside the assessment article. The article's children blocks may get randomised when the assessment attempt begins (depending on your settings), affecting the order of the blocks. Please put results components in a separate article and block.
 
 ####article.json
 
@@ -38,18 +38,18 @@ NOTE: Please only include question blocks inside the assessment article. The art
 A description of the attributes is as follows:
 
 | Attribute                 | Type         | Description|
-| :-------------------------|:-------------|:-----|
-| _isEnabled                | bool         | Turns the assessment on or off |
-| _id                       | bool         | This is a unique name for the assessment |
-| _isPercentageBased        | bool         | Set this to *true* if the scoreToPass attribute should work on percentages, or *false* for otherwise |
-| _scoreToPass              | int          | This is the 'pass' mark for the assessment.  If _isPercentageBased is set to *true* this will be a percentage, e.g. 60 would equal 60% |
-| _banks                    | object       | Contains attributes for controlling which questions the user should receive based on a series of banks/question buckets (use either _banks or _randomisation) |
-| _randomisation            | object       | Contains attributes for controlling how many random questions the user should receive (use either _banks or _randomisation) |
-| _questions                | object       | Contains attributes for overriding question component behaviours |
-| _postScoreToLms           | bool         | To signify that the score should be sent to the Lms (as a percentage) |
-| _assessmentWeight         | int          | If there are multiple assessments in the course, this value controls the proportion of the Lms score which is attributed to this assessment. 1 = 100% |
-| _isResetOnRevisit         | bool         | Controls if the assessment chould automatically reset (up to the number of available attempts) when a user revisits the page |
-| _attempts                 | int / string | Controls the number of attempts available to the user. -1/0/null/undefined/"infinite" = infinite attempts |
+| :-------------------------|:-------------|:-----------|
+| _isEnabled                | bool         | Turns the assessment on or off. |
+| _id                       | bool         | This is a unique name for the assessment. |
+| _isPercentageBased        | bool         | Set this to `true` if the `scoreToPass` attribute should work on percentages, or `false` for otherwise. |
+| _scoreToPass              | int          | This is the 'pass' mark for the assessment.  If `_isPercentageBased` is set to `true` this will be a percentage, e.g. 60 would equal 60%. |
+| _banks                    | object       | Contains attributes for controlling which questions the user should receive based on a series of banks/question buckets (use either _banks or _randomisation). |
+| _randomisation            | object       | Contains attributes for controlling how many random questions the user should receive (use either `_banks` or `_randomisation`). |
+| _questions                | object       | Contains attributes for overriding question component behaviours. |
+| _postScoreToLms           | bool         | To signify that the score should be sent to the LMS (as a percentage). |
+| _assessmentWeight         | int          | If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100%. |
+| _isResetOnRevisit         | bool         | Controls if the assessment should automatically reset (up to the number of available attempts) when a user revisits the page. |
+| _attempts                 | int / string | Controls the number of attempts available to the user. Infinite attempts can be specified using any of the following: `-1`,`0`,`null`,`undefined`,`"infinite"`. |
   
 
   
@@ -77,76 +77,57 @@ A description of the attributes is as follows:
 
 | Attribute                 | Type         | Description|
 | :-------------------------|:-------------|:-----|
-| _isPercentageBased        | bool         | Set this to *true* if the scoreToPass attribute should work on percentages, or *false* for otherwise |
-| _scoreToPass              | int          | This is the 'pass' mark for the assessment.  If _isPercentageBased is set to *true* this will be a percentage, e.g. 60 would equal 60% |
-| _postTotalScoreToLms           | bool         | To signify that the total score should be sent to the Lms (as a percentage) |
+| _isPercentageBased        | bool         | Set this to `true` if the scoreToPass attribute should work on percentages, or `false` otherwise. |
+| _scoreToPass              | int          | This is the 'pass' mark for the assessment.  If `_isPercentageBased` is set to `true` this will be a percentage, e.g. 60 would equal 60%. |
+| _postTotalScoreToLms           | bool         | To signify that the total score should be sent to the LMS (as a percentage). |
 
 
 
 ###Events
 
-<table>
-    <thead>
-        <td><b>Event</b></td>
-        <td><b>Description</b></td>     
-        <td><b>Object(s)</b></td>  
-    </thead>
-    <tr valign="top">
-        <td><i>assessments:register</i></td>
-        <td>Triggered when an assessment is registered, between app:dataReady and adapt:initialize events </td>
-        <td>stateObject, assessmentModel</td>
-    </tr>
-    <tr valign="top">
-        <td><i>assessments:reset</i></td>
-        <td>Triggered when an assessment is reset </td>
-        <td>stateObject, assessmentModel</td>
-    </tr>
-    <tr valign="top">
-        <td><i>assessments:complete</i></td>
-        <td>Triggered when the user submits the last question of an assessment </td>
-        <td>stateObject, assessmentModel</td>
-    </tr>
-    <tr valign="top">
-        <td><i>assessment:complete</i></td>
-        <td>Triggered when the user submits the last question of the last assessment and the score is to be posted back to the Lms </td>
-        <td>stateObject</td>        
-    </tr>
-</table>
+| Event | Description | Objects(s) |
+|:------|:------------|:-----------|
+| *assessment:register* | Triggered when an assessment is registered, between `app:dataReady` and `adapt:initialize` events. | stateObject, assessmentModel |
+| *assessments:reset* | Triggered when an assessment is reset. | stateObject, assessmentModel |
+| *assessments:complete* | Triggered when the user submits the last question of an assessment. | stateObject, assessmentModel | 
+| *assessment:complete* | Triggered when the user submits the last question of the last assessment and the score is to be posted back to the LMS _(note that this event is `assessment` rather than `assessments`)_. | stateObject | 
+
 
 ####stateObject
 
-A description of the stateObject returned by the assessments:events is as follows:
+The following table describes state object passed with the events above (with the exception of the final `assessment:complete` event, which passes a pared-down version of the state; attributes that are also attatched to this are denoted with an * next to the name).
 
 | Attribute                 | Type         | Description|
 | :-------------------------|:-------------|:-----|
 | id                        | string       | The unique id of the assessment |
 | type                      | string       | The assessment type (to allow for future assessment types, currently 'article-assessment' only) |
-| pageId                    | string       | The page to which the assessment belongs (used to reset the assessment before a pageView:preRender event) |
+| pageId                    | string       | The page to which the assessment belongs (used to reset the assessment before a `pageView:preRender` event) |
 | isEnabled                 | bool         | Returns a boolean signifying if the assessment is enabled |
 | isComplete                | bool         | Returns a boolean signifying if the assessment is complete |
-| isPercentageBased         | bool         | Returns a boolean signifying if the assessment scoreToPass is percentage based |
-| scoreToPass               | int          | Defines the threshold score to signify a pass |
-| score                     | int          | Returns the current score of the assessment |
-| scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (maxScore/score) * 100 |
-| maxScore                  | int          | Returns the maximum attainable score |
-| isPass                    | bool         | Returns a boolean signifying if the assessment is passed |
-| postScoreToLms            | bool         | Signifys that the assessment score will be posted to the Lms |
+| isPercentageBased *       | bool         | Returns a boolean signifying if the assessment `scoreToPass` is percentage based |
+| scoreToPass *             | int          | Defines the threshold score to signify a pass |
+| score *                   | int          | Returns the current score of the assessment |
+| scoreAsPercent *          | int          | Returns the current score of the assessment as a percentage, (`maxScore`/`score`) * 100 |
+| maxScore *                | int          | Returns the maximum attainable score |
+| isPass *                  | bool         | Returns a boolean signifying if the assessment is passed |
+| postScoreToLms            | bool         | Signifys that the assessment score will be posted to the LMS |
 | assessmentWeight          | int          | Signifys the portion of the total Lms score which is derived from this assessment, (1 = 100%) |
 | attempts                  | int          | The total number of attempts specified by the configuration (0 = infinite) |
 | attemptsSpent             | int          | The total number of attempts spent by the user |
 | attemptsLeft              | int / bool   | The total number of attempts remaining for the user or true if attempts=infinite |
 | lastAttemptScoreAsPercent | int          | Returns the last attempt score |
-| questions                 | object array | Contains an array of question objects { _id: string, _isCorrect: bool, title: string, displayTitle: string } |
+| questions                 | object array | Contains an array of question objects `{ _id: string, _isCorrect: bool, title: string, displayTitle: string }` |
+| assessments *             | int          | **NOTE: `assessment:complete` ONLY!**<br>Signifies the number of assessments passed to post back to the LMS | 
   
   
 A description of the stateObject returned by the assessment:complete event is as follows:  
   
 | Attribute                 | Type         | Description|
 | :-------------------------|:-------------|:-----|
-| isPercentageBased         | bool         | Returns a boolean signifying if the assessment scoreToPass is percentage based |
+| isPercentageBased         | bool         | Returns a boolean signifying if the assessment `scoreToPass` is percentage based |
 | scoreToPass               | int          | Defines the threshold score to signify a pass |
 | score                     | int          | Returns the current score of the assessment |
-| scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (maxScore/score) * 100 |
+| scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (`maxScore`/`score`) * 100 |
 | maxScore                  | int          | Returns the maximum attainable score |
 | isPass                    | bool         | Returns a boolean signifying if the assessment is passed |
 | assessments               | int          | Signifies the number of assessments passed to post back to the Lms |
@@ -154,21 +135,17 @@ A description of the stateObject returned by the assessment:complete event is as
 
 ###Globals
 
-```Adapt.assessment``` is globally available.    
- 
-A description of its public functions is as follows:
+```Adapt.assessment``` is a globally available variable. See below for descriptions of its public functions:    
 
 | Function                  | Type                         | Description|
 | :-------------------------|:-----------------------------|:-----|
-| register(assessmentModel) | N/A                          | Registers the assessment for use with the postToLms feature and the `Adapt.assessment.get` function |
+| register(assessmentModel) | N/A                          | Registers the assessment for use with the `postToLms` feature and the `Adapt.assessment.get` function |
 | get([id])                 | object array assessmentModel / object assessmentModel | Returns the assessmentModel by assessment id or returns an array of all models |
 
 
 ###AssessmentModel  
   
-The assessment models have a global API for each item return by a call to the ```Adapt.assessment.get([id]);``` function.   
- 
-A description of the AssessmentModel's public functions is as follows:
+The assessment models have a global API for each item return by a call to the ```Adapt.assessment.get([id]);``` function. See below for documentation about the available public functions:
 
 | Function                  | Type               | Description|
 | :-------------------------|:-------------------|:-----|
@@ -176,9 +153,3 @@ A description of the AssessmentModel's public functions is as follows:
 | canResetInPage()          | bool               | Returns if the assessment can be reset from within the page |
 | reset([force])            | bool               | Resets or forces the reset of an assessment (will reload the page if on assessment page) |
 | getState()                | object StateObject | Returns the stateObject for the assessment |
-
-
-
-
-
-
