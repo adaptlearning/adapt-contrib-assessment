@@ -34,7 +34,7 @@ NOTE: Please only include question blocks inside the assessment article. The art
     "_attempts": 2
 }
 ```
-NOTE: In the example above, you should use either ""_banks": {..." or ""_randomisation": {..."
+NOTE: In the example above, you should use only one of the attributes, either `_banks": {...` or `"_randomisation": {...`
 
 
 A description of the attributes is as follows:
