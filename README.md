@@ -34,6 +34,8 @@ NOTE: Please only include question blocks inside the assessment article. The art
     "_attempts": 2
 }
 ```
+NOTE: In the example above, you should use only one of the attributes, either `_banks": {...` or `"_randomisation": {...`
+
 
 A description of the attributes is as follows:
 
@@ -43,8 +45,8 @@ A description of the attributes is as follows:
 | _id                       | bool         | This is a unique name for the assessment. |
 | _isPercentageBased        | bool         | Set this to `true` if the `scoreToPass` attribute should work on percentages, or `false` for otherwise. |
 | _scoreToPass              | int          | This is the 'pass' mark for the assessment.  If `_isPercentageBased` is set to `true` this will be a percentage, e.g. 60 would equal 60%. |
-| _banks                    | object       | Contains attributes for controlling which questions the user should receive based on a series of banks/question buckets (use either _banks or _randomisation). |
-| _randomisation            | object       | Contains attributes for controlling how many random questions the user should receive (use either `_banks` or `_randomisation`). |
+| _banks                    | object       | Contains attributes for controlling which questions the user should receive based on a series of banks/question buckets (NOTE: This attribute cannot be used when the `_randomisation` attribute has been included). |
+| _randomisation            | object       | Contains attributes for controlling how many random questions the user should receive (NOTE: This attribute cannot be used when the `_banks` attribute has been included). |
 | _questions                | object       | Contains attributes for overriding question component behaviours. |
 | _postScoreToLms           | bool         | To signify that the score should be sent to the LMS (as a percentage). |
 | _assessmentWeight         | int          | If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100%. |
@@ -59,7 +61,7 @@ A description of the attributes is as follows:
     "_quizBankID": "1",
 ```
 
-Add the ```_quizBankID``` attribute to your blocks in order to organise the assessment article's blocks into banks. According to the ```_assessment._banks._split``` attribute from the assessment's article, a value of ```'2,1'``` in ```_assessment._banks._split``` would pick 2 questions from bank 1 and and one question from bank 2. Quiz bank id's are a 1 index string value. 
+Add the ```_quizBankID``` attribute to your blocks in order to organise the assessment article's blocks into banks. According to the ```_assessment._banks._split``` attribute from the assessment's article, a value of ```'2,1'``` in ```_assessment._banks._split``` would pick 2 blocks from bank 1 and and one block from bank 2. Quiz bank id's are a 1 index string value. 
   
   
 ####course.json
