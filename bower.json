@@ -10,7 +10,7 @@
   "displayName" : "Assessment",
   "extension" : "assessment",
   "description": "An extension which attaches to an article object to group various question components and provide a score with feedback",
-  "main": "/js/adapt-contrib-assessment.js",
+  "main": "/js/adapt-assessmentArticleExtension.js",
   "keywords": [
     "adapt-plugin",
     "adapt-extension"

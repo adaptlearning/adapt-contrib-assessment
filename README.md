@@ -28,7 +28,7 @@ NOTE: Please only include question blocks inside the assessment article. The art
         "_resetType": "hard",
         "_canShowFeedback": false
     },
-    "_postScoreToLms": true,
+    "_includeInTotalScore": true,
     "_assessmentWeight": 1,
     "_isResetOnRevisit": false,
     "_attempts": 2
@@ -48,7 +48,7 @@ A description of the attributes is as follows:
 | _banks                    | object       | Contains attributes for controlling which questions the user should receive based on a series of banks/question buckets (NOTE: This attribute cannot be used when the `_randomisation` attribute has been included). |
 | _randomisation            | object       | Contains attributes for controlling how many random questions the user should receive (NOTE: This attribute cannot be used when the `_banks` attribute has been included). |
 | _questions                | object       | Contains attributes for overriding question component behaviours. |
-| _postScoreToLms           | bool         | To signify that the score should be sent to the LMS (as a percentage). |
+| _includeInTotalScore      | bool         | To signify that the score should be sent to the LMS as a proportional part of the total (as a percentage according to _assessmentWeight). |
 | _assessmentWeight         | int          | If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100%. |
 | _isResetOnRevisit         | bool         | Controls if the assessment should automatically reset (up to the number of available attempts) when a user revisits the page. |
 | _attempts                 | int / string | Controls the number of attempts available to the user. Infinite attempts can be specified using any of the following: `-1`,`0`,`null`,`undefined`,`"infinite"`. |
@@ -70,7 +70,8 @@ Add the ```_quizBankID``` attribute to your blocks in order to organise the asse
 "_assessment": {
     "_isPercentageBased": true,
     "_scoreToPass": 75,
-    "_postTotalScoreToLms": true
+    "_postTotalScoreToLms": true,
+    "_requireAssessmentPassed": true
 }
 ```
 
@@ -82,6 +83,7 @@ A description of the attributes is as follows:
 | _isPercentageBased        | bool         | Set this to `true` if the scoreToPass attribute should work on percentages, or `false` otherwise. |
 | _scoreToPass              | int          | This is the 'pass' mark for the assessment.  If `_isPercentageBased` is set to `true` this will be a percentage, e.g. 60 would equal 60%. |
 | _postTotalScoreToLms           | bool         | To signify that the total score should be sent to the LMS (as a percentage). |
+| _requireAssessmentPassed           | bool         | To signify that the progress calculations should account for a pass/fail rather than completion |
 
 
 
@@ -112,7 +114,7 @@ The following table describes state object passed with the events above (with th
 | scoreAsPercent *          | int          | Returns the current score of the assessment as a percentage, (`maxScore`/`score`) * 100 |
 | maxScore *                | int          | Returns the maximum attainable score |
 | isPass *                  | bool         | Returns a boolean signifying if the assessment is passed |
-| postScoreToLms            | bool         | Signifys that the assessment score will be posted to the LMS |
+| includeInTotalScore            | bool         | Signifys that the assessment score will be posted to the LMS as part of the total score |
 | assessmentWeight          | int          | Signifys the portion of the total Lms score which is derived from this assessment, (1 = 100%) |
 | attempts                  | int          | The total number of attempts specified by the configuration (0 = infinite) |
 | attemptsSpent             | int          | The total number of attempts spent by the user |
@@ -127,6 +129,7 @@ A description of the stateObject returned by the assessment:complete event is as
 | Attribute                 | Type         | Description|
 | :-------------------------|:-------------|:-----|
 | isPercentageBased         | bool         | Returns a boolean signifying if the assessment `scoreToPass` is percentage based |
+| requireAssessmentPassed         | bool         | Returns a boolean signifying if the course progress calculations should account for completion or pass/fail |
 | scoreToPass               | int          | Defines the threshold score to signify a pass |
 | score                     | int          | Returns the current score of the assessment |
 | scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (`maxScore`/`score`) * 100 |
@@ -143,6 +146,10 @@ A description of the stateObject returned by the assessment:complete event is as
 | :-------------------------|:-----------------------------|:-----|
 | register(assessmentModel) | N/A                          | Registers the assessment for use with the `postToLms` feature and the `Adapt.assessment.get` function |
 | get([id])                 | object array assessmentModel / object assessmentModel | Returns the assessmentModel by assessment id or returns an array of all models |
+| getState()                | object StateObject | Returns the stateObject for the assessment:complete event signifying the total assessments state |
+| saveState()                | N/A | Forces the assessment's states to be saved |
+| getConfig()                | object | Returns the ``Adapt.course.get("_assessment")`` object with defaults applied |
+
 
 
 ###AssessmentModel  
@@ -155,3 +162,5 @@ The assessment models have a global API for each item return by a call to the ``
 | canResetInPage()          | bool               | Returns if the assessment can be reset from within the page |
 | reset([force])            | bool               | Resets or forces the reset of an assessment (will reload the page if on assessment page) |
 | getState()                | object StateObject | Returns the stateObject for the assessment |
+| getSaveState()                | object | Returns an object signifying all of the appropriate states which need to be saved for all assessments |
+| setRestoreState()                | N/A | Takes the object from ``getStateSave()`` and restores the assessments to these states |

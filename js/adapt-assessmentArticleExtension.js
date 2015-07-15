@@ -3,7 +3,8 @@ define([
     'coreViews/articleView',
     'coreModels/articleModel',
     './adapt-assessmentArticleView',
-    './adapt-assessmentArticleModel'
+    './adapt-assessmentArticleModel',
+    './assessment',
 ], function(Adapt, ArticleView, ArticleModel, AdaptAssessmentArticleView, AdaptAssessmentArticleModel) {
 
     /*  

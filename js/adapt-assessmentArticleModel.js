@@ -8,12 +8,12 @@ define([
     var assessmentConfigDefaults = {
         "_isEnabled":true,
         "_questions": {
-            "_resetType": "hard",
+            "_resetType": "soft",
             "_canShowFeedback": false
         },
         "_isPercentageBased" : true,
         "_scoreToPass" : 100,
-        "_postScoreToLms": true,
+        "_includeInTotalScore": true,
         "_assessmentWeight": 1,
         "_isResetOnRevisit": true,
         "_reloadPageOnReset": true,
@@ -44,6 +44,13 @@ define([
                 default:
                     attemptsLeft = assessmentConfig._attempts;
                     break;
+            }
+
+            var centralAssessmentState = Adapt.assessment.getState();
+
+            if (assessmentConfig._includeInTotalScore &&
+                centralAssessmentState.requireAssessmentPassed) {
+                attemptsLeft = "infinite";
             }
 
             this.set({
@@ -80,6 +87,9 @@ define([
             for (var i = 0, l = this._originalChildModels.length; i < l; i++) {
                 var blockModel = this._originalChildModels[i];
                 blockModel.set({
+                    _isPartOfAssessment: true
+                });
+                blockModel.setOnChildren({
                     _isPartOfAssessment: true
                 });
             }
@@ -421,6 +431,8 @@ define([
 
             if (assessmentConfig._id === undefined) {
                 assessmentConfig._id = "givenId"+(givenIdCount++);
+            } else {
+                return assessmentConfig;
             }
 
             if (!assessmentConfig) {
@@ -428,6 +440,8 @@ define([
             } else {
                 assessmentConfig = $.extend(true, {}, assessmentConfigDefaults, assessmentConfig);
             }
+
+            this.set("_assessment", assessmentConfig);
 
             return assessmentConfig;
         },
@@ -437,6 +451,31 @@ define([
                 "_isComplete": true,
                 "_isInteractionComplete": true,
             });
+        },
+
+        _checkIfQuestionWereRestored: function() {
+            if (this.get("_assessmentCompleteInSession")) return;
+            if (!this.get("_isAssessmentComplete")) return;
+
+            //fix for courses that do not remember the user selections
+            //force assessment to reset if user revisits an assessment page which is completed
+            var wereQuestionsRestored = true;
+
+            var questions = this.get("_questions");
+            for (var i = 0, l = questions.length; i < l; i++) {
+                var question = questions[i];
+                var questionModel = Adapt.findById(question._id);
+                if (!questionModel.get("_isSubmitted")) {
+                    wereQuestionsRestored = false;
+                    break;
+                }
+            }
+        
+            if (!wereQuestionsRestored) {
+                return true;
+            }
+
+            return false;
         },
 
 
@@ -468,6 +507,9 @@ define([
                     !assessmentConfig._isResetOnRevisit && 
                     !isPageReload && 
                     !force) return false;
+            
+            //check if new session and questions not restored
+            force = force || this._checkIfQuestionWereRestored();
             
             //stop resetting if no attempts left
             if (!this._isAttemptsLeft() && !force) return false;
@@ -512,7 +554,7 @@ define([
 
 
             this.set("_isAssessmentComplete", isComplete);
-            this.set("_assessmentCompleteInSession", isComplete);
+            this.set("_assessmentCompleteInSession", false);
             this.set("_attemptsSpent", attemptsSpent )
 
             if (attempts == "infinite") this.set("_attemptsLeft", "infinite");
@@ -561,7 +603,7 @@ define([
                 scoreAsPercent: this.get("_scoreAsPercent"),
                 maxScore: this.get("_maxScore"),
                 isPass: this.get("_isPass"),
-                postScoreToLms: assessmentConfig._postScoreToLms,
+                includeInTotalScore: assessmentConfig._includeInTotalScore,
                 assessmentWeight: assessmentConfig._assessmentWeight,
                 attempts: this.get("_attempts"),
                 attemptsSpent: this.get("_attemptsSpent"),
