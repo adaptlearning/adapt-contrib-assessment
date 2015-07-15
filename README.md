@@ -164,3 +164,4 @@ The assessment models have a global API for each item return by a call to the ``
 | getState()                | object StateObject | Returns the stateObject for the assessment |
 | getSaveState()                | object | Returns an object signifying all of the appropriate states which need to be saved for all assessments |
 | setRestoreState()                | N/A | Takes the object from ``getStateSave()`` and restores the assessments to these states |
+| getConfig()                | object | Returns the assessment model object with defaults applied |

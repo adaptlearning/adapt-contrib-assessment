@@ -244,7 +244,7 @@ define([
         getConfig: function () {
             var assessmentsConfig = Adapt.course.get("_assessment");
 
-            if (assessmentsConfig._isDefaultLoaded) {
+            if (assessmentsConfig && assessmentsConfig._isDefaultLoaded) {
                 return assessmentsConfig;
             }
 
