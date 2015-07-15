@@ -458,6 +458,7 @@ define([
             }
         
             if (!wereQuestionsRestored) {
+                this.set("_assessmentCompleteInSession", true);
                 return true;
             }
 
