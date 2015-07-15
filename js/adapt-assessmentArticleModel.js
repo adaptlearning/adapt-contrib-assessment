@@ -439,7 +439,7 @@ define([
             });
         },
 
-        _checkIfQuestionWereRestored: function() {
+        _checkIfQuestionsWereRestored: function() {
             if (this.get("_assessmentCompleteInSession")) return;
             if (!this.get("_isAssessmentComplete")) return;
 
@@ -495,7 +495,7 @@ define([
                     !force) return false;
             
             //check if new session and questions not restored
-            force = force || this._checkIfQuestionWereRestored();
+            force = force || this._checkIfQuestionsWereRestored();
             
             //stop resetting if no attempts left
             if (!this._isAttemptsLeft() && !force) return false;
