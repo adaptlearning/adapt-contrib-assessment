@@ -46,6 +46,9 @@ define([
                     break;
             }
 
+
+            //if assessment passed required and assessment included in total
+            //set attemptsleft to infinite
             var centralAssessmentState = Adapt.assessment.getState();
 
             if (assessmentConfig._includeInTotalScore &&
@@ -89,6 +92,7 @@ define([
                 blockModel.set({
                     _isPartOfAssessment: true
                 });
+                //make sure components are set to _isPartOfAssessment for plp checking
                 blockModel.setOnChildren({
                     _isPartOfAssessment: true
                 });
@@ -440,7 +444,7 @@ define([
             if (!this.get("_isAssessmentComplete")) return;
 
             //fix for courses that do not remember the user selections
-            //force assessment to reset if user revisits an assessment page which is completed
+            //force assessment to reset if user revisits an assessment page in a new session which is completed
             var wereQuestionsRestored = true;
 
             var questions = this.get("_questions");

@@ -153,6 +153,8 @@ define([
         },
 
         _setPageProgress: function() {
+            //set _subProgressTotal and _subProgressComplete on pages that have assessment progress indicator requirements
+            
             var requireAssessmentPassed = this.getConfig()._requireAssessmentPassed;
 
             for (var k in this._assessments._byPageId) {
