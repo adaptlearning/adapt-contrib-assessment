@@ -25,7 +25,7 @@ NOTE: Please only include question blocks inside the assessment article. The art
         "_blockCount": 1
     },
     "_questions": {
-        "_resetType": "hard",
+        "_resetType": "soft",
         "_canShowFeedback": false
     },
     "_includeInTotalScore": true,
