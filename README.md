@@ -1,7 +1,21 @@
-adapt-contrib-assessment
-========================
+#adapt-contrib-assessment
 
 A basic assessment for the Adapt Framework which attaches to an 'article' object to group various question components (such as [adapt-contrib-mcq](https://github.com/adaptlearning/adapt-contrib-mcq), [adapt-contrib-textInput](https://github.com/adaptlearning/adapt-contrib-textInput) and [adapt-contrib-matching](https://github.com/adaptlearning/adapt-contrib-matching)) and provide a score with feedback.
+
+##Installation
+
+First, be sure to install the [Adapt Command Line Interface](https://github.com/adaptlearning/adapt-cli), then from the command line run:-
+
+        adapt install adapt-contrib-assessment
+
+This extension can also be installed by adding the extension to the adapt.json file before running `adapt install`:
+ 
+        "adapt-contrib-assessment": "*"
+
+##Usage
+To be completed.
+
+##Settings overview
 
 A [sample JSON](https://github.com/adaptlearning/adapt-contrib-assessment/blob/master/example.json) is given below which can be added to an article:
 
@@ -155,3 +169,11 @@ The assessment models have a global API for each item return by a call to the ``
 | canResetInPage()          | bool               | Returns if the assessment can be reset from within the page |
 | reset([force])            | bool               | Resets or forces the reset of an assessment (will reload the page if on assessment page) |
 | getState()                | object StateObject | Returns the stateObject for the assessment |
+
+##Limitations
+ 
+To be completed.
+
+##Browser spec
+
+This component has been tested to the standard Adapt browser specification.
