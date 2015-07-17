@@ -151,6 +151,10 @@ define([
                 Adapt.trigger('assessments:reset', this.getState(), this);
             }
             
+            if (!state.isComplete) {
+                this.set("_attemptInProgress", true);
+            }
+            
             this._overrideQuestionFeedbackAttributes();
             this._setupQuestionListeners();
 
