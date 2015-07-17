@@ -8,12 +8,12 @@ define([
     var assessmentConfigDefaults = {
         "_isEnabled":true,
         "_questions": {
-            "_resetType": "hard",
+            "_resetType": "soft",
             "_canShowFeedback": false
         },
         "_isPercentageBased" : true,
         "_scoreToPass" : 100,
-        "_postScoreToLms": true,
+        "_includeInTotalScore": true,
         "_assessmentWeight": 1,
         "_isResetOnRevisit": true,
         "_reloadPageOnReset": true,
@@ -27,7 +27,7 @@ define([
         _postInitialize: function() {
             if (!this.isAssessmentEnabled()) return;
 
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
 
             _.extend(this, {
                 '_currentQuestionComponents': null,
@@ -44,6 +44,16 @@ define([
                 default:
                     attemptsLeft = assessmentConfig._attempts;
                     break;
+            }
+
+
+            //if assessment passed required and assessment included in total
+            //set attemptsleft to infinite
+            var centralAssessmentState = Adapt.assessment.getState();
+
+            if (assessmentConfig._includeInTotalScore &&
+                centralAssessmentState.requireAssessmentPassed) {
+                attemptsLeft = "infinite";
             }
 
             this.set({
@@ -82,6 +92,10 @@ define([
                 blockModel.set({
                     _isPartOfAssessment: true
                 });
+                //make sure components are set to _isPartOfAssessment for plp checking
+                blockModel.setOnChildren({
+                    _isPartOfAssessment: true
+                });
             }
         },
         
@@ -92,7 +106,7 @@ define([
         },
 
         _setupAssessmentData: function(force) {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
             var state = this.getState();
             var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass)
                                 || force == true;
@@ -137,6 +151,10 @@ define([
                 Adapt.trigger('assessments:reset', this.getState(), this);
             }
             
+            if (!state.isComplete) {
+                this.set("_attemptInProgress", true);
+            }
+            
             this._overrideQuestionFeedbackAttributes();
             this._setupQuestionListeners();
 
@@ -145,7 +163,7 @@ define([
         },
 
         _setupBankedAssessment: function() {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
 
             this._setupBanks();
 
@@ -168,7 +186,7 @@ define([
         _setupBanks: function() {
             if (this._questionBanks) return;
 
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
             var banks = assessmentConfig._banks._split.split(",");
 
             this._questionBanks = [];
@@ -196,7 +214,7 @@ define([
         },
 
         _setupRandomisedAssessment: function() {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
 
             var randomisationModel = assessmentConfig._randomisation;
             var blockModels = this.getChildren().models;
@@ -209,7 +227,7 @@ define([
         },
 
         _overrideQuestionFeedbackAttributes: function() {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
             var questionComponents = this._currentQuestionComponents;
 
             for (var i = 0, l = questionComponents.length; i < l; i++) {
@@ -258,7 +276,7 @@ define([
         },
 
         _onAssessmentComplete: function() {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
 
             this.set("_attemptInProgress", false);
             this._spendAttempt();
@@ -301,7 +319,7 @@ define([
         },
 
         _checkIsPass: function() {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
 
             var isPercentageBased = assessmentConfig._isPercentageBased;
             var scoreToPass = assessmentConfig._scoreToPass;
@@ -322,7 +340,7 @@ define([
         },
 
         _isAttemptsLeft: function() {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
 
             var isAttemptsEnabled = assessmentConfig._attempts && assessmentConfig._attempts != "infinite";
 
@@ -403,7 +421,7 @@ define([
         },
 
         _resetQuestions: function() {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
             var questionComponents = this._currentQuestionComponents;
 
             for (var i = 0, l = questionComponents.length; i < l; i++) {
@@ -416,27 +434,39 @@ define([
             this._removeQuestionListeners();
         },
 
-        _getAssessmentConfig: function() {
-            var assessmentConfig = this.get("_assessment");
 
-            if (assessmentConfig._id === undefined) {
-                assessmentConfig._id = "givenId"+(givenIdCount++);
-            }
-
-            if (!assessmentConfig) {
-                assessmentConfig = $.extend(true, {}, assessmentConfigDefaults);
-            } else {
-                assessmentConfig = $.extend(true, {}, assessmentConfigDefaults, assessmentConfig);
-            }
-
-            return assessmentConfig;
-        },
 
         _setCompletionStatus: function() {
             this.set({
                 "_isComplete": true,
                 "_isInteractionComplete": true,
             });
+        },
+
+        _checkIfQuestionsWereRestored: function() {
+            if (this.get("_assessmentCompleteInSession")) return;
+            if (!this.get("_isAssessmentComplete")) return;
+
+            //fix for courses that do not remember the user selections
+            //force assessment to reset if user revisits an assessment page in a new session which is completed
+            var wereQuestionsRestored = true;
+
+            var questions = this.get("_questions");
+            for (var i = 0, l = questions.length; i < l; i++) {
+                var question = questions[i];
+                var questionModel = Adapt.findById(question._id);
+                if (!questionModel.get("_isSubmitted")) {
+                    wereQuestionsRestored = false;
+                    break;
+                }
+            }
+        
+            if (!wereQuestionsRestored) {
+                this.set("_assessmentCompleteInSession", true);
+                return true;
+            }
+
+            return false;
         },
 
 
@@ -449,13 +479,13 @@ define([
         },
 
         canResetInPage: function() {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
             if (assessmentConfig._reloadPageOnReset === false) return false;
             return true;
         },
 
         reset: function(force) {
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
 
             //check if forcing reset via page revisit or force parameter
             force = this._forceResetOnRevisit || force == true;
@@ -468,6 +498,9 @@ define([
                     !assessmentConfig._isResetOnRevisit && 
                     !isPageReload && 
                     !force) return false;
+            
+            //check if new session and questions not restored
+            force = force || this._checkIfQuestionsWereRestored();
             
             //stop resetting if no attempts left
             if (!this._isAttemptsLeft() && !force) return false;
@@ -512,7 +545,7 @@ define([
 
 
             this.set("_isAssessmentComplete", isComplete);
-            this.set("_assessmentCompleteInSession", isComplete);
+            this.set("_assessmentCompleteInSession", false);
             this.set("_attemptsSpent", attemptsSpent )
 
             if (attempts == "infinite") this.set("_attemptsLeft", "infinite");
@@ -547,7 +580,7 @@ define([
         getState: function() {
             //return the current state of the assessment
             //create snapshot of values so as not to create memory leaks
-            var assessmentConfig = this._getAssessmentConfig();
+            var assessmentConfig = this.getConfig();
 
             var state = {
                 id: assessmentConfig._id,
@@ -561,7 +594,7 @@ define([
                 scoreAsPercent: this.get("_scoreAsPercent"),
                 maxScore: this.get("_maxScore"),
                 isPass: this.get("_isPass"),
-                postScoreToLms: assessmentConfig._postScoreToLms,
+                includeInTotalScore: assessmentConfig._includeInTotalScore,
                 assessmentWeight: assessmentConfig._assessmentWeight,
                 attempts: this.get("_attempts"),
                 attemptsSpent: this.get("_attemptsSpent"),
@@ -572,7 +605,28 @@ define([
             };
 
             return state;
+        },
+
+        getConfig: function() {
+            var assessmentConfig = this.get("_assessment");
+
+            if (assessmentConfig._id === undefined) {
+                assessmentConfig._id = "givenId"+(givenIdCount++);
+            } else {
+                return assessmentConfig;
+            }
+
+            if (!assessmentConfig) {
+                assessmentConfig = $.extend(true, {}, assessmentConfigDefaults);
+            } else {
+                assessmentConfig = $.extend(true, {}, assessmentConfigDefaults, assessmentConfig);
+            }
+
+            this.set("_assessment", assessmentConfig);
+
+            return assessmentConfig;
         }
+        
     };
 
     return AssessmentModel;

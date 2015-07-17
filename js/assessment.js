@@ -1,6 +1,5 @@
 define([
-    'coreJS/adapt',
-    './adapt-assessmentArticleExtension'
+    'coreJS/adapt'
 ], function(Adapt) {
 
     /*
@@ -10,7 +9,9 @@ define([
     var assessmentsConfigDefaults = {
         "_postTotalScoreToLms": true,
         "_isPercentageBased": true,
-        "_scoreToPass": 100
+        "_scoreToPass": 100,
+        "_requireAssessmentPassed": false,
+        "_isDefaultsLoaded": true
     };
 
     Adapt.assessment = _.extend({
@@ -39,6 +40,8 @@ define([
             }
 
             this.saveState();
+
+            this._setPageProgress();
 
             this._checkAssessmentsComplete();
 
@@ -76,6 +79,7 @@ define([
                 pageAssessmentModel.reset();
             }
 
+            this._setPageProgress();
         },
 
         _checkAssessmentsComplete: function() {
@@ -87,7 +91,7 @@ define([
 
             for (var id in states) {
                 var state = states[id];
-                if (!state.postScoreToLms) continue;
+                if (!state.includeInTotalScore) continue;
                 if (!state.isComplete) {
                     allAssessmentsComplete = false;
                     break;
@@ -111,7 +115,7 @@ define([
             var assessmentsConfig = Adapt.course.get("_assessment");
             if (assessmentsConfig === undefined) {
                 assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, {
-                    "_postTotalScoreToLms": assessmentState.postScoreToLms,
+                    "_postTotalScoreToLms": assessmentState.includeInTotalScore,
                     "_isPercentageBased": assessmentState.isPercentageBased,
                     "_scoreToPass": assessmentState.scoreToPass
                 });
@@ -148,6 +152,52 @@ define([
             return states;
         },
 
+        _setPageProgress: function() {
+            //set _subProgressTotal and _subProgressComplete on pages that have assessment progress indicator requirements
+            
+            var requireAssessmentPassed = this.getConfig()._requireAssessmentPassed;
+
+            for (var k in this._assessments._byPageId) {
+
+                var assessments = this._assessments._byPageId[k];
+
+                var assessmentsTotal = assessments.length;
+                var assessmentsPassed = 0;
+
+                for (var i = 0, l = assessments.length; i < l; i++) {
+                    var assessmentState = assessments[i].getState();
+
+                    var isComplete;
+
+                    if (requireAssessmentPassed) {
+                        
+                        if (!assessmentState.includeInTotalScore) {
+                            isComplete = assessmentState.isComplete;
+                        } else if (assessmentState.isPass) {
+                            isComplete = assessmentState.isComplete;
+                        }
+
+                    } else {
+
+                        isComplete = assessmentState.isComplete;
+                    }
+
+                    if ( isComplete ) {
+                        assessmentsPassed+=1; 
+                    }
+                }
+
+                try {
+                    var pageModel = Adapt.findById(k);
+                    pageModel.set("_subProgressTotal", assessmentsTotal);
+                    pageModel.set("_subProgressComplete", assessmentsPassed);
+                } catch(e) {
+
+                }
+
+            }
+        },
+
 
     //Public functions
 
@@ -170,6 +220,8 @@ define([
             this._restoreModelState(assessmentModel);
 
             Adapt.trigger("assessments:register", state, assessmentModel);
+
+            this._setPageProgress();
         },
 
         get: function(id) {
@@ -194,11 +246,17 @@ define([
         getConfig: function () {
             var assessmentsConfig = Adapt.course.get("_assessment");
 
+            if (assessmentsConfig && assessmentsConfig._isDefaultLoaded) {
+                return assessmentsConfig;
+            }
+
             if (assessmentsConfig === undefined) {
                 assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults);
             } else {
                 assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, assessmentsConfig);
             }
+
+            Adapt.course.set("_assessment", assessmentsConfig);
 
             return assessmentsConfig;
         },
@@ -217,7 +275,7 @@ define([
 
             for (var id in states) {
                 var state = states[id];
-                if (!state.postScoreToLms) continue;
+                if (!state.includeInTotalScore) continue;
                 if (state.isComplete) assessmentsComplete++;
                 totalAssessments++;
                 maxScore += state.maxScore / state.assessmentWeight;
@@ -240,6 +298,7 @@ define([
             return {
                 isComplete: isComplete,
                 isPercentageBased: assessmentsConfig._isPercentageBased,
+                requireAssessmentPassed: assessmentsConfig._requireAssessmentPassed,
                 isPass: isPass,
                 scoreAsPercent: scoreAsPercent,
                 maxScore: maxScore,

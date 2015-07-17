@@ -17,7 +17,7 @@
         },
         "_isPercentageBased" : true,
         "_scoreToPass" : 75,
-        "_postScoreToLms": true,
+        "_includeInTotalScore": true,
         "_assessmentWeight": 1,
         "_isResetOnRevisit": false,
         "_attempts": 2
@@ -27,5 +27,6 @@
     "_assessment": {
         "_postTotalScoreToLms": true,
         "_isPercentageBased": true,
-        "_scoreToPass": 75
+        "_scoreToPass": 75,
+        "_requireAssessmentPassed": true
     }
