@@ -32,6 +32,45 @@
                   "inputType": { "type": "Boolean", "options": [false, true]},
                   "validators": []
                 },
+                "_id": {
+                  "type":"string",
+                  "required":true,
+                  "title": "Assessment ID",
+                  "default": "",
+                  "inputType": "Text",
+                  "validators": ["required"],
+                  "help": "Unique name for the assessment"
+                },
+                "_banks": {
+                  "type":"object",
+                  "required":false,
+                  "title": "Question Banks",
+                  "properties":{
+                    "_isEnabled": {
+                      "type":"boolean",
+                      "required":false,
+                      "title": "Enabled",
+                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "validators": []
+                    },
+                    "_split": {
+                      "type":"string",
+                      "required":true,
+                      "title": "Split",
+                      "default": "",
+                      "inputType": "Text",
+                      "validators": [],
+                      "help": "This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The position of the number in the list corresponds to the _quizBankID assigned to a block."
+                    },
+                    "_randomisation": {
+                      "type":"boolean",
+                      "required":false,
+                      "title": "Randomise",
+                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "validators": []
+                    }
+                  }
+                },
                 "_isPercentageBased": {
                   "type":"boolean",
                   "required":true,
@@ -46,59 +85,6 @@
                   "inputType": "Number",
                   "default": 60,
                   "validators": ["number", "required"]
-                },
-                "_bands": {
-                  "type":"array",
-                  "required":false,
-                  "title": "Feedback bands",
-                  "items": {
-                    "type":"object",
-                    "required":false,
-                    "title": "Items",
-                    "properties":{
-                      "_score": {
-                        "type":"number",
-                        "required":true,
-                        "title": "Score",
-                        "minLength": 1,
-                        "default": "",
-                        "inputType": "Number",
-                        "validators": ["required", "number"]
-                      },
-                      "feedback": {
-                        "type":"string",
-                        "required":true,
-                        "title": "Feedback",
-                        "minLength": 1,
-                        "default": "",
-                        "inputType": "TextArea",
-                        "validators": ["required"]
-                      }
-                    }
-                  }
-                },
-                "_completionMessage": {
-                  "type":"object",
-                  "required":false,
-                  "legend": "Completion Message",
-                  "properties":{
-                    "message": {
-                      "type":"string",
-                      "required":false,
-                      "title": "Message",
-                      "default": "",
-                      "inputType": "TextArea",
-                      "validators": []
-                    },
-                    "title": {
-                      "type":"string",
-                      "required":false,
-                      "default": "",
-                      "title": "Completion title",
-                      "inputType": "Text",
-                      "validators": []
-                    }
-                  }
                 }
               }
             }
