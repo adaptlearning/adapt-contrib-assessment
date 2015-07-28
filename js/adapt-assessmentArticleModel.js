@@ -9,7 +9,8 @@ define([
         "_isEnabled":true,
         "_questions": {
             "_resetType": "soft",
-            "_canShowFeedback": false
+            "_canShowFeedback": false,
+            "_canShowMarking": false
         },
         "_isPercentageBased" : true,
         "_scoreToPass" : 100,
