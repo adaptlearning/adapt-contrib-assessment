@@ -153,6 +153,13 @@
                       "title": "Show Feedback",
                       "inputType": { "type": "Boolean", "options": [false, true]},
                       "validators": []
+                    },
+                    "_canShowMarking": {
+                      "type":"boolean",
+                      "required":false,
+                      "title": "Show Marking",
+                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "validators": []
                     }
                   }
                 },
@@ -198,8 +205,9 @@
                   "required":false,
                   "title": "Attempts Allowed",
                   "inputType": "Number",
-                  "default": 1,
-                  "validators": ["number"]
+                  "default": -1,
+                  "validators": ["number"],
+                  "help": "Controls the number of attempts available to the user. Set to -1 to allow infinite attempts."
                 }
               }
             }
