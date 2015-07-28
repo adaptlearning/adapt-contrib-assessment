@@ -40,7 +40,8 @@ NOTE: Please only include question blocks inside the assessment article. The art
     },
     "_questions": {
         "_resetType": "soft",
-        "_canShowFeedback": false
+        "_canShowFeedback": false,
+        "_canShowMarking": false
     },
     "_includeInTotalScore": true,
     "_assessmentWeight": 1,
