@@ -208,7 +208,7 @@ define([
             for (var i = 0, l = children.length; i < l; i++) {
                 var blockModel = children[i];
                 var blockAssessmentConfig = blockModel.get('_assessment');
-                var bankId = _assessment._quizBankID;
+                var bankId = blockAssessmentConfig._quizBankID;
                 this._questionBanks[bankId].addBlock(blockModel);
             }
 
