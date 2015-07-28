@@ -44,7 +44,7 @@ define(function(require) {
 
         getRandomQuestion: function() {
             if (this.unUsedQuestionBlocks !== undefined && this.unUsedQuestionBlocks.length < 1) {
-               console.warn("assessment:"+this._articleId+" No more unique questions for _quizBankID " + this._id);
+               console.warn("assessment:"+this._articleId+" No more unique questions for _assessment._quizBankID " + this._id);
                return undefined;
             }
 
