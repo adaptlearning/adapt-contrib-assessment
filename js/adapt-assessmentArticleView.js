@@ -7,7 +7,14 @@ define([
 
         postRender: function() {
             AdaptArticleView.prototype.postRender.call(this);
-            if (this.model.isAssessmentEnabled()) this._setupEventListeners();
+            if (this.model.isAssessmentEnabled()) {
+                this._setupEventListeners();
+
+                var config = this.model.getConfig();
+                if (config && config._questions && config._questions._canShowMarking === false) {
+                    this.$el.addClass('no-marking');
+                }
+            }
         },
 
         _setupEventListeners: function() {
