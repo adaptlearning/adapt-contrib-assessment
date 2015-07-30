@@ -3,10 +3,7 @@
   "version": "2.0.0",
   "framework": "^2.0.0",
   "homepage": "https://github.com/adaptlearning/adapt-contrib-assessment",
-  "authors": [
-    "Brian Quinn <brian@learningpool.com>",
-    "Oliver Foster <oliver.foster@kineo.com>"
-  ],
+  "issues": "https://adaptlearning.atlassian.net/secure/CreateIssueDetails!init.jspa?pid=10100&issuetype=1&priority=6&components=10504",
   "displayName" : "Assessment",
   "extension" : "assessment",
   "description": "An extension which attaches to an article object to group various question components and provide a score with feedback",
