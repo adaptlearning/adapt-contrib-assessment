@@ -1,4 +1,4 @@
-    //article.json
+    //articles.json
     "_assessment": {
         "_isEnabled":true,
         "_id": "Assessment 1",
@@ -22,6 +22,11 @@
         "_assessmentWeight": 1,
         "_isResetOnRevisit": false,
         "_attempts": 2
+    }
+
+    //blocks.json
+    "_assessment": {
+        "_quizBankID": 1
     }
 
     //course.json
