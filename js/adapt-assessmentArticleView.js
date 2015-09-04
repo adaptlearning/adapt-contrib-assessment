@@ -15,6 +15,7 @@ define([
                     this.$el.addClass('no-marking');
                 }
             }
+            this.$el.addClass('assessment');
         },
 
         _setupEventListeners: function() {
