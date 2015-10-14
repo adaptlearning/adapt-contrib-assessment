@@ -113,14 +113,12 @@ define([
 
         _setupSingleAssessmentConfiguration: function(assessmentState) {
             var assessmentsConfig = Adapt.course.get("_assessment");
-            if (assessmentsConfig === undefined) {
-                assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, {
-                    "_postTotalScoreToLms": assessmentState.includeInTotalScore,
-                    "_isPercentageBased": assessmentState.isPercentageBased,
-                    "_scoreToPass": assessmentState.scoreToPass
-                });
-                Adapt.course.set("_assessment", assessmentsConfig);
-            }
+            $.extend(true, assessmentsConfig, {
+                "_postTotalScoreToLms": assessmentState.includeInTotalScore,
+                "_isPercentageBased": assessmentState.isPercentageBased,
+                "_scoreToPass": assessmentState.scoreToPass
+            });
+            Adapt.course.set("_assessment", assessmentsConfig);
         },
         
         _postScoreToLms: function() {
