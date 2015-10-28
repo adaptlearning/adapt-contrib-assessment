@@ -8,6 +8,7 @@ define(function(require) {
         this._uniqueQuestions = uniqueQuestions;
         this.questionBlocks = [];
         this.unUsedQuestionBlocks = undefined;
+        this.usedQuestionBlocks = [];
 
     };
 
@@ -25,10 +26,16 @@ define(function(require) {
             this.checkResetUnunsedBlocks();
 
             var questionBlocks = [];
+            var usedQuestionBlocks = this.usedQuestionBlocks.slice(0);
 
             for (var i = 0; i < this._numQuestionBlocks; i++) {
                 var question = this.getRandomQuestion();
                 if (question !== undefined) {
+                    questionBlocks.push(question);
+                } else {
+                    if (usedQuestionBlocks.length === 0) break;
+                    var index = Math.floor(Math.random() * (usedQuestionBlocks.length-1));
+                    question = usedQuestionBlocks.splice(index,1)[0];
                     questionBlocks.push(question);
                 }
             }
@@ -50,6 +57,7 @@ define(function(require) {
 
             var index = Math.round(Math.random() * (this.unUsedQuestionBlocks.length-1));
             var questionBlock = this.unUsedQuestionBlocks[index];
+            this.usedQuestionBlocks.push(questionBlock);
 
             this.unUsedQuestionBlocks.splice(index, 1);
 
