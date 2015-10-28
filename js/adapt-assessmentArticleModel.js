@@ -617,7 +617,8 @@ define([
                 attemptsLeft: this.get("_attemptsLeft"),
                 attemptInProgress: this.get("_attemptInProgress"),
                 lastAttemptScoreAsPercent: this.get('_lastAttemptScoreAsPercent'),
-                questions: this.get("_questions")
+                questions: this.get("_questions"),
+                questionModels: new Backbone.Collection(this._currentQuestionComponents)
             };
 
             return state;
