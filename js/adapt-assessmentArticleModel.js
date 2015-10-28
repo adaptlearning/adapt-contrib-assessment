@@ -116,6 +116,8 @@ define([
             if (shouldResetAssessment) {
                 this.set("_numberOfQuestionsAnswered", 0);
                 this.set("_isAssessmentComplete", false);
+                this.set("_assessmentCompleteInSession", false);
+                this.set("_score", 0);
                 this.getChildren().models = this._originalChildModels;
                 if(assessmentConfig._banks && 
                         assessmentConfig._banks._isEnabled && 
