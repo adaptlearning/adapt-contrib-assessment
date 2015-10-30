@@ -116,6 +116,8 @@ define([
             if (shouldResetAssessment) {
                 this.set("_numberOfQuestionsAnswered", 0);
                 this.set("_isAssessmentComplete", false);
+                this.set("_assessmentCompleteInSession", false);
+                this.set("_score", 0);
                 this.getChildren().models = this._originalChildModels;
                 if(assessmentConfig._banks && 
                         assessmentConfig._banks._isEnabled && 
@@ -545,6 +547,16 @@ define([
             var score = restoreState[3];
             var scoreAsPercent;
 
+            var indexByIdQuestions = restoreState[4];
+
+            var blockIds = {};
+            for (var id in indexByIdQuestions) {
+                var blockId = Adapt.findById(id).get("_parentId");
+                blockIds[blockId] = Adapt.findById(blockId);
+            }
+            var restoredChildrenModels = _.values(blockIds);
+            this.getChildren().models = restoredChildrenModels;
+
 
             this.set("_isAssessmentComplete", isComplete);
             this.set("_assessmentCompleteInSession", false);
@@ -565,7 +577,7 @@ define([
             this.set("_scoreAsPercent", scoreAsPercent);
             this.set("_lastAttemptScoreAsPercent", scoreAsPercent)
 
-            var indexByIdQuestions = restoreState[4];
+            
             var questions = [];
             for (var id in indexByIdQuestions) {
                 questions.push({
@@ -573,6 +585,8 @@ define([
                     _isCorrect: indexByIdQuestions[id]
                 });
             }
+
+            
 
             this.set("_questions", questions);
             this._checkIsPass();
@@ -603,7 +617,8 @@ define([
                 attemptsLeft: this.get("_attemptsLeft"),
                 attemptInProgress: this.get("_attemptInProgress"),
                 lastAttemptScoreAsPercent: this.get('_lastAttemptScoreAsPercent'),
-                questions: this.get("_questions")
+                questions: this.get("_questions"),
+                questionModels: new Backbone.Collection(this._currentQuestionComponents)
             };
 
             return state;
