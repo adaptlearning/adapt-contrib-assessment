@@ -160,6 +160,7 @@ define([
             
             this._overrideQuestionFeedbackAttributes();
             this._setupQuestionListeners();
+            this._checkNumberOfQuestionsAnswered();
 
             Adapt.assessment.saveState();
 
@@ -247,8 +248,21 @@ define([
             var questionComponents = this._currentQuestionComponents;
             for (var i = 0, l = questionComponents.length; i < l; i++) {
                 var question = questionComponents[i];
+                if (question.get("_isInteractionComplete")) continue;
                 this.listenTo(question, 'change:_isInteractionComplete', this._onQuestionCompleted);
             }
+        },
+
+        _checkNumberOfQuestionsAnswered: function() {
+            var questionComponents = this._currentQuestionComponents;
+            var numberOfQuestionsAnswered = 0;
+            for (var i = 0, l = questionComponents.length; i < l; i++) {
+                var question = questionComponents[i];
+                if (question.get("_isInteractionComplete")) {
+                    numberOfQuestionsAnswered++;
+                }
+            }
+            this.set("_numberOfQuestionsAnswered", numberOfQuestionsAnswered);
         },
 
         _removeQuestionListeners: function() {
@@ -266,6 +280,9 @@ define([
             var numberOfQuestionsAnswered = this.get("_numberOfQuestionsAnswered");
             numberOfQuestionsAnswered++;
             this.set("_numberOfQuestionsAnswered", numberOfQuestionsAnswered);
+
+            this._updateQuestionsState();
+            Adapt.assessment.saveState();
 
             this._checkAssessmentComplete();
         },
@@ -289,6 +306,25 @@ define([
             var score = this._getScore();
             var maxScore = this._getMaxScore();
 
+            this.set({
+                '_scoreAsPercent': scoreAsPercent,
+                '_score': score,
+                '_maxScore': maxScore,
+                '_lastAttemptScoreAsPercent': scoreAsPercent,
+                '_assessmentCompleteInSession': true,
+                '_isAssessmentComplete': true
+            });
+
+            this._updateQuestionsState();
+
+            this._checkIsPass();
+
+            this._removeQuestionListeners();
+            
+            Adapt.trigger('assessments:complete', this.getState(), this);
+        },
+
+        _updateQuestionsState: function() {
             var questions = [];
 
             var questionComponents = this._currentQuestionComponents;
@@ -297,7 +333,7 @@ define([
 
                 var questionModel = {
                     _id: questionComponent.get("_id"),
-                    _isCorrect: questionComponent.get("_isCorrect")
+                    _isCorrect: questionComponent.get("_isCorrect") === undefined ? null : questionComponent.get("_isCorrect")
                 };
 
                 //build array of questions
@@ -306,20 +342,8 @@ define([
             }
             
             this.set({
-                '_scoreAsPercent': scoreAsPercent,
-                '_score': score,
-                '_maxScore': maxScore,
-                '_lastAttemptScoreAsPercent': scoreAsPercent,
-                '_assessmentCompleteInSession': true,
-                '_questions': questions,
-                '_isAssessmentComplete': true
+                '_questions': questions
             });
-
-            this._checkIsPass();
-
-            this._removeQuestionListeners();
-            
-            Adapt.trigger('assessments:complete', this.getState(), this);
         },
 
         _checkIsPass: function() {
@@ -533,6 +557,7 @@ define([
                 state.attemptsSpent,
                 state.maxScore,
                 state.score,
+                state.attemptInProgress ? 1:0,
                 indexByIdQuestions
             ];
 
@@ -545,9 +570,10 @@ define([
             var attemptsSpent = restoreState[1];
             var maxScore = restoreState[2];
             var score = restoreState[3];
+            var attemptInProgress = restoreState[4] == 1 ? true : false;
             var scoreAsPercent;
 
-            var indexByIdQuestions = restoreState[4];
+            var indexByIdQuestions = restoreState[5];
 
             var blockIds = {};
             for (var id in indexByIdQuestions) {
@@ -560,7 +586,8 @@ define([
 
             this.set("_isAssessmentComplete", isComplete);
             this.set("_assessmentCompleteInSession", false);
-            this.set("_attemptsSpent", attemptsSpent )
+            this.set("_attemptsSpent", attemptsSpent );
+            this.set("_attemptInProgress", attemptInProgress )
 
             if (attempts == "infinite") this.set("_attemptsLeft", "infinite");
             else this.set("_attemptsLeft" , attempts - attemptsSpent);
