@@ -161,6 +161,7 @@ define([
             this._overrideQuestionFeedbackAttributes();
             this._setupQuestionListeners();
             this._checkNumberOfQuestionsAnswered();
+            this._updateQuestionsState();
 
             Adapt.assessment.saveState();
 
