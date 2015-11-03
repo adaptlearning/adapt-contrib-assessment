@@ -16,7 +16,7 @@ define([
     //Extends core/js/views/articleView.js
     var ArticleViewInitialize = ArticleView.prototype.initialize;
     ArticleView.prototype.initialize = function(options) {
-        if (this.model.get("_assessment")) {
+        if (this.model.get("_assessment") && this.model.get("_assessment")._isEnabled === true) {
             //extend the articleView with new functionality
             _.extend(this, AdaptAssessmentArticleView);
         }
@@ -27,7 +27,7 @@ define([
     //Extends core/js/models/articleModel.js
     var ArticleModelInitialize = ArticleModel.prototype.initialize;
     ArticleModel.prototype.initialize = function(options) {
-        if (this.get("_assessment")) {
+        if (this.get("_assessment") && this.get("_assessment")._isEnabled === true) {
             //extend the articleModel with new functionality
             _.extend(this, AdaptAssessmentArticleModel);
 
