@@ -10,7 +10,8 @@ define([
         "_questions": {
             "_resetType": "soft",
             "_canShowFeedback": false,
-            "_canShowMarking": false
+            "_canShowMarking": false,
+            "_canShowModelAnswer": false
         },
         "_isPercentageBased" : true,
         "_scoreToPass" : 100,
@@ -237,7 +238,8 @@ define([
             for (var i = 0, l = questionComponents.length; i < l; i++) {
                 var question = questionComponents[i];
                 question.set({
-                    '_canShowFeedback': assessmentConfig._questions._canShowFeedback
+                    '_canShowFeedback': assessmentConfig._questions._canShowFeedback,
+                    '_canShowModelAnswer': assessmentConfig._questions._canShowModelAnswer
                 }, { pluginName: "_assessment" });
             }
 
