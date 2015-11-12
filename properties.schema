@@ -160,6 +160,13 @@
                       "title": "Show Marking",
                       "inputType": { "type": "Boolean", "options": [false, true]},
                       "validators": []
+                    },
+                    "_canShowModelAnswer": {
+                      "type":"boolean",
+                      "required":false,
+                      "title": "Show Model Answer",
+                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "validators": []
                     }
                   }
                 },
