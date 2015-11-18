@@ -557,7 +557,8 @@ define([
                 blockIds[blockId] = Adapt.findById(blockId);
             }
             var restoredChildrenModels = _.values(blockIds);
-            this.getChildren().models = restoredChildrenModels;
+            
+            if (indexByIdQuestions.length) this.getChildren().models = restoredChildrenModels;
 
 
             this.set("_isAssessmentComplete", isComplete);
