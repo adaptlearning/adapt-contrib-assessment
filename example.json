@@ -14,7 +14,8 @@
         "_questions": {
             "_resetType": "hard",
             "_canShowFeedback": false,
-            "_canShowMarking": false
+            "_canShowMarking": false,
+            "_canShowModelAnswer": false
         },
         "_isPercentageBased" : true,
         "_scoreToPass" : 75,
