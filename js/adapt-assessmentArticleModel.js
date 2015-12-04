@@ -190,8 +190,6 @@ define([
         },
 
         _setupBanks: function() {
-            if (this._questionBanks) return;
-
             var assessmentConfig = this.getConfig();
             var banks = assessmentConfig._banks._split.split(",");
 
