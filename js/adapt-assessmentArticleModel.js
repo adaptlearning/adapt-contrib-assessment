@@ -61,7 +61,7 @@ define([
             this.set({
                 '_currentQuestionComponentIds': [],
                 '_assessmentCompleteInSession': false,
-                '_attemptInProgress': false, 
+                '_attemptInProgress': false,
                 "_isAssessmentComplete": false,
                 '_numberOfQuestionsAnswered': 0,
                 '_lastAttemptScoreAsPercent': 0,
@@ -124,7 +124,7 @@ define([
                         assessmentConfig._banks._isEnabled && 
                         assessmentConfig._banks._split.length > 1) {
 
-                    quizModels = this._setupBankedAssessment();             
+                    quizModels = this._setupBankedAssessment();
                 } else if(assessmentConfig._randomisation && 
                         assessmentConfig._randomisation._isEnabled) {
 
@@ -159,7 +159,7 @@ define([
                 this.set("_attemptInProgress", true);
             }
             
-            this._overrideQuestionFeedbackAttributes();
+            this._overrideQuestionComponentSettings();
             this._setupQuestionListeners();
             this._checkNumberOfQuestionsAnswered();
             this._updateQuestionsState();
@@ -233,16 +233,23 @@ define([
             return questionModels;
         },
 
-        _overrideQuestionFeedbackAttributes: function() {
-            var assessmentConfig = this.getConfig();
+        _overrideQuestionComponentSettings: function() {
+            var questionConfig = this.getConfig()._questions;
             var questionComponents = this._currentQuestionComponents;
 
-            for (var i = 0, l = questionComponents.length; i < l; i++) {
-                var question = questionComponents[i];
-                question.set({
-                    '_canShowFeedback': assessmentConfig._questions._canShowFeedback,
-                    '_canShowModelAnswer': assessmentConfig._questions._canShowModelAnswer
-                }, { pluginName: "_assessment" });
+            var newSettings = {};
+            if(questionConfig.hasOwnProperty('_canShowFeedback')) {
+                newSettings._canShowFeedback = questionConfig._canShowFeedback;
+            }
+
+            if(questionConfig.hasOwnProperty('_canShowModelAnswer')) {
+                newSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
+            }
+
+            if(!_.isEmpty(newSettings)) {
+                for (var i = 0, l = questionComponents.length; i < l; i++) {
+                    questionComponents[i].set(newSettings, { pluginName: "_assessment" });
+                }
             }
 
         },
@@ -380,7 +387,7 @@ define([
             if (this.get('_attemptsLeft') === 0) return false;
         
             return true;
-        },  
+        },
 
         _spendAttempt: function() {
             if (!this._isAttemptsLeft()) return false;
