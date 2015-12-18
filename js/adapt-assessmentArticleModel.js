@@ -159,7 +159,7 @@ define([
                 this.set("_attemptInProgress", true);
             }
             
-            this._overrideQuestionFeedbackAttributes();
+            this._overrideQuestionComponentSettings();
             this._setupQuestionListeners();
             this._checkNumberOfQuestionsAnswered();
             this._updateQuestionsState();
@@ -233,16 +233,23 @@ define([
             return questionModels;
         },
 
-        _overrideQuestionFeedbackAttributes: function() {
-            var assessmentConfig = this.getConfig();
+        _overrideQuestionComponentSettings: function() {
+            var questionConfig = this.getConfig()._questions;
             var questionComponents = this._currentQuestionComponents;
 
+            var newSettings = {};
+            if(questionConfig.hasOwnProperty('_canShowFeedback')) {
+                newSettings._canShowFeedback = questionConfig._canShowFeedback;
+            }
+
+            if(questionConfig.hasOwnProperty('_canShowModelAnswer')) {
+                newSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
+            }
+
+            if(!_.isEmpty(newSettings)) {
             for (var i = 0, l = questionComponents.length; i < l; i++) {
-                var question = questionComponents[i];
-                question.set({
-                    '_canShowFeedback': assessmentConfig._questions._canShowFeedback,
-                    '_canShowModelAnswer': assessmentConfig._questions._canShowModelAnswer
-                }, { pluginName: "_assessment" });
+                    questionComponents[i].set(newSettings, { pluginName: "_assessment" });
+                }
             }
 
         },
