@@ -61,7 +61,7 @@ define([
             this.set({
                 '_currentQuestionComponentIds': [],
                 '_assessmentCompleteInSession': false,
-                '_attemptInProgress': false, 
+                '_attemptInProgress': false,
                 "_isAssessmentComplete": false,
                 '_numberOfQuestionsAnswered': 0,
                 '_lastAttemptScoreAsPercent': 0,
@@ -124,7 +124,7 @@ define([
                         assessmentConfig._banks._isEnabled && 
                         assessmentConfig._banks._split.length > 1) {
 
-                    quizModels = this._setupBankedAssessment();             
+                    quizModels = this._setupBankedAssessment();
                 } else if(assessmentConfig._randomisation && 
                         assessmentConfig._randomisation._isEnabled) {
 
@@ -247,7 +247,7 @@ define([
             }
 
             if(!_.isEmpty(newSettings)) {
-            for (var i = 0, l = questionComponents.length; i < l; i++) {
+                for (var i = 0, l = questionComponents.length; i < l; i++) {
                     questionComponents[i].set(newSettings, { pluginName: "_assessment" });
                 }
             }
@@ -387,7 +387,7 @@ define([
             if (this.get('_attemptsLeft') === 0) return false;
         
             return true;
-        },  
+        },
 
         _spendAttempt: function() {
             if (!this._isAttemptsLeft()) return false;
