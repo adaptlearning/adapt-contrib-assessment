@@ -590,7 +590,7 @@ define([
             }
             var restoredChildrenModels = _.values(blockIds);
             
-            if (indexByIdQuestions.length) this.getChildren().models = restoredChildrenModels;
+            if (indexByIdQuestions) this.getChildren().models = restoredChildrenModels;
 
 
             this.set("_isAssessmentComplete", isComplete);
