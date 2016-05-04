@@ -536,8 +536,15 @@ define([
                     !force) return false;
             
             //check if new session and questions not restored
-            force = force || this._checkIfQuestionsWereRestored();
-            
+            var wereQuestionsRestored = this._checkIfQuestionsWereRestored();
+            force = force || wereQuestionsRestored;
+            // the assessment is going to be reset so we must reset attempts
+            // otherwise assessment may not be set up properly in next session
+            if (wereQuestionsRestored && !this._isAttemptsLeft()) {
+                this.set({'_attemptsLeft':this.get('_attempts')});
+                this.set({'_attemptsSpent':0});
+            }
+
             //stop resetting if no attempts left
             if (!this._isAttemptsLeft() && !force) return false;
 
