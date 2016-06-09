@@ -110,10 +110,10 @@ Triggered when an assessment is registered. Occurs between app:dataReady and ada
 Triggered when an assessment is reset. Returns `stateObject`, `assessmentModel`  
 
 **assessment:complete**  
-Triggered when the user submits the last question of an assessment. Returns `stateObject`, `assessmentModel`  
+Triggered when the user submits the last question of an assessment. Returns `stateObject`  
 
 **assessments:complete**   
-Triggered when the user submits the last question of the last assessment and the score is to be posted back to the LMS. Returns `stateObject`  
+Triggered when the user submits the last question of the last assessment and the score is to be posted back to the LMS. Returns `stateObject`, `assessmentModel`   
 <div float align=right><a href="#top">Back to Top</a></div>
 
 ####stateObject
