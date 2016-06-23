@@ -107,7 +107,7 @@ define([
             Adapt.assessment.register(this);
         },
 
-        _setupAssessmentData: function(force) {
+        _setupAssessmentData: function(force, callback) {
             var assessmentConfig = this.getConfig();
             var state = this.getState();
             var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass)
@@ -150,22 +150,31 @@ define([
                                         || force == true;
 
             if (shouldResetAssessment || shouldResetQuestions) {
-                this._resetQuestions();
-                this.set("_attemptInProgress", true);
-                Adapt.trigger('assessments:reset', this.getState(), this);
-            }
-            
-            if (!state.isComplete) {
-                this.set("_attemptInProgress", true);
-            }
-            
-            this._overrideQuestionComponentSettings();
-            this._setupQuestionListeners();
-            this._checkNumberOfQuestionsAnswered();
-            this._updateQuestionsState();
+                this._resetQuestions(_.bind(function() {
+                    this.set("_attemptInProgress", true);
+                    Adapt.trigger('assessments:reset', this.getState(), this);
 
-            Adapt.assessment.saveState();
+                    finalise.apply(this);
+                }, this));
+            }
+            else {
+                finalise.apply(this);
+            }
 
+            function finalise() {
+                if (!state.isComplete) {
+                    this.set("_attemptInProgress", true);
+                }
+                
+                this._overrideQuestionComponentSettings();
+                this._setupQuestionListeners();
+                this._checkNumberOfQuestionsAnswered();
+                this._updateQuestionsState();
+
+                Adapt.assessment.saveState();
+
+                if (typeof callback == 'function') callback();
+            }
         },
 
         _setupBankedAssessment: function() {
@@ -456,14 +465,19 @@ define([
             Backbone.history.navigate("#/id/"+Adapt.location._currentId, { replace:true, trigger: true });
         },
 
-        _resetQuestions: function() {
+        _resetQuestions: function(callback) {
             var assessmentConfig = this.getConfig();
-            var questionComponents = this._currentQuestionComponents;
+            var i = 0, qs = this._currentQuestionComponents, len = qs.length;
 
-            for (var i = 0, l = questionComponents.length; i < l; i++) {
-                var question = questionComponents[i];
-                question.reset(assessmentConfig._questions._resetType, true);
+            function step() {
+                for (var j=0, count=Math.min(2, len-i); j < count; i++, j++) {
+                    var question = qs[i];
+                    question.reset(assessmentConfig._questions._resetType, true);
+                }
+                i == len ? callback() : setTimeout(step);
             }
+
+            step();
         },
 
         _onRemove: function() {
@@ -520,7 +534,7 @@ define([
             return true;
         },
 
-        reset: function(force) {
+        reset: function(force, callback) {
             var assessmentConfig = this.getConfig();
 
             //check if forcing reset via page revisit or force parameter
@@ -533,7 +547,10 @@ define([
             if (this.get("_assessmentCompleteInSession") && 
                     !assessmentConfig._isResetOnRevisit && 
                     !isPageReload && 
-                    !force) return false;
+                    !force) {
+                if (typeof callback == 'function') callback(false);
+                return;
+            }
             
             //check if new session and questions not restored
             var wereQuestionsRestored = this._checkIfQuestionsWereRestored();
@@ -546,16 +563,20 @@ define([
             }
 
             //stop resetting if no attempts left
-            if (!this._isAttemptsLeft() && !force) return false;
+            if (!this._isAttemptsLeft() && !force) {
+                if (typeof callback == 'function') callback(false);
+                return;
+            }
 
             if (!isPageReload) {
                 //only perform this section when not attempting to reload the page
-                this._setupAssessmentData(force);
+                this._setupAssessmentData(force, function() {
+                    if (typeof callback == 'function') callback(true);
+                });
             } else {
                 this._reloadPage();
+                if (typeof callback == 'function') callback(true);
             }
-
-            return true;
         },
 
         getSaveState: function() {
