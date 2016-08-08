@@ -76,7 +76,7 @@
                   "title": "Assessment ID",
                   "default": "",
                   "inputType": "Text",
-                  "validators": ["required"],
+                  "validators": [],
                   "help": "Unique name for the assessment"
                 },
                 "_banks": {
