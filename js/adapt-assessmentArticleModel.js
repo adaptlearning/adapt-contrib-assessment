@@ -244,6 +244,10 @@ define([
                 newSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
             }
 
+            if (questionConfig.hasOwnProperty('_canShowMarking')) {
+                newSettings._canShowMarking = questionConfig._canShowMarking;
+            }
+
             if(!_.isEmpty(newSettings)) {
                 for (var i = 0, l = questionComponents.length; i < l; i++) {
                     questionComponents[i].set(newSettings, { pluginName: "_assessment" });
