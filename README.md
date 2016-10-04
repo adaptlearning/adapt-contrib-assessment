@@ -8,7 +8,7 @@ It is not a single [question component](https://github.com/adaptlearning/adapt_f
 
 >Blocks inside an assessment article must contain a question. Any blocks containing only presentation components will not be rendered when the article is restored. 
 
-[Visit the **Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for more information about its functionality and for explanations of key properties.
+[Visit the **Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for explanations of key properties and for more information about its functionality such as [restoring state upon revisit](https://github.com/adaptlearning/adapt-contrib-assessment/wiki/Restore-assessment-state).
 
 ##Installation
 
