@@ -26,6 +26,7 @@ define([
         initialize: function() {
             this.listenTo(Adapt, "assessments:complete", this._onAssessmentsComplete);
             this.listenTo(Adapt, "router:location", this._checkResetAssessmentsOnRevisit);
+            this.listenTo(Adapt, "app:dataReady", this._onDataReady);
         },
 
         _onAssessmentsComplete: function(state) {
@@ -80,6 +81,13 @@ define([
             }
 
             this._setPageProgress();
+        },
+
+        _onDataReady: function() {
+            this._assessments = _.extend([], {
+                _byPageId: {},
+                _byAssessmentId: {}
+            });
         },
 
         _checkAssessmentsComplete: function() {
