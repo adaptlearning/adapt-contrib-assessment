@@ -5,9 +5,9 @@ It is not a single [question component](https://github.com/adaptlearning/adapt_f
 
 >**Important:**  
 >The **Assessment** extension applies to the entire article. Since `_randomisation` may reorder blocks within the article, it is highly recommended to include only question components within the assessment article. 
-
-**The Results component must be placed in a separate article, *not* within the assessment article. **
-
+> 
+> **The Results component must be placed in a separate article, *not* within the assessment article.**
+> 
 >Blocks inside an assessment article must contain a question. Any blocks containing only presentation components will not be rendered when the article is restored. 
 
 [Visit the **Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for explanations of key properties and for more information about its functionality such as [restoring state upon revisit](https://github.com/adaptlearning/adapt-contrib-assessment/wiki/Restore-assessment-state).
