@@ -682,7 +682,7 @@ define([
             this.set("_score", score || 0);
 
             if (score) {
-                scoreAsPercent = Math.floor( score / maxScore  * 100);
+                scoreAsPercent = Math.round( score / maxScore  * 100);
             } else {
                 scoreAsPercent = 0;
             }
