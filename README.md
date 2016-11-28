@@ -1,12 +1,16 @@
 # adapt-contrib-assessment  
-    
+
 **Assessment** is an *extension* bundled with the [Adapt framework](https://github.com/adaptlearning/adapt_framework).  
 It is not a single [question component](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components). It is an extension that provides a score for all the [question components](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components) contained within a single [article](https://github.com/adaptlearning/adapt_framework/wiki/Framework-in-five-minutes#content-structure) and that communicates the score to the LMS if so configured. It does not display results. Results are presented with the [Assessment Results](https://github.com/adaptlearning/adapt-contrib-assessmentResults) component (for the results from a single assessment) or the [Assessment Results Total](https://github.com/adaptlearning/adapt-contrib-assessmentResultsTotal) component (for the results from multiple assessments).
 
 >**Important:**  
->The **Assessment** extension applies to the entire article. Since `_randomisation` may reorder blocks within the article, it is highly recommended to include only question components within the assessment article. The Results component should be placed in a separate article, *not* within the assessment article.  
+>The **Assessment** extension applies to the entire article. Since `_randomisation` may reorder blocks within the article, it is highly recommended to include only question components within the assessment article. 
+> 
+> **The Results component must be placed in a separate article, *not* within the assessment article.**
+> 
+>Blocks inside an assessment article must contain a question. Any blocks containing only presentation components will not be rendered when the article is restored. 
 
-[Visit the **Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for more information about its functionality and for explanations of key properties. 
+[Visit the **Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for explanations of key properties and for more information about its functionality such as [restoring state upon revisit](https://github.com/adaptlearning/adapt-contrib-assessment/wiki/Restore-assessment-state).
 
 ##Installation
 
@@ -35,15 +39,15 @@ With the [Adapt CLI](https://github.com/adaptlearning/adapt-cli) installed, run 
 #### *course.json*  
 The following attributes, set within *course.json*, configure the defaults for all assessments in the course. These attributes can be overridden on a per assessment basis by setting attributes of the same names in *articles.json*.
 
-**_assessment** (object): The Assessment object that contains values for **_scoreToPass**, **_isPercentageBased**, **_postTotalScoreToLms**, and **_requireAssessmentPassed**. 
+**_assessment** (object): The Assessment object that contains values for **_scoreToPass**, **_isPercentageBased**, **_postTotalScoreToLms**, and **_requireAssessmentPassed**.
 
 >**_scoreToPass** (integer): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **_isPercentageBased** is set to `true`.
 
->**_isPercentageBased** (boolean): Determines whether the value of **_scoreToPass** should be treated as a percentage or as the raw score. For example, if **_isPercentageBased** is set to `true`, a **_scoreToPass** value of `60` will be treated as `60%`. 
+>**_isPercentageBased** (boolean): Determines whether the value of **_scoreToPass** should be treated as a percentage or as the raw score. For example, if **_isPercentageBased** is set to `true`, a **_scoreToPass** value of `60` will be treated as `60%`.
 
 >**_postTotalScoreToLms** (boolean): Specifies whether the total score (as a percentage) should be sent to the LMS. Acceptable values are `true` or `false`.   
 
->**_requireAssessmentPassed** (boolean): Determines if a pass is required for each assessment to be completed. 
+>**_requireAssessmentPassed** (boolean): Determines if a pass is required for each assessment to be completed.
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
@@ -52,7 +56,7 @@ The following attributes are appended to a particular article within *articles.j
 
 **_assessment** (object): The Assessment object that contains values for **_isEnabled**, **_id**, **_isPercentageBased**, **_scoreToPass**, **_banks**, **_randomisation**,  **_questions**, **_includeInTotalScore**, **_assessmentWeight**, **_isResetOnRevisit**, and **_attempts**.  
 
->**_isEnabled** (boolean): Turns the assessment on or off. Acceptable values are `true` or `false`. 
+>**_isEnabled** (boolean): Turns the assessment on or off. Acceptable values are `true` or `false`.
 
 >**_id** (string): This is a unique name for the assessment. This value is used by other plug-ins, such as [adapt-contrib-assessmentResults](https://github.com/adaptlearning/adapt-contrib-assessmentResults), to identify the assessment and to display its variables.
 
@@ -74,7 +78,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >>**_isEnabled** (boolean): Turns on or off the ability to use **_randomisation**.      
 
->>**_blockCount** (number): The number of blocks to present to the learner. (Questions are presented by blocks. If one component occupies a block, it will be presented alone. If multiple components occupy a block, they will always appear together.) 
+>>**_blockCount** (number): The number of blocks to present to the learner. (Questions are presented by blocks. If one component occupies a block, it will be presented alone. If multiple components occupy a block, they will always appear together.)
 
 >**_questions** (object): Contains attributes for overriding question component behaviours. Contains values for **_resetType**, **_canShowFeedback**, **_canShowMarking** and **_canShowModelAnswer**.
 
@@ -140,10 +144,10 @@ A description of the stateObject returned by the assessments:events is as follow
 | attemptsLeft              | int / bool   | The total number of attempts remaining for the user or true if attempts=infinite |
 | lastAttemptScoreAsPercent | int          | Returns the last attempt score |
 | questions                 | object array | Contains an array of question objects { _id: string, _isCorrect: bool, title: string, displayTitle: string } |
-  
-  
+
+
 A description of the stateObject returned by the assessment:complete event is as follows:  
-  
+
 | Attribute                 | Type         | Description|
 | :-------------------------|:-------------|:-----|
 | isPercentageBased         | bool         | Returns a boolean signifying if the assessment scoreToPass is percentage based |
@@ -155,12 +159,12 @@ A description of the stateObject returned by the assessment:complete event is as
 | assessments               | int          | Signifies the number of assessments passed to post back to the LMS |
 
 ## Limitations
- 
-**Assessment** must be used with [question components](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components) that extend and implement Adapt's [`questionView`](https://github.com/adaptlearning/adapt_framework/wiki/Developers-guide:-components#question-components). 
+
+**Assessment** must be used with [question components](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components) that extend and implement Adapt's [`questionView`](https://github.com/adaptlearning/adapt_framework/wiki/Developers-guide:-components#question-components). Each block in an assessment article must contain a question, blocks with only presentation components will not be rendered on restore.
 If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://github.com/adaptlearning/adapt-contrib-spoor) extension must be enabled. If [question components](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components) are required to display feedback after attempts, the [Tutor](https://github.com/adaptlearning/adapt-contrib-tutor) extension must be enabled. And if it is appropriate to display performance results to the learner, a separate component such as [Assessment Results](https://github.com/adaptlearning/adapt-contrib-assessmentResults) is required.  
 
 ----------------------------
-**Version number:**  2.0.7   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
+**Version number:**  2.0.8   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
 **Framework versions:** 2.0  
 **Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)    
 **Accessibility support:** WAI AA   
