@@ -182,7 +182,7 @@ define([
                     "_isQuestionType" : true
                 });
 
-                return ( questions.length > 0 );
+                return ( questions.length === 0 );
 
             } , this );
 
