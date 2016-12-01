@@ -11,7 +11,7 @@ define([
                 this._setupEventListeners();
 
                 var config = this.model.getConfig();
-                if (!config || !config._questions || !config._questions._canShowMarking || config._questions._suppressMarking) {
+                if (!config || !config._questions || !config._questions._canShowMarking || config._suppressMarking) {
                     this.$el.addClass('no-marking');
                 }
             }
