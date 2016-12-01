@@ -11,7 +11,7 @@ define([
                 this._setupEventListeners();
 
                 var config = this.model.getConfig();
-                if (!config || !config._questions || !config._questions._canShowMarking || config._suppressMarking) {
+                if (!config || !config._questions || !config._questions._canShowMarking || (config._suppressMarking && this.model._isAttemptsLeft())) {
                     this.$el.addClass('no-marking');
                 }
             }
@@ -34,7 +34,9 @@ define([
 
             var config = this.model.getConfig();
             if (config && config._questions && config._questions._canShowMarking) {
-                this.$el.removeClass('no-marking');
+                if (!(config._suppressMarking && this.model._isAttemptsLeft())) {
+                    this.$el.removeClass('no-marking');
+                }
             }
             
             console.log("assessment complete", state, model);
