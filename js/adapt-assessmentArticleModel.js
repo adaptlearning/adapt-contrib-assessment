@@ -694,19 +694,17 @@ define([
 
         getConfig: function() {
             var assessmentConfig = this.get("_assessment");
-
-            if (assessmentConfig._id === undefined) {
-                assessmentConfig._id = "givenId"+(givenIdCount++);
-            } else {
-                return assessmentConfig;
-            }
-
+            
             if (!assessmentConfig) {
                 assessmentConfig = $.extend(true, {}, assessmentConfigDefaults);
             } else {
                 assessmentConfig = $.extend(true, {}, assessmentConfigDefaults, assessmentConfig);
             }
-
+            
+            if (assessmentConfig._id === undefined) {
+                assessmentConfig._id = "givenId"+(givenIdCount++);
+            }
+            
             this.set("_assessment", assessmentConfig);
 
             return assessmentConfig;
