@@ -13,6 +13,7 @@ define([
             "_canShowMarking": false,
             "_canShowModelAnswer": false
         },
+        "_suppressMarking": false,
         "_isPercentageBased" : true,
         "_scoreToPass" : 100,
         "_includeInTotalScore": true,
@@ -100,7 +101,7 @@ define([
                 });
             }
         },
-        
+
 
         _onDataReady: function() {
             //register assessment
@@ -120,12 +121,12 @@ define([
                 this.set("_assessmentCompleteInSession", false);
                 this.set("_score", 0);
                 this.getChildren().models = this._originalChildModels;
-                if(assessmentConfig._banks && 
-                        assessmentConfig._banks._isEnabled && 
+                if(assessmentConfig._banks &&
+                        assessmentConfig._banks._isEnabled &&
                         assessmentConfig._banks._split.length > 1) {
 
                     quizModels = this._setupBankedAssessment();
-                } else if(assessmentConfig._randomisation && 
+                } else if(assessmentConfig._randomisation &&
                         assessmentConfig._randomisation._isEnabled) {
 
                     quizModels = this._setupRandomisedAssessment();
@@ -146,7 +147,7 @@ define([
             var currentQuestionsCollection = new Backbone.Collection(this._currentQuestionComponents);
             this.set("_currentQuestionComponentIds", currentQuestionsCollection.pluck("_id"));
 
-            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) 
+            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass)
                                         || force == true;
 
             if (shouldResetAssessment || shouldResetQuestions) {
@@ -154,11 +155,11 @@ define([
                 this.set("_attemptInProgress", true);
                 Adapt.trigger('assessments:reset', this.getState(), this);
             }
-            
+
             if (!state.isComplete) {
                 this.set("_attemptInProgress", true);
             }
-            
+
             this._overrideQuestionComponentSettings();
             this._setupQuestionListeners();
             this._checkNumberOfQuestionsAnswered();
@@ -199,9 +200,9 @@ define([
             for (var i = 0, l = banks.length; i < l; i++) {
                 var bank = banks[i];
                 var bankId = (i+1);
-                var questionBank = new QuestionBank(bankId, 
-                                                this.get("_id"), 
-                                                bank, 
+                var questionBank = new QuestionBank(bankId,
+                                                this.get("_id"),
+                                                bank,
                                                 true);
 
                 this._questionBanks[bankId] = questionBank;
@@ -223,11 +224,11 @@ define([
 
             var randomisationModel = assessmentConfig._randomisation;
             var blockModels = this.getChildren().models;
-            
+
             var questionModels = _.shuffle(blockModels);
 
             questionModels = questionModels.slice(0, randomisationModel._blockCount);
-            
+
             return questionModels;
         },
 
@@ -236,24 +237,14 @@ define([
             var questionComponents = this._currentQuestionComponents;
 
             var newSettings = {};
-            if(questionConfig.hasOwnProperty('_canShowFeedback')) {
-                newSettings._canShowFeedback = questionConfig._canShowFeedback;
-            }
 
-            if(questionConfig.hasOwnProperty('_canShowModelAnswer')) {
-                newSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
-            }
+            newSettings = _.extend(newSettings, this._overrideMarkingSettings());
 
-            if (questionConfig.hasOwnProperty('_canShowMarking')) {
-                newSettings._canShowMarking = questionConfig._canShowMarking;
-            }
-
-            if(!_.isEmpty(newSettings)) {
+            if (!_.isEmpty(newSettings)) {
                 for (var i = 0, l = questionComponents.length; i < l; i++) {
                     questionComponents[i].set(newSettings, { pluginName: "_assessment" });
                 }
             }
-
         },
 
         _setupQuestionListeners: function() {
@@ -304,7 +295,7 @@ define([
 
             var allQuestionsAnswered = numberOfQuestionsAnswered >= this._currentQuestionComponents.length;
             if (!allQuestionsAnswered) return;
-            
+
             this._onAssessmentComplete();
         },
 
@@ -332,7 +323,12 @@ define([
             this._checkIsPass();
 
             this._removeQuestionListeners();
-            
+
+            if (this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && this.get('_attemptsLeft') <= 0) {
+              this._unsuppressMarking();
+              this._refreshQuestions();
+            }
+
             Adapt.trigger('assessments:complete', this.getState(), this);
         },
 
@@ -352,7 +348,7 @@ define([
                 questions.push(questionModel);
 
             }
-            
+
             this.set({
                 '_questions': questions
             });
@@ -379,15 +375,93 @@ define([
             this.set("_isPass", isPass);
         },
 
-        _isAttemptsLeft: function() {
+        _overrideMarkingSettings: function() {
+          var questionConfig = this.getConfig()._questions;
+
+          var newMarkingSettings = {};
+
+          if (this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && this.get('_attemptsLeft') > 0) {
+            this._suppressMarking();
+          } else {
+            this._unsuppressMarking();
+          }
+
+          return newMarkingSettings;
+        },
+
+        _suppressMarking: function() {
+          if (!this._isMarkingSuppressionEnabled() || !this._isAttemptsEnabled() || this.get('_attemptsLeft') <= 0) {
+            return;
+          }
+
+          var questionConfig = this.getConfig()._questions;
+          var questionComponents = this._currentQuestionComponents;
+
+          var newMarkingSettings = {
+            _canShowMarking: false,
+            _canShowModelAnswer: false,
+            _canShowFeedback: false
+          };
+
+          for (var i = 0, l = questionComponents.length; i < l; i++) {
+            questionComponents[i].set(newMarkingSettings, { pluginName: "_assessment" });
+          }
+        },
+
+        _unsuppressMarking: function() {
+          if (!this._isMarkingSuppressionEnabled() || !this._isAttemptsEnabled() || this.get('_attemptsLeft') > 0) {
+            return;
+          }
+
+          var questionConfig = this.getConfig()._questions;
+          var questionComponents = this._currentQuestionComponents;
+
+          var newMarkingSettings = {};
+
+          if (questionConfig.hasOwnProperty('_canShowFeedback')) {
+            newMarkingSettings._canShowFeedback = questionConfig._canShowFeedback;
+          }
+
+          if (questionConfig.hasOwnProperty('_canShowModelAnswer')) {
+            newMarkingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
+          }
+
+          if (questionConfig.hasOwnProperty('_canShowMarking')) {
+            newMarkingSettings._canShowMarking = questionConfig._canShowMarking;
+          }
+
+          if (_.isEmpty(newMarkingSettings)) {
+            return;
+          }
+
+          for (var i = 0, l = questionComponents.length; i < l; i++) {
+            questionComponents[i].set(newMarkingSettings, { pluginName: "_assessment" });
+          }
+        },
+
+        _refreshQuestions: function() {
+          // @TODO - remove the suppression - reset 'can show feedback', 'can show marking' etc. then re-render questions
+          for (var a = 0, b = this._currentQuestionComponents.length; a < b; a++) {
+            var question = this._currentQuestionComponents[a];
+            question.refresh();
+          }
+        },
+
+        _isMarkingSuppressionEnabled: function() {
             var assessmentConfig = this.getConfig();
+            return assessmentConfig._suppressMarking;
+        },
 
-            var isAttemptsEnabled = assessmentConfig._attempts && assessmentConfig._attempts != "infinite";
+        _isAttemptsEnabled: function() {
+            var assessmentConfig = this.getConfig();
+            return assessmentConfig._attempts && assessmentConfig._attempts != "infinite";
+        },
 
-            if (!isAttemptsEnabled) return true;
+        _isAttemptsLeft: function() {
+            if (!this._isAttemptsEnabled()) return true;
 
             if (this.get('_attemptsLeft') === 0) return false;
-        
+
             return true;
         },
 
@@ -412,14 +486,14 @@ define([
             var questionComponents = this._currentQuestionComponents;
             for (var i = 0, l = questionComponents.length; i < l; i++) {
                 var question = questionComponents[i];
-                if (question.get('_isCorrect') && 
+                if (question.get('_isCorrect') &&
                     question.get('_questionWeight')) {
                     score += question.get('_questionWeight');
                 }
             }
             return score;
         },
-        
+
         _getMaxScore: function() {
             var maxScore = 0;
             var questionComponents = this._currentQuestionComponents;
@@ -431,7 +505,7 @@ define([
             }
             return maxScore;
         },
-        
+
         _getScoreAsPercent: function() {
             if (this._getMaxScore() === 0) return 0;
             return Math.round((this._getScore() / this._getMaxScore()) * 100);
@@ -500,7 +574,7 @@ define([
                     break;
                 }
             }
-        
+
             if (!wereQuestionsRestored) {
                 this.set("_assessmentCompleteInSession", true);
                 return true;
@@ -513,7 +587,7 @@ define([
     //Public Functions
 
         isAssessmentEnabled: function() {
-            if (this.get("_assessment") && 
+            if (this.get("_assessment") &&
                 this.get("_assessment")._isEnabled) return true;
             return false;
         },
@@ -534,11 +608,11 @@ define([
             var isPageReload = this._checkReloadPage();
 
             //stop resetting if not complete or not allowed
-            if (this.get("_assessmentCompleteInSession") && 
-                    !assessmentConfig._isResetOnRevisit && 
-                    !isPageReload && 
+            if (this.get("_assessmentCompleteInSession") &&
+                    !assessmentConfig._isResetOnRevisit &&
+                    !isPageReload &&
                     !force) return false;
-            
+
             //check if new session and questions not restored
             var wereQuestionsRestored = this._checkIfQuestionsWereRestored();
             force = force || wereQuestionsRestored;
@@ -600,7 +674,7 @@ define([
                 blockIds[blockId] = Adapt.findById(blockId);
             }
             var restoredChildrenModels = _.values(blockIds);
-            
+
             if (indexByIdQuestions) this.getChildren().models = restoredChildrenModels;
 
 
@@ -620,11 +694,11 @@ define([
             } else {
                 scoreAsPercent = 0;
             }
-        
+
             this.set("_scoreAsPercent", scoreAsPercent);
             this.set("_lastAttemptScoreAsPercent", scoreAsPercent)
 
-            
+
             var questions = [];
             for (var id in indexByIdQuestions) {
                 questions.push({
@@ -633,7 +707,7 @@ define([
                 });
             }
 
-            
+
 
             this.set("_questions", questions);
             this._checkIsPass();
@@ -673,22 +747,22 @@ define([
 
         getConfig: function() {
             var assessmentConfig = this.get("_assessment");
-            
+
             if (!assessmentConfig) {
                 assessmentConfig = $.extend(true, {}, assessmentConfigDefaults);
             } else {
                 assessmentConfig = $.extend(true, {}, assessmentConfigDefaults, assessmentConfig);
             }
-            
+
             if (assessmentConfig._id === undefined) {
                 assessmentConfig._id = "givenId"+(givenIdCount++);
             }
-            
+
             this.set("_assessment", assessmentConfig);
 
             return assessmentConfig;
         }
-        
+
     };
 
     return AssessmentModel;
