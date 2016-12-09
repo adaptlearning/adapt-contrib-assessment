@@ -471,13 +471,15 @@ define([
 
         _resetQuestions: function(callback) {
             var assessmentConfig = this.getConfig();
+            var syncIterations = 1; // number of synchronous iterations to perform
             var i = 0, qs = this._currentQuestionComponents, len = qs.length;
 
             function step() {
-                for (var j=0, count=Math.min(2, len-i); j < count; i++, j++) {
+                for (var j=0, count=Math.min(syncIterations, len-i); j < count; i++, j++) {
                     var question = qs[i];
                     question.reset(assessmentConfig._questions._resetType, true);
                 }
+		console.log(i==len?"all reset":"reset question step");
                 i == len ? callback() : setTimeout(step);
             }
 
@@ -553,7 +555,7 @@ define([
                     !isPageReload && 
                     !force) {
                 if (typeof callback == 'function') callback(false);
-                return;
+                return false;
             }
             
             //check if new session and questions not restored
@@ -569,7 +571,7 @@ define([
             //stop resetting if no attempts left
             if (!this._isAttemptsLeft() && !force) {
                 if (typeof callback == 'function') callback(false);
-                return;
+                return false;
             }
 
             if (!isPageReload) {
@@ -581,6 +583,8 @@ define([
                 this._reloadPage();
                 if (typeof callback == 'function') callback(true);
             }
+
+            return true;
         },
 
         getSaveState: function() {
