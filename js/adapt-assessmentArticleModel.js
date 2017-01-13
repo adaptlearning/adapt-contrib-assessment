@@ -236,7 +236,12 @@ define([
             this._overrideMarkingSettings();
 
             var newSettings = {};
+
             // Add any setting overrides here
+            var questionConfig = this.getConfig()._questions;
+            if (questionConfig.hasOwnProperty('_canShowFeedback')) {
+                newSettings._canShowFeedback = questionConfig._canShowFeedback;
+            }
 
             if (!_.isEmpty(newSettings)) {
                 for (var i = 0, l = this._currentQuestionComponents.length; i < l; i++) {
@@ -324,7 +329,7 @@ define([
 
             this._removeQuestionListeners();
 
-            if (this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && this.get('_attemptsLeft') <= 0) {
+            if (this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && !this._isAttemptsLeft()) {
                 this._overrideMarkingSettings();
                 this._refreshQuestions();
             }
@@ -389,7 +394,7 @@ define([
                 if (questionConfig.hasOwnProperty('_canShowFeedback')) {
                     markingSettings._canShowFeedback = questionConfig._canShowFeedback;
                 }
-                
+
                 if (questionConfig.hasOwnProperty('_canShowModelAnswer')) {
                     markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
                 }
@@ -403,7 +408,6 @@ define([
         },
 
         _overrideMarkingSettings: function() {
-            var questionConfig = this.getConfig()._questions;
             var newMarkingSettings = this._getMarkingSettings();
             for (var i = 0, l = this._currentQuestionComponents.length; i < l; i++) {
                 this._currentQuestionComponents[i].set(newMarkingSettings, {
@@ -411,14 +415,16 @@ define([
                 });
             }
         },
+
         _refreshQuestions: function() {
             for (var a = 0, b = this._currentQuestionComponents.length; a < b; a++) {
                 var question = this._currentQuestionComponents[a];
                 question.refresh();
             }
         },
+
         _shouldSuppressMarking: function() {
-            return this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && this.get('_attemptsLeft') > 0;
+            return this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && this._isAttemptsLeft();
         },
 
         _isMarkingSuppressionEnabled: function() {
@@ -521,8 +527,6 @@ define([
         _onRemove: function() {
             this._removeQuestionListeners();
         },
-
-
 
         _setCompletionStatus: function() {
             this.set({
@@ -672,7 +676,6 @@ define([
             this.set("_scoreAsPercent", scoreAsPercent);
             this.set("_lastAttemptScoreAsPercent", scoreAsPercent)
 
-
             var questions = [];
             for (var id in indexByIdQuestions) {
                 questions.push({
@@ -680,8 +683,6 @@ define([
                     _isCorrect: indexByIdQuestions[id]
                 });
             }
-
-
 
             this.set("_questions", questions);
             this._checkIsPass();
