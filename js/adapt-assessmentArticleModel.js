@@ -233,16 +233,16 @@ define([
         },
 
         _overrideQuestionComponentSettings: function() {
-            var questionConfig = this.getConfig()._questions;
-            var questionComponents = this._currentQuestionComponents;
+            this._overrideMarkingSettings();
 
             var newSettings = {};
-
-            newSettings = _.extend(newSettings, this._overrideMarkingSettings());
+            // Add any setting overrides here
 
             if (!_.isEmpty(newSettings)) {
-                for (var i = 0, l = questionComponents.length; i < l; i++) {
-                    questionComponents[i].set(newSettings, { pluginName: "_assessment" });
+                for (var i = 0, l = this._currentQuestionComponents.length; i < l; i++) {
+                    this._currentQuestionComponents[i].set(newSettings, {
+                        pluginName: "_assessment"
+                    });
                 }
             }
         },
@@ -325,8 +325,8 @@ define([
             this._removeQuestionListeners();
 
             if (this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && this.get('_attemptsLeft') <= 0) {
-              this._unsuppressMarking();
-              this._refreshQuestions();
+                this._overrideMarkingSettings();
+                this._refreshQuestions();
             }
 
             Adapt.trigger('assessments:complete', this.getState(), this);
@@ -375,76 +375,50 @@ define([
             this.set("_isPass", isPass);
         },
 
+        _getMarkingSettings: function() {
+            var markingSettings = {};
+
+            if (this._shouldSuppressMarking()) {
+                markingSettings = {
+                    _canShowMarking: false,
+                    _canShowModelAnswer: false,
+                    _canShowFeedback: false
+                };
+            } else {
+                var questionConfig = this.getConfig()._questions;
+                if (questionConfig.hasOwnProperty('_canShowFeedback')) {
+                    markingSettings._canShowFeedback = questionConfig._canShowFeedback;
+                }
+                
+                if (questionConfig.hasOwnProperty('_canShowModelAnswer')) {
+                    markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
+                }
+
+                if (questionConfig.hasOwnProperty('_canShowMarking')) {
+                    markingSettings._canShowMarking = questionConfig._canShowMarking;
+                }
+            }
+
+            return markingSettings;
+        },
+
         _overrideMarkingSettings: function() {
-          var questionConfig = this.getConfig()._questions;
-
-          var newMarkingSettings = {};
-
-          if (this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && this.get('_attemptsLeft') > 0) {
-            this._suppressMarking();
-          } else {
-            this._unsuppressMarking();
-          }
-
-          return newMarkingSettings;
+            var questionConfig = this.getConfig()._questions;
+            var newMarkingSettings = this._getMarkingSettings();
+            for (var i = 0, l = this._currentQuestionComponents.length; i < l; i++) {
+                this._currentQuestionComponents[i].set(newMarkingSettings, {
+                    pluginName: "_assessment"
+                });
+            }
         },
-
-        _suppressMarking: function() {
-          if (!this._isMarkingSuppressionEnabled() || !this._isAttemptsEnabled() || this.get('_attemptsLeft') <= 0) {
-            return;
-          }
-
-          var questionConfig = this.getConfig()._questions;
-          var questionComponents = this._currentQuestionComponents;
-
-          var newMarkingSettings = {
-            _canShowMarking: false,
-            _canShowModelAnswer: false,
-            _canShowFeedback: false
-          };
-
-          for (var i = 0, l = questionComponents.length; i < l; i++) {
-            questionComponents[i].set(newMarkingSettings, { pluginName: "_assessment" });
-          }
-        },
-
-        _unsuppressMarking: function() {
-          if (!this._isMarkingSuppressionEnabled() || !this._isAttemptsEnabled() || this.get('_attemptsLeft') > 0) {
-            return;
-          }
-
-          var questionConfig = this.getConfig()._questions;
-          var questionComponents = this._currentQuestionComponents;
-
-          var newMarkingSettings = {};
-
-          if (questionConfig.hasOwnProperty('_canShowFeedback')) {
-            newMarkingSettings._canShowFeedback = questionConfig._canShowFeedback;
-          }
-
-          if (questionConfig.hasOwnProperty('_canShowModelAnswer')) {
-            newMarkingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
-          }
-
-          if (questionConfig.hasOwnProperty('_canShowMarking')) {
-            newMarkingSettings._canShowMarking = questionConfig._canShowMarking;
-          }
-
-          if (_.isEmpty(newMarkingSettings)) {
-            return;
-          }
-
-          for (var i = 0, l = questionComponents.length; i < l; i++) {
-            questionComponents[i].set(newMarkingSettings, { pluginName: "_assessment" });
-          }
-        },
-
         _refreshQuestions: function() {
-          // @TODO - remove the suppression - reset 'can show feedback', 'can show marking' etc. then re-render questions
-          for (var a = 0, b = this._currentQuestionComponents.length; a < b; a++) {
-            var question = this._currentQuestionComponents[a];
-            question.refresh();
-          }
+            for (var a = 0, b = this._currentQuestionComponents.length; a < b; a++) {
+                var question = this._currentQuestionComponents[a];
+                question.refresh();
+            }
+        },
+        _shouldSuppressMarking: function() {
+            return this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && this.get('_attemptsLeft') > 0;
         },
 
         _isMarkingSuppressionEnabled: function() {
