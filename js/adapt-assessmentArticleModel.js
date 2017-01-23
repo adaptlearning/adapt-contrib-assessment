@@ -564,8 +564,27 @@ define([
 
         getSaveState: function() {
             var state = this.getState();
-            var questions = state.questions;
-            var indexByIdQuestions = _.indexBy(questions, "_id");
+            var indexByIdQuestions = [];
+            var cfg = this.getConfig();
+            var banksActive = cfg._banks && cfg._banks._isEnabled && cfg._banks._split.length > 1;
+            var randomisationActive = cfg._randomisation && cfg._randomisation._isEnabled;
+
+            if (!banksActive && !randomisationActive) {
+                // include presentation component IDs in save state so that blocks without questions aren't removed
+                this.findDescendants("components").each(function(component) {
+                    var componentModel = {
+                        _id: component.get("_id"),
+                        _isCorrect: component.get("_isCorrect") === undefined ? null : component.get("_isCorrect")
+                    };
+
+                    indexByIdQuestions.push(componentModel);
+                    
+                });
+
+                indexByIdQuestions = _.indexBy(indexByIdQuestions, "_id");
+            } else {
+                indexByIdQuestions = _.indexBy(state.questions, "_id");
+            }
 
             for (var id in indexByIdQuestions) {
                 indexByIdQuestions[id] = indexByIdQuestions[id]._isCorrect
@@ -627,10 +646,12 @@ define([
             
             var questions = [];
             for (var id in indexByIdQuestions) {
-                questions.push({
-                    _id: id,
-                    _isCorrect: indexByIdQuestions[id]
-                });
+                if (Adapt.findById(id).get("_isQuestionType")) {
+                    questions.push({
+                        _id: id,
+                        _isCorrect: indexByIdQuestions[id]
+                    });
+                }
             }
 
             
