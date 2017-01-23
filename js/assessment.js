@@ -294,7 +294,7 @@ define([
             var scoreAsPercent = Math.round((score / maxScore) * 100);
 
             if ((assessmentsConfig._scoreToPass || 100) && isComplete) {
-                if (assessmentsConfig._isPercentageBased || true) {
+                if (assessmentsConfig._isPercentageBased !== false) {
                     if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
                 } else {
                     if (score >= assessmentsConfig._scoreToPass) isPass = true;
