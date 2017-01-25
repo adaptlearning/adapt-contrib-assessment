@@ -38,7 +38,7 @@
                     "type": "Boolean",
                     "options": [false, true]
                   },
-                  "help": "If set to 'true', the assessment score will be converted to a percentage.  If 'false', a number will be sent.",
+                  "help": "If set to 'true', the assessment score will be converted to a percentage",
                   "validators": []
                 },
                 "_scoreToPass": {
