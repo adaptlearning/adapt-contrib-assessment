@@ -479,7 +479,7 @@ define([
                     var question = qs[i];
                     question.reset(assessmentConfig._questions._resetType, true);
                 }
-		console.log(i==len?"all reset":"reset question step");
+
                 i == len ? callback() : setTimeout(step);
             }
 
