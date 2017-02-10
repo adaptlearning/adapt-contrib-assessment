@@ -173,7 +173,7 @@ define([
                 for (var i = 0, l = assessments.length; i < l; i++) {
                     var assessmentState = assessments[i].getState();
 
-                    var isComplete;
+                    var isComplete = false;
 
                     if (requireAssessmentPassed) {
                         
