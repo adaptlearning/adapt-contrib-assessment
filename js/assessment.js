@@ -75,9 +75,19 @@ define([
             var pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
             if (pageAssessmentModels === undefined) return;
 
+            /*
+                Here we further hijack the router to ensure the asynchronous assessment
+                reset completes before routing completes
+            */
+
+            Adapt.trigger('plugin:beginWait');
+
             for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
                 var pageAssessmentModel = pageAssessmentModels[i];
-                pageAssessmentModel.reset();
+                pageAssessmentModel.reset(false, function() {
+                    // N.B. this callback is asynchronous so [i] may have been incremented
+                    if (i >= l - 1) Adapt.trigger('plugin:endWait');
+                });
             }
 
             this._setPageProgress();
