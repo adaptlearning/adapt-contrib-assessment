@@ -75,9 +75,19 @@ define([
             var pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
             if (pageAssessmentModels === undefined) return;
 
+            /*
+                Here we further hijack the router to ensure the asynchronous assessment
+                reset completes before routing completes
+            */
+
+            Adapt.trigger('plugin:beginWait');
+
             for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
                 var pageAssessmentModel = pageAssessmentModels[i];
-                pageAssessmentModel.reset();
+                pageAssessmentModel.reset(false, function() {
+                    // N.B. this callback is asynchronous so [i] may have been incremented
+                    if (i >= l - 1) Adapt.trigger('plugin:endWait');
+                });
             }
 
             this._setPageProgress();
@@ -173,7 +183,7 @@ define([
                 for (var i = 0, l = assessments.length; i < l; i++) {
                     var assessmentState = assessments[i].getState();
 
-                    var isComplete;
+                    var isComplete = false;
 
                     if (requireAssessmentPassed) {
                         
@@ -294,7 +304,7 @@ define([
             var scoreAsPercent = Math.round((score / maxScore) * 100);
 
             if ((assessmentsConfig._scoreToPass || 100) && isComplete) {
-                if (assessmentsConfig._isPercentageBased || true) {
+                if (assessmentsConfig._isPercentageBased !== false) {
                     if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
                 } else {
                     if (score >= assessmentsConfig._scoreToPass) isPass = true;

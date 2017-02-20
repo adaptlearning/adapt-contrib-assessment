@@ -108,7 +108,7 @@ define([
             Adapt.assessment.register(this);
         },
 
-        _setupAssessmentData: function(force) {
+        _setupAssessmentData: function(force, callback) {
             var assessmentConfig = this.getConfig();
             var state = this.getState();
             var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass)
@@ -151,22 +151,28 @@ define([
                                         || force == true;
 
             if (shouldResetAssessment || shouldResetQuestions) {
-                this._resetQuestions();
-                this.set("_attemptInProgress", true);
-                Adapt.trigger('assessments:reset', this.getState(), this);
+                this._resetQuestions(_.bind(function() {
+                    this.set("_attemptInProgress", true);
+                    Adapt.trigger('assessments:reset', this.getState(), this);
+
+                    finalise.apply(this);
+                }, this));
             }
 
-            if (!state.isComplete) {
-                this.set("_attemptInProgress", true);
+            function finalise() {
+                if (!state.isComplete) {
+                    this.set("_attemptInProgress", true);
+                }
+                
+                this._overrideQuestionComponentSettings();
+                this._setupQuestionListeners();
+                this._checkNumberOfQuestionsAnswered();
+                this._updateQuestionsState();
+
+                Adapt.assessment.saveState();
+
+                if (typeof callback == 'function') callback();
             }
-
-            this._overrideQuestionComponentSettings();
-            this._setupQuestionListeners();
-            this._checkNumberOfQuestionsAnswered();
-            this._updateQuestionsState();
-
-            Adapt.assessment.saveState();
-
         },
 
         _setupBankedAssessment: function() {
@@ -514,14 +520,21 @@ define([
             Backbone.history.navigate("#/id/"+Adapt.location._currentId, { replace:true, trigger: true });
         },
 
-        _resetQuestions: function() {
+        _resetQuestions: function(callback) {
             var assessmentConfig = this.getConfig();
-            var questionComponents = this._currentQuestionComponents;
+            var syncIterations = 1; // number of synchronous iterations to perform
+            var i = 0, qs = this._currentQuestionComponents, len = qs.length;
 
-            for (var i = 0, l = questionComponents.length; i < l; i++) {
-                var question = questionComponents[i];
-                question.reset(assessmentConfig._questions._resetType, true);
+            function step() {
+                for (var j=0, count=Math.min(syncIterations, len-i); j < count; i++, j++) {
+                    var question = qs[i];
+                    question.reset(assessmentConfig._questions._resetType, true);
+                }
+
+                i == len ? callback() : setTimeout(step);
             }
+
+            step();
         },
 
         _onRemove: function() {
@@ -576,7 +589,7 @@ define([
             return true;
         },
 
-        reset: function(force) {
+        reset: function(force, callback) {
             var assessmentConfig = this.getConfig();
 
             //check if forcing reset via page revisit or force parameter
@@ -586,11 +599,14 @@ define([
             var isPageReload = this._checkReloadPage();
 
             //stop resetting if not complete or not allowed
-            if (this.get("_assessmentCompleteInSession") &&
-                    !assessmentConfig._isResetOnRevisit &&
-                    !isPageReload &&
-                    !force) return false;
-
+            if (this.get("_assessmentCompleteInSession") && 
+                    !assessmentConfig._isResetOnRevisit && 
+                    !isPageReload && 
+                    !force) {
+                if (typeof callback == 'function') callback(false);
+                return false;
+            }
+            
             //check if new session and questions not restored
             var wereQuestionsRestored = this._checkIfQuestionsWereRestored();
             force = force || wereQuestionsRestored;
@@ -602,13 +618,19 @@ define([
             }
 
             //stop resetting if no attempts left
-            if (!this._isAttemptsLeft() && !force) return false;
+            if (!this._isAttemptsLeft() && !force) {
+                if (typeof callback == 'function') callback(false);
+                return false;
+            }
 
             if (!isPageReload) {
                 //only perform this section when not attempting to reload the page
-                this._setupAssessmentData(force);
+                this._setupAssessmentData(force, function() {
+                    if (typeof callback == 'function') callback(true);
+                });
             } else {
                 this._reloadPage();
+                if (typeof callback == 'function') callback(true);
             }
 
             return true;
@@ -616,8 +638,27 @@ define([
 
         getSaveState: function() {
             var state = this.getState();
-            var questions = state.questions;
-            var indexByIdQuestions = _.indexBy(questions, "_id");
+            var indexByIdQuestions = [];
+            var cfg = this.getConfig();
+            var banksActive = cfg._banks && cfg._banks._isEnabled && cfg._banks._split.length > 1;
+            var randomisationActive = cfg._randomisation && cfg._randomisation._isEnabled;
+
+            if (!banksActive && !randomisationActive) {
+                // include presentation component IDs in save state so that blocks without questions aren't removed
+                this.findDescendants("components").each(function(component) {
+                    var componentModel = {
+                        _id: component.get("_id"),
+                        _isCorrect: component.get("_isCorrect") === undefined ? null : component.get("_isCorrect")
+                    };
+
+                    indexByIdQuestions.push(componentModel);
+                    
+                });
+
+                indexByIdQuestions = _.indexBy(indexByIdQuestions, "_id");
+            } else {
+                indexByIdQuestions = _.indexBy(state.questions, "_id");
+            }
 
             for (var id in indexByIdQuestions) {
                 indexByIdQuestions[id] = indexByIdQuestions[id]._isCorrect
@@ -678,10 +719,12 @@ define([
 
             var questions = [];
             for (var id in indexByIdQuestions) {
-                questions.push({
-                    _id: id,
-                    _isCorrect: indexByIdQuestions[id]
-                });
+                if (Adapt.findById(id).get("_isQuestionType")) {
+                    questions.push({
+                        _id: id,
+                        _isCorrect: indexByIdQuestions[id]
+                    });
+                }
             }
 
             this.set("_questions", questions);

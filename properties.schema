@@ -1,51 +1,65 @@
 {
-  "type":"object",
+  "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
-  "required":false,
-  "properties":{
+  "required": false,
+  "properties": {
     "pluginLocations": {
-      "type":"object",
-      "required":true,
-      "properties":{
+      "type": "object",
+      "required": true,
+      "properties": {
         "config": {
-          "type":"object"
+          "type": "object"
         },
         "course": {
-          "type":"object",
-          "properties":{
+          "type": "object",
+          "properties": {
             "_assessment": {
-              "type":"object",
-              "required":false,
+              "type": "object",
+              "required": false,
               "legend": "Assessment",
-              "properties":{
+              "properties": {
                 "_postTotalScoreToLms": {
-                  "type":"boolean",
-                  "required":true,
+                  "type": "boolean",
+                  "required": true,
                   "title": "Send Total Score to LMS",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "inputType": {
+                    "type": "Boolean",
+                    "options": [false, true]
+                  },
+                  "help": "If set to 'true', an overall assessment score will be submitted to the LMS",
                   "validators": []
                 },
                 "_isPercentageBased": {
-                  "type":"boolean",
-                  "required":true,
+                  "type": "boolean",
+                  "required": true,
                   "title": "Percentage based",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "inputType": {
+                    "type": "Boolean",
+                    "options": [false, true]
+                  },
+                  "help": "If set to 'true', the assessment score will be converted to a percentage",
                   "validators": []
                 },
                 "_scoreToPass": {
-                  "type":"number",
-                  "required":false,
+                  "type": "number",
+                  "required": false,
                   "title": "Pass mark",
                   "inputType": "Number",
                   "default": 60,
+                  "help": "The minimum score required to pass the assessment",
                   "validators": ["number"]
                 },
                 "_requireAssessmentPassed": {
-                  "type":"boolean",
-                  "required":true,
+                  "type": "boolean",
+                  "required": true,
                   "title": "Require Assessment Pass",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "inputType": {
+                    "type": "Boolean",
+                    "options": [false, true]
+                  },
+                  "default": false,
+                  "help": "If 'true', the learner must pass the assessment.  Note: if 'Send Total Score to LMS' is also set to 'true', this will force an infinite number of attempts on any assessment.",
                   "validators": []
                 }
               }
@@ -53,26 +67,29 @@
           }
         },
         "contentobject": {
-          "type":"object"
+          "type": "object"
         },
         "article": {
-          "type":"object",
-          "properties":{
+          "type": "object",
+          "properties": {
             "_assessment": {
-              "type":"object",
-              "required":false,
+              "type": "object",
+              "required": false,
               "legend": "Assessment",
-              "properties":{
+              "properties": {
                 "_isEnabled": {
-                  "type":"boolean",
-                  "required":true,
+                  "type": "boolean",
+                  "required": true,
                   "title": "Enabled",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "inputType": {
+                    "type": "Boolean",
+                    "options": [false, true]
+                  },
                   "validators": []
                 },
                 "_id": {
-                  "type":"string",
-                  "required":true,
+                  "type": "string",
+                  "required": true,
                   "title": "Assessment ID",
                   "default": "",
                   "inputType": "Text",
@@ -80,20 +97,23 @@
                   "help": "Unique name for the assessment"
                 },
                 "_banks": {
-                  "type":"object",
-                  "required":false,
+                  "type": "object",
+                  "required": false,
                   "title": "Question Banks",
-                  "properties":{
+                  "properties": {
                     "_isEnabled": {
-                      "type":"boolean",
-                      "required":false,
+                      "type": "boolean",
+                      "required": false,
                       "title": "Enabled",
-                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "inputType": {
+                        "type": "Boolean",
+                        "options": [false, true]
+                      },
                       "validators": []
                     },
                     "_split": {
-                      "type":"string",
-                      "required":true,
+                      "type": "string",
+                      "required": true,
                       "title": "Split",
                       "default": "",
                       "inputType": "Text",
@@ -101,71 +121,89 @@
                       "help": "This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The position of the number in the list corresponds to the _quizBankID assigned to a block."
                     },
                     "_randomisation": {
-                      "type":"boolean",
-                      "required":false,
+                      "type": "boolean",
+                      "required": false,
                       "title": "Randomised Banks",
-                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "inputType": {
+                        "type": "Boolean",
+                        "options": [false, true]
+                      },
                       "validators": []
                     }
                   }
                 },
                 "_randomisation": {
-                  "type":"object",
-                  "required":false,
+                  "type": "object",
+                  "required": false,
                   "title": "Randomised Blocks",
-                  "properties":{
+                  "properties": {
                     "_isEnabled": {
-                      "type":"boolean",
-                      "required":false,
+                      "type": "boolean",
+                      "required": false,
                       "title": "Enabled",
-                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "inputType": {
+                        "type": "Boolean",
+                        "options": [false, true]
+                      },
                       "validators": []
                     },
                     "_blockCount": {
-                      "type":"number",
-                      "required":false,
-                      "default":1,
+                      "type": "number",
+                      "required": false,
+                      "default": 1,
                       "title": "Block Count",
-                      "inputType":"Number",
+                      "inputType": "Number",
                       "validators": ["number"],
                       "help": "The number of blocks to present to the learner"
                     }
                   }
                 },
                 "_questions": {
-                  "type":"object",
-                  "required":false,
+                  "type": "object",
+                  "required": false,
                   "title": "Question Behaviour",
-                  "properties":{
+                  "properties": {
                     "_resetType": {
-                      "type":"string",
-                      "required":false,
+                      "type": "string",
+                      "required": false,
                       "enum": ["soft", "hard"],
                       "default": "soft",
                       "title": "Reset Type",
-                      "inputType": {"type": "Select", "options":["soft", "hard"]},
+                      "inputType": {
+                        "type": "Select",
+                        "options": ["soft", "hard"]
+                      },
                       "validators": [],
                       "help": "Determines whether the question will register as completed when reset. When assigned a value of soft, the learner may continue to interact with it, but the complete attribute remains set to true. When assigned hard, complete is set to false, and the learner will be forced to complete it again if it is reset."
                     },
                     "_canShowFeedback": {
-                      "type":"boolean",
-                      "required":false,
+                      "type": "boolean",
+                      "required": false,
                       "title": "Show Feedback",
-                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "inputType": {
+                        "type": "Boolean",
+                        "options": [false, true]
+                      },
                       "validators": []
                     },
                     "_canShowMarking": {
-                      "type":"boolean",
-                      "required":false,
+                      "type": "boolean",
+                      "required": false,
                       "title": "Show Marking",
-                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "inputType": {
+                        "type": "Boolean",
+                        "options": [false, true]
+                      },
                       "validators": []
                     },
                     "_canShowModelAnswer": {
-                      "type":"boolean",
-                      "required":false,
+                      "type": "boolean",
+                      "required": false,
                       "title": "Show Model Answer",
-                      "inputType": { "type": "Boolean", "options": [false, true]},
+                      "inputType": {
+                        "type": "Boolean",
+                        "options": [false, true]
+                      },
                       "validators": []
                     }
                   }
@@ -180,45 +218,54 @@
                   "help": "If enabled, individual question marking will only occur when the user has completed the assessment. Dependant on Show Marking being enabled."
                 },
                 "_isPercentageBased": {
-                  "type":"boolean",
-                  "required":true,
+                  "type": "boolean",
+                  "required": true,
                   "title": "Percentage based",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "inputType": {
+                    "type": "Boolean",
+                    "options": [false, true]
+                  },
                   "validators": []
                 },
                 "_scoreToPass": {
-                  "type":"number",
-                  "required":false,
+                  "type": "number",
+                  "required": false,
                   "title": "Pass mark",
                   "inputType": "Number",
                   "default": 60,
                   "validators": ["number"]
                 },
                 "_includeInTotalScore": {
-                  "type":"boolean",
-                  "required":true,
+                  "type": "boolean",
+                  "required": true,
                   "title": "Include in Total Score",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "inputType": {
+                    "type": "Boolean",
+                    "options": [false, true]
+                  },
                   "validators": []
                 },
                 "_assessmentWeight": {
-                  "type":"number",
-                  "required":false,
+                  "type": "number",
+                  "required": false,
                   "title": "Assessment Weight",
                   "inputType": "Number",
                   "default": 1,
                   "validators": ["number"]
                 },
                 "_isResetOnRevisit": {
-                  "type":"boolean",
-                  "required":true,
+                  "type": "boolean",
+                  "required": true,
                   "title": "Reset on Revisit",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "inputType": {
+                    "type": "Boolean",
+                    "options": [false, true]
+                  },
                   "validators": []
                 },
                 "_attempts": {
-                  "type":"number",
-                  "required":false,
+                  "type": "number",
+                  "required": false,
                   "title": "Attempts Allowed",
                   "inputType": "Number",
                   "default": -1,
@@ -230,16 +277,16 @@
           }
         },
         "block": {
-          "type":"object",
-          "properties":{
+          "type": "object",
+          "properties": {
             "_assessment": {
-              "type":"object",
-              "required":false,
+              "type": "object",
+              "required": false,
               "legend": "Assessment",
-              "properties":{
+              "properties": {
                 "_quizBankID": {
-                  "type":"number",
-                  "required":false,
+                  "type": "number",
+                  "required": false,
                   "title": "Quiz Bank ID",
                   "inputType": "Number",
                   "default": 1,
@@ -251,7 +298,7 @@
           }
         },
         "component": {
-          "type":"object"
+          "type": "object"
         }
       }
     }
