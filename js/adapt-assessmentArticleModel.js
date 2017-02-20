@@ -176,6 +176,28 @@ define([
                 if (typeof callback == 'function') callback();
             }
         },
+        
+        
+        //check if any of the blocks in the assessment article
+        //have no questions
+        _hasNonAssessmentBlocks: function(){
+
+            var blockModels = this._originalChildModels;
+
+            var nonQuestionBlock = _.find( blockModels , function findQuestionComponents( model ){
+
+                var questions = model.findDescendants('components').where({
+                    "_isAvailable" : true,
+                    "_isQuestionType" : true
+                });
+
+                return ( questions.length === 0 );
+
+            } , this );
+
+            return ( nonQuestionBlock !== undefined );
+        },
+        
 
         _setupBankedAssessment: function() {
             var assessmentConfig = this.getConfig();
@@ -628,6 +650,9 @@ define([
         },
 
         setRestoreState: function(restoreState) {
+
+            var assessmentConfig = this.getConfig();
+
             var isComplete = restoreState[0] == 1 ? true : false;
             var attempts = this.get("_attempts");
             var attemptsSpent = restoreState[1];
@@ -643,9 +668,50 @@ define([
                 var blockId = Adapt.findById(id).get("_parentId");
                 blockIds[blockId] = Adapt.findById(blockId);
             }
-            var restoredChildrenModels = _.values(blockIds);
+
+
+            //determine if there may be non question blocks
+            //that need to be kept when assessment is restored
+            var restoreModelsFromStateOnly = false;
+
+            //non-question blocks make no sense in banked assessment
+            //so restore models from state
+            if( assessmentConfig._banks && 
+                assessmentConfig._banks._isEnabled && 
+                assessmentConfig._banks._split.length > 1) {
+
+                restoreModelsFromStateOnly = true;
+                    
+            }
+
+            //non-question blocks make no sense in randomised assessment
+            //so restore models from state
+            if(assessmentConfig._randomisation && 
+                    assessmentConfig._randomisation._isEnabled) {
+
+                restoreModelsFromStateOnly = true;
+            }
+
+            //There are no non-question blocks 
+            //so restore models from state
+            if( !this._hasNonAssessmentBlocks() ){
+
+                restoreModelsFromStateOnly = true;
+            }
+
+            //restore models straigt from state
+            if( restoreModelsFromStateOnly ){
+
+                var restoredChildrenModels = _.values(blockIds);
             
-            if (indexByIdQuestions) this.getChildren().models = restoredChildrenModels;
+                if (indexByIdQuestions) this.getChildren().models = restoredChildrenModels;
+
+            //restore _originalChildModels
+            }else{
+
+                this.getChildren().models = this._originalChildModels;   
+
+            }
 
 
             this.set("_isAssessmentComplete", isComplete);
