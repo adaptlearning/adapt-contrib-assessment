@@ -185,9 +185,11 @@ define([
             //get random questions from banks
             var questionModels = [];
             for (var bankId in this._questionBanks) {
-                var questionBank = this._questionBanks[bankId];
-                var questions = questionBank.getRandomQuestionBlocks();
-                questionModels = questionModels.concat(questions);
+                if(this._questionBanks.hasOwnProperty(bankId)) {
+                    var questionBank = this._questionBanks[bankId];
+                    var questions = questionBank.getRandomQuestionBlocks();
+                    questionModels = questionModels.concat(questions);
+                }
             }
 
             //if overall question order should be randomized
@@ -612,7 +614,9 @@ define([
             }
 
             for (var id in indexByIdQuestions) {
-                indexByIdQuestions[id] = indexByIdQuestions[id]._isCorrect
+                if(indexByIdQuestions.hasOwnProperty(id)) {
+                    indexByIdQuestions[id] = indexByIdQuestions[id]._isCorrect;
+                }
             }
 
             var saveState = [
@@ -628,6 +632,7 @@ define([
         },
 
         setRestoreState: function(restoreState) {
+            var id;
             var isComplete = restoreState[0] == 1 ? true : false;
             var attempts = this.get("_attempts");
             var attemptsSpent = restoreState[1];
@@ -639,9 +644,11 @@ define([
             var indexByIdQuestions = restoreState[5];
 
             var blockIds = {};
-            for (var id in indexByIdQuestions) {
-                var blockId = Adapt.findById(id).get("_parentId");
-                blockIds[blockId] = Adapt.findById(blockId);
+            for (id in indexByIdQuestions) {
+                if(indexByIdQuestions.hasOwnProperty(id)) {
+                    var blockId = Adapt.findById(id).get("_parentId");
+                    blockIds[blockId] = Adapt.findById(blockId);
+                }
             }
             var restoredChildrenModels = _.values(blockIds);
             
@@ -670,12 +677,14 @@ define([
 
             
             var questions = [];
-            for (var id in indexByIdQuestions) {
-                if (Adapt.findById(id).get("_isQuestionType")) {
-                    questions.push({
-                        _id: id,
-                        _isCorrect: indexByIdQuestions[id]
-                    });
+            for (id in indexByIdQuestions) {
+                if(indexByIdQuestions.hasOwnProperty(id)) {
+                    if (Adapt.findById(id).get("_isQuestionType")) {
+                        questions.push({
+                            _id: id,
+                            _isCorrect: indexByIdQuestions[id]
+                        });
+                    }
                 }
             }
 
