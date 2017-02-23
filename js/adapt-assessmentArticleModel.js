@@ -183,7 +183,7 @@ define([
             //get random questions from banks
             var questionModels = [];
             for (var bankId in this._questionBanks) {
-                if(this._questionBanks.hasOwnProperty(bankId)) {
+                if(this._questionBanks.hasOwnProperty(bankId)) { // skip over properties that were added to Array.prototype by the ES5-shim for IE8
                     var questionBank = this._questionBanks[bankId];
                     var questions = questionBank.getRandomQuestionBlocks();
                     questionModels = questionModels.concat(questions);
@@ -676,13 +676,11 @@ define([
             
             var questions = [];
             for (id in indexByIdQuestions) {
-                if(indexByIdQuestions.hasOwnProperty(id)) {
-                    if (Adapt.findById(id).get("_isQuestionType")) {
-                        questions.push({
-                            _id: id,
-                            _isCorrect: indexByIdQuestions[id]
-                        });
-                    }
+                if(indexByIdQuestions.hasOwnProperty(id) && Adapt.findById(id).get("_isQuestionType")) {
+                    questions.push({
+                        _id: id,
+                        _isCorrect: indexByIdQuestions[id]
+                    });
                 }
             }
 
