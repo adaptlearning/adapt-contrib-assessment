@@ -215,7 +215,7 @@
                   "inputType": { "type": "Boolean", "options": [false, true]},
                   "default": true,
                   "validators": [],
-                  "help": "If enabled, individual question marking will only occur when the user has completed the assessment. Dependant on Show Marking being enabled."
+                  "help": "If enabled, individual question marking will only occur when the user has completed the assessment. Note: this is dependent on 'Show Marking' being enabled on the question component."
                 },
                 "_isPercentageBased": {
                   "type": "boolean",
