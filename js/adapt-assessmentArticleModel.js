@@ -239,11 +239,9 @@ define([
         },
 
         _overrideQuestionComponentSettings: function() {
-            this._overrideMarkingSettings();
+            var newSettings = this._getMarkingSettings();
 
-            var newSettings = {};
-
-            // Add any setting overrides here
+            // Add any additional setting overrides here
             var questionConfig = this.getConfig()._questions;
             if (questionConfig.hasOwnProperty('_canShowFeedback')) {
                 newSettings._canShowFeedback = questionConfig._canShowFeedback;
@@ -392,14 +390,10 @@ define([
             if (this._shouldSuppressMarking()) {
                 markingSettings = {
                     _canShowMarking: false,
-                    _canShowModelAnswer: false,
-                    _canShowFeedback: false
+                    _canShowModelAnswer: false
                 };
             } else {
                 var questionConfig = this.getConfig()._questions;
-                if (questionConfig.hasOwnProperty('_canShowFeedback')) {
-                    markingSettings._canShowFeedback = questionConfig._canShowFeedback;
-                }
 
                 if (questionConfig.hasOwnProperty('_canShowModelAnswer')) {
                     markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
