@@ -249,9 +249,7 @@ define([
 
             if (!_.isEmpty(newSettings)) {
                 for (var i = 0, l = this._currentQuestionComponents.length; i < l; i++) {
-                    this._currentQuestionComponents[i].set(newSettings, {
-                        pluginName: "_assessment"
-                    });
+                    this._currentQuestionComponents[i].set(newSettings, { pluginName: "_assessment" });
                 }
             }
         },
@@ -334,8 +332,10 @@ define([
             this._removeQuestionListeners();
 
             if (this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && !this._isAttemptsLeft()) {
-                this._overrideMarkingSettings();
-                this._refreshQuestions();
+                _.defer(_.bind(function() {
+                    this._overrideMarkingSettings();
+                    this._refreshQuestions();
+                }, this));
             }
 
             Adapt.trigger('assessments:complete', this.getState(), this);
@@ -383,7 +383,7 @@ define([
 
             this.set("_isPass", isPass);
         },
-
+        
         _getMarkingSettings: function() {
             var markingSettings = {};
 
