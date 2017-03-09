@@ -1,5 +1,5 @@
 define([
-    'coreJS/adapt'
+    'core/js/adapt'
 ], function(Adapt) {
 
     /*
@@ -322,7 +322,7 @@ define([
                 assessmentsComplete: assessmentsComplete,
                 assessments: totalAssessments
             };
-        },
+        }
 
     }, Backbone.Events);
 

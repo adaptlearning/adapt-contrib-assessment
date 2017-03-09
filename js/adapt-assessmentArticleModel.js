@@ -1,5 +1,5 @@
 define([
-    'coreJS/adapt',
+    'core/js/adapt',
     './adapt-assessmentQuestionBank'
 ], function(Adapt, QuestionBank) {
 
@@ -110,8 +110,7 @@ define([
         _setupAssessmentData: function(force, callback) {
             var assessmentConfig = this.getConfig();
             var state = this.getState();
-            var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass)
-                                || force == true;
+            var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass) || force === true;
 
             var quizModels;
             if (shouldResetAssessment) {
@@ -146,8 +145,7 @@ define([
             var currentQuestionsCollection = new Backbone.Collection(this._currentQuestionComponents);
             this.set("_currentQuestionComponentIds", currentQuestionsCollection.pluck("_id"));
 
-            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) 
-                                        || force == true;
+            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) || force === true;
 
             if (shouldResetAssessment || shouldResetQuestions) {
                 this._resetQuestions(_.bind(function() {
@@ -185,9 +183,11 @@ define([
             //get random questions from banks
             var questionModels = [];
             for (var bankId in this._questionBanks) {
-                var questionBank = this._questionBanks[bankId];
-                var questions = questionBank.getRandomQuestionBlocks();
-                questionModels = questionModels.concat(questions);
+                if(this._questionBanks.hasOwnProperty(bankId)) { // skip over properties that were added to Array.prototype by the ES5-shim for IE8
+                    var questionBank = this._questionBanks[bankId];
+                    var questions = questionBank.getRandomQuestionBlocks();
+                    questionModels = questionModels.concat(questions);
+                }
             }
 
             //if overall question order should be randomized
@@ -201,13 +201,14 @@ define([
         _setupBanks: function() {
             var assessmentConfig = this.getConfig();
             var banks = assessmentConfig._banks._split.split(",");
+            var bankId;
 
             this._questionBanks = [];
 
             //build fresh banks
             for (var i = 0, l = banks.length; i < l; i++) {
                 var bank = banks[i];
-                var bankId = (i+1);
+                bankId = (i+1);
                 var questionBank = new QuestionBank(bankId, 
                                                 this.get("_id"), 
                                                 bank, 
@@ -218,10 +219,10 @@ define([
 
             //add blocks to banks
             var children = this.getChildren().models;
-            for (var i = 0, l = children.length; i < l; i++) {
-                var blockModel = children[i];
+            for (var j = 0, count = children.length; j < count; j++) {
+                var blockModel = children[j];
                 var blockAssessmentConfig = blockModel.get('_assessment');
-                var bankId = blockAssessmentConfig._quizBankID;
+                bankId = blockAssessmentConfig._quizBankID;
                 this._questionBanks[bankId].addBlock(blockModel);
             }
 
@@ -495,7 +496,7 @@ define([
         _setCompletionStatus: function() {
             this.set({
                 "_isComplete": true,
-                "_isInteractionComplete": true,
+                "_isInteractionComplete": true
             });
         },
 
@@ -544,7 +545,7 @@ define([
             var assessmentConfig = this.getConfig();
 
             //check if forcing reset via page revisit or force parameter
-            force = this._forceResetOnRevisit || force == true;
+            force = this._forceResetOnRevisit || force === true;
             this._forceResetOnRevisit = false;
 
             var isPageReload = this._checkReloadPage();
@@ -612,7 +613,9 @@ define([
             }
 
             for (var id in indexByIdQuestions) {
-                indexByIdQuestions[id] = indexByIdQuestions[id]._isCorrect
+                if(indexByIdQuestions.hasOwnProperty(id)) {
+                    indexByIdQuestions[id] = indexByIdQuestions[id]._isCorrect;
+                }
             }
 
             var saveState = [
@@ -628,6 +631,7 @@ define([
         },
 
         setRestoreState: function(restoreState) {
+            var id;
             var isComplete = restoreState[0] == 1 ? true : false;
             var attempts = this.get("_attempts");
             var attemptsSpent = restoreState[1];
@@ -639,9 +643,11 @@ define([
             var indexByIdQuestions = restoreState[5];
 
             var blockIds = {};
-            for (var id in indexByIdQuestions) {
-                var blockId = Adapt.findById(id).get("_parentId");
-                blockIds[blockId] = Adapt.findById(blockId);
+            for (id in indexByIdQuestions) {
+                if(indexByIdQuestions.hasOwnProperty(id)) {
+                    var blockId = Adapt.findById(id).get("_parentId");
+                    blockIds[blockId] = Adapt.findById(blockId);
+                }
             }
             var restoredChildrenModels = _.values(blockIds);
             
@@ -651,10 +657,9 @@ define([
             this.set("_isAssessmentComplete", isComplete);
             this.set("_assessmentCompleteInSession", false);
             this.set("_attemptsSpent", attemptsSpent );
-            this.set("_attemptInProgress", attemptInProgress )
+            this.set("_attemptInProgress", attemptInProgress);
 
-            if (attempts == "infinite") this.set("_attemptsLeft", "infinite");
-            else this.set("_attemptsLeft" , attempts - attemptsSpent);
+            this.set('_attemptsLeft', (attempts === "infinite" ? attempts : attempts - attemptsSpent));
 
             this.set("_maxScore", maxScore || this._getMaxScore());
             this.set("_score", score || 0);
@@ -666,12 +671,12 @@ define([
             }
         
             this.set("_scoreAsPercent", scoreAsPercent);
-            this.set("_lastAttemptScoreAsPercent", scoreAsPercent)
+            this.set("_lastAttemptScoreAsPercent", scoreAsPercent);
 
             
             var questions = [];
-            for (var id in indexByIdQuestions) {
-                if (Adapt.findById(id).get("_isQuestionType")) {
+            for (id in indexByIdQuestions) {
+                if(indexByIdQuestions.hasOwnProperty(id) && Adapt.findById(id).get("_isQuestionType")) {
                     questions.push({
                         _id: id,
                         _isCorrect: indexByIdQuestions[id]
@@ -679,11 +684,9 @@ define([
                 }
             }
 
-            
-
             this.set("_questions", questions);
-            this._checkIsPass();
 
+            this._checkIsPass();
         },
 
         getState: function() {
