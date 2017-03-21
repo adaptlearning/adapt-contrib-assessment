@@ -114,10 +114,10 @@ Triggered when an assessment is registered. Occurs between app:dataReady and ada
 Triggered when an assessment is reset. Returns `stateObject`, `assessmentModel`  
 
 **assessment:complete**  
-Triggered when the user submits the last question of an assessment. Returns `stateObject`  
+Triggered when the user submits the last question of the last assessment and the score is to be posted back to the LMS. Returns `stateObject`  
 
 **assessments:complete**   
-Triggered when the user submits the last question of the last assessment and the score is to be posted back to the LMS. Returns `stateObject`, `assessmentModel`   
+Triggered when the user submits the last question of one of the assessments. Returns `stateObject`, `assessmentModel`   
 <div float align=right><a href="#top">Back to Top</a></div>
 
 ####stateObject
@@ -166,7 +166,7 @@ If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://
 **Important:** if targetting IE8, it is recommended to limit each assessment to a maximum of 12 questions. When using question banks, the recommendation is a limit of 32 questions with a maximum of 12 questions drawn. These limits are recommended to help avoid the popup warning "A script on this page is causing Internet Explorer to run slowly". See https://support.microsoft.com/en-gb/kb/175500 for more information.
 
 ----------------------------
-**Version number:**  2.0.9   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
+**Version number:**  2.0.10   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
 **Framework versions:** 2.0.15
 **Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)    
 **Accessibility support:** WAI AA   

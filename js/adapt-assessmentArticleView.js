@@ -1,6 +1,6 @@
 define([
-    'coreJS/adapt',
-    'coreViews/articleView'
+    'core/js/adapt',
+    'core/js/views/articleView'
 ], function(Adapt, AdaptArticleView) {
 
     var AssessmentView = {
