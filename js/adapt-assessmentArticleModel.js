@@ -332,7 +332,7 @@ define([
 
             this._removeQuestionListeners();
 
-            if (this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && !this._isAttemptsLeft()) {
+            if (this._isMarkingSuppressionEnabled() && !this._isAttemptsLeft()) {
                 _.defer(_.bind(function() {
                     this._overrideMarkingSettings();
                     this._refreshQuestions();
@@ -425,7 +425,7 @@ define([
         },
 
         _shouldSuppressMarking: function() {
-            return this._isMarkingSuppressionEnabled() && this._isAttemptsEnabled() && this._isAttemptsLeft();
+            return this._isMarkingSuppressionEnabled() && this._isAttemptsLeft();
         },
 
         _isMarkingSuppressionEnabled: function() {
@@ -433,13 +433,8 @@ define([
             return assessmentConfig._suppressMarking;
         },
 
-        _isAttemptsEnabled: function() {
-            var assessmentConfig = this.getConfig();
-            return assessmentConfig._attempts && assessmentConfig._attempts != "infinite";
-        },
-
         _isAttemptsLeft: function() {
-            if (!this._isAttemptsEnabled()) return true;
+            if (this.get('_isAssessmentComplete') && this.get('_isPass')) return false;
 
             if (this.get('_attemptsLeft') === 0) return false;
 
