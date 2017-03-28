@@ -296,7 +296,6 @@ define([
                 totalAssessments++;
                 maxScore += state.maxScore / state.assessmentWeight;
                 score += state.score / state.assessmentWeight;
-                isPass = isPass === false ? false : state.isPass;
             }
 
             var isComplete = assessmentsComplete == totalAssessments;
