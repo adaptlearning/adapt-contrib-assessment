@@ -12,7 +12,7 @@ It is not a single [question component](https://github.com/adaptlearning/adapt_f
 
 [Visit the **Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for explanations of key properties and for more information about its functionality such as [restoring state upon revisit](https://github.com/adaptlearning/adapt-contrib-assessment/wiki/Restore-assessment-state).
 
-##Installation
+## Installation
 
 As one of Adapt's *[core extensions](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#extensions),* **Assessment** is included with the [installation of the Adapt framework](https://github.com/adaptlearning/adapt_framework/wiki/Manual-installation-of-the-Adapt-framework#installation) and the [installation of the Adapt authoring tool](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-Adapt-Origin).
 
@@ -120,7 +120,7 @@ Triggered when the user submits the last question of the last assessment and the
 Triggered when the user submits the last question of one of the assessments. Returns `stateObject`, `assessmentModel`   
 <div float align=right><a href="#top">Back to Top</a></div>
 
-####stateObject
+#### stateObject
 
 A description of the stateObject returned by the assessments:events is as follows:
 
