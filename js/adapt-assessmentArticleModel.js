@@ -13,6 +13,7 @@ define([
             "_canShowMarking": false,
             "_canShowModelAnswer": false
         },
+        "_suppressMarking": false,
         "_isPercentageBased" : true,
         "_scoreToPass" : 100,
         "_includeInTotalScore": true,
@@ -100,7 +101,7 @@ define([
                 });
             }
         },
-        
+
 
         _onDataReady: function() {
             //register assessment
@@ -119,12 +120,12 @@ define([
                 this.set("_assessmentCompleteInSession", false);
                 this.set("_score", 0);
                 this.getChildren().models = this._originalChildModels;
-                if(assessmentConfig._banks && 
-                        assessmentConfig._banks._isEnabled && 
+                if(assessmentConfig._banks &&
+                        assessmentConfig._banks._isEnabled &&
                         assessmentConfig._banks._split.length > 1) {
 
                     quizModels = this._setupBankedAssessment();
-                } else if(assessmentConfig._randomisation && 
+                } else if(assessmentConfig._randomisation &&
                         assessmentConfig._randomisation._isEnabled) {
 
                     quizModels = this._setupRandomisedAssessment();
@@ -154,9 +155,6 @@ define([
 
                     finalise.apply(this);
                 }, this));
-            }
-            else {
-                finalise.apply(this);
             }
 
             function finalise() {
@@ -211,7 +209,7 @@ define([
                 bankId = (i+1);
                 var questionBank = new QuestionBank(bankId, 
                                                 this.get("_id"), 
-                                                bank, 
+                                                bank,
                                                 true);
 
                 this._questionBanks[bankId] = questionBank;
@@ -233,37 +231,28 @@ define([
 
             var randomisationModel = assessmentConfig._randomisation;
             var blockModels = this.getChildren().models;
-            
+
             var questionModels = _.shuffle(blockModels);
 
             questionModels = questionModels.slice(0, randomisationModel._blockCount);
-            
+
             return questionModels;
         },
 
         _overrideQuestionComponentSettings: function() {
-            var questionConfig = this.getConfig()._questions;
-            var questionComponents = this._currentQuestionComponents;
+            var newSettings = this._getMarkingSettings();
 
-            var newSettings = {};
-            if(questionConfig.hasOwnProperty('_canShowFeedback')) {
+            // Add any additional setting overrides here
+            var questionConfig = this.getConfig()._questions;
+            if (questionConfig.hasOwnProperty('_canShowFeedback')) {
                 newSettings._canShowFeedback = questionConfig._canShowFeedback;
             }
 
-            if(questionConfig.hasOwnProperty('_canShowModelAnswer')) {
-                newSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
-            }
-
-            if (questionConfig.hasOwnProperty('_canShowMarking')) {
-                newSettings._canShowMarking = questionConfig._canShowMarking;
-            }
-
-            if(!_.isEmpty(newSettings)) {
-                for (var i = 0, l = questionComponents.length; i < l; i++) {
-                    questionComponents[i].set(newSettings, { pluginName: "_assessment" });
+            if (!_.isEmpty(newSettings)) {
+                for (var i = 0, l = this._currentQuestionComponents.length; i < l; i++) {
+                    this._currentQuestionComponents[i].set(newSettings, { pluginName: "_assessment" });
                 }
             }
-
         },
 
         _setupQuestionListeners: function() {
@@ -314,7 +303,7 @@ define([
 
             var allQuestionsAnswered = numberOfQuestionsAnswered >= this._currentQuestionComponents.length;
             if (!allQuestionsAnswered) return;
-            
+
             this._onAssessmentComplete();
         },
 
@@ -342,7 +331,14 @@ define([
             this._checkIsPass();
 
             this._removeQuestionListeners();
-            
+
+            if (this._isMarkingSuppressionEnabled() && !this._isAttemptsLeft()) {
+                _.defer(_.bind(function() {
+                    this._overrideMarkingSettings();
+                    this._refreshQuestions();
+                }, this));
+            }
+
             Adapt.trigger('assessments:complete', this.getState(), this);
         },
 
@@ -362,7 +358,7 @@ define([
                 questions.push(questionModel);
 
             }
-            
+
             this.set({
                 '_questions': questions
             });
@@ -388,16 +384,60 @@ define([
 
             this.set("_isPass", isPass);
         },
+        
+        _getMarkingSettings: function() {
+            var markingSettings = {};
+
+            if (this._shouldSuppressMarking()) {
+                markingSettings = {
+                    _canShowMarking: false,
+                    _canShowModelAnswer: false
+                };
+            } else {
+                var questionConfig = this.getConfig()._questions;
+
+                if (questionConfig.hasOwnProperty('_canShowModelAnswer')) {
+                    markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
+                }
+
+                if (questionConfig.hasOwnProperty('_canShowMarking')) {
+                    markingSettings._canShowMarking = questionConfig._canShowMarking;
+                }
+            }
+
+            return markingSettings;
+        },
+
+        _overrideMarkingSettings: function() {
+            var newMarkingSettings = this._getMarkingSettings();
+            for (var i = 0, l = this._currentQuestionComponents.length; i < l; i++) {
+                this._currentQuestionComponents[i].set(newMarkingSettings, {
+                    pluginName: "_assessment"
+                });
+            }
+        },
+
+        _refreshQuestions: function() {
+            for (var a = 0, b = this._currentQuestionComponents.length; a < b; a++) {
+                var question = this._currentQuestionComponents[a];
+                question.refresh();
+            }
+        },
+
+        _shouldSuppressMarking: function() {
+            return this._isMarkingSuppressionEnabled() && this._isAttemptsLeft();
+        },
+
+        _isMarkingSuppressionEnabled: function() {
+            var assessmentConfig = this.getConfig();
+            return assessmentConfig._suppressMarking;
+        },
 
         _isAttemptsLeft: function() {
-            var assessmentConfig = this.getConfig();
-
-            var isAttemptsEnabled = assessmentConfig._attempts && assessmentConfig._attempts != "infinite";
-
-            if (!isAttemptsEnabled) return true;
+            if (this.get('_isAssessmentComplete') && this.get('_isPass')) return false;
 
             if (this.get('_attemptsLeft') === 0) return false;
-        
+
             return true;
         },
 
@@ -422,14 +462,14 @@ define([
             var questionComponents = this._currentQuestionComponents;
             for (var i = 0, l = questionComponents.length; i < l; i++) {
                 var question = questionComponents[i];
-                if (question.get('_isCorrect') && 
+                if (question.get('_isCorrect') &&
                     question.get('_questionWeight')) {
                     score += question.get('_questionWeight');
                 }
             }
             return score;
         },
-        
+
         _getMaxScore: function() {
             var maxScore = 0;
             var questionComponents = this._currentQuestionComponents;
@@ -441,7 +481,7 @@ define([
             }
             return maxScore;
         },
-        
+
         _getScoreAsPercent: function() {
             if (this._getMaxScore() === 0) return 0;
             return Math.round((this._getScore() / this._getMaxScore()) * 100);
@@ -491,8 +531,6 @@ define([
             this._removeQuestionListeners();
         },
 
-
-
         _setCompletionStatus: function() {
             this.set({
                 "_isComplete": true,
@@ -517,7 +555,7 @@ define([
                     break;
                 }
             }
-        
+
             if (!wereQuestionsRestored) {
                 this.set("_assessmentCompleteInSession", true);
                 return true;
@@ -530,7 +568,7 @@ define([
     //Public Functions
 
         isAssessmentEnabled: function() {
-            if (this.get("_assessment") && 
+            if (this.get("_assessment") &&
                 this.get("_assessment")._isEnabled) return true;
             return false;
         },
@@ -650,7 +688,7 @@ define([
                 }
             }
             var restoredChildrenModels = _.values(blockIds);
-            
+
             if (indexByIdQuestions) this.getChildren().models = restoredChildrenModels;
 
 
@@ -669,11 +707,10 @@ define([
             } else {
                 scoreAsPercent = 0;
             }
-        
+
             this.set("_scoreAsPercent", scoreAsPercent);
             this.set("_lastAttemptScoreAsPercent", scoreAsPercent);
 
-            
             var questions = [];
             for (id in indexByIdQuestions) {
                 if(indexByIdQuestions.hasOwnProperty(id) && Adapt.findById(id).get("_isQuestionType")) {
@@ -722,22 +759,22 @@ define([
 
         getConfig: function() {
             var assessmentConfig = this.get("_assessment");
-            
+
             if (!assessmentConfig) {
                 assessmentConfig = $.extend(true, {}, assessmentConfigDefaults);
             } else {
                 assessmentConfig = $.extend(true, {}, assessmentConfigDefaults, assessmentConfig);
             }
-            
+
             if (assessmentConfig._id === undefined) {
                 assessmentConfig._id = "givenId"+(givenIdCount++);
             }
-            
+
             this.set("_assessment", assessmentConfig);
 
             return assessmentConfig;
         }
-        
+
     };
 
     return AssessmentModel;

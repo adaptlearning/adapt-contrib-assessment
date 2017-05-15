@@ -208,6 +208,15 @@
                     }
                   }
                 },
+                "_suppressMarking": {
+                  "type":"boolean",
+                  "required":false,
+                  "title": "Suppress marking until assessment completion",
+                  "inputType": { "type": "Boolean", "options": [false, true]},
+                  "default": true,
+                  "validators": [],
+                  "help": "If enabled, individual question marking will only occur when the user has used up all assessment attempts or has passed the assessment. Note: this is dependent on 'Show Marking' being enabled on the question component."
+                },
                 "_isPercentageBased": {
                   "type": "boolean",
                   "required": true,
