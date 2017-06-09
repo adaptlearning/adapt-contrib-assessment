@@ -507,7 +507,9 @@ define([
         _reloadPage: function() {
             this._forceResetOnRevisit = true;
 
-            Backbone.history.navigate("#/id/"+Adapt.location._currentId, { replace:true, trigger: true });
+            _.delay(function() {
+                Backbone.history.navigate("#/id/"+Adapt.location._currentId, { replace:true, trigger: true });
+            }, 250);
         },
 
         _resetQuestions: function(callback) {
