@@ -155,6 +155,8 @@ define([
 
                     finalise.apply(this);
                 }, this));
+            } else {
+                finalise.apply(this);
             }
 
             function finalise() {
@@ -169,7 +171,7 @@ define([
 
                 Adapt.assessment.saveState();
 
-                if (typeof callback == 'function') callback();
+                if (typeof callback == 'function') callback.apply(this);
             }
         },
 
@@ -582,6 +584,19 @@ define([
         },
 
         reset: function(force, callback) {
+            
+            if (this._isResetInProgress) {
+                // prevent multiple resets from executing. 
+                // keep callbacks in queue for when current reset is finished
+                this.once("reset", function() {
+                    this._isResetInProgress = false;
+                    if (typeof callback == 'function') {
+                        callback(true);
+                    }
+                });
+                return;
+            }
+            
             var assessmentConfig = this.getConfig();
 
             //check if forcing reset via page revisit or force parameter
@@ -595,7 +610,9 @@ define([
                     !assessmentConfig._isResetOnRevisit && 
                     !isPageReload && 
                     !force) {
-                if (typeof callback == 'function') callback(false);
+                if (typeof callback == 'function') {
+                    callback(false);
+                }
                 return false;
             }
             
@@ -616,13 +633,24 @@ define([
             }
 
             if (!isPageReload) {
-                //only perform this section when not attempting to reload the page
+                // only perform this section when not attempting to reload the page
+                // wait for reset to trigger
+                this.once("reset", function() {
+                    this._isResetInProgress = false;
+                    if (typeof callback == 'function') {
+                        callback(true);
+                    }
+                });
+                this._isResetInProgress = true;
+                // perform asynchronous reset
                 this._setupAssessmentData(force, function() {
-                    if (typeof callback == 'function') callback(true);
+                    this.trigger("reset");
                 });
             } else {
                 this._reloadPage();
-                if (typeof callback == 'function') callback(true);
+                if (typeof callback == 'function') {
+                    callback(true);
+                }
             }
 
             return true;
