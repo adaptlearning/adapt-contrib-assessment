@@ -72,7 +72,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >>**_isEnabled** (boolean): Turns on or off the ability to use question banks.  
 
->>**_split** (string): This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The *position* of the numberal in the list corresponds to the **_quizBankID** assigned to a block. The *value* of the number determines how many questions to retrieve randomly from that particular quiz bank. For example, a **_split** with a value of "2,1" would pick 2 questions from bank 1 (`"_quizBankID": "1"`) and 1 question from bank 2 (`"_quizBankID": "2"`).  
+>>**_split** (string): This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The *position* of the numeral in the list corresponds to the **_quizBankID** assigned to a block. The *value* of the number determines how many questions to retrieve randomly from that particular quiz bank. For example, a **_split** with a value of "2,1" would pick 2 questions from bank 1 (`"_quizBankID": "1"`) and 1 question from bank 2 (`"_quizBankID": "2"`).  
 
 >>**_randomisation** (boolean): Determines whether the questions will be displayed in the same order as the blocks are ordered in *blocks.json* or will be shuffled before they are presented to the learner. Acceptable values are `true` or `false`.
 
