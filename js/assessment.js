@@ -10,7 +10,6 @@ define([
         "_postTotalScoreToLms": true,
         "_isPercentageBased": true,
         "_scoreToPass": 100,
-        "_requireAssessmentPassed": false,
         "_isDefaultsLoaded": true
     };
 
@@ -171,8 +170,6 @@ define([
         _setPageProgress: function() {
             //set _subProgressTotal and _subProgressComplete on pages that have assessment progress indicator requirements
             
-            var requireAssessmentPassed = this.getConfig()._requireAssessmentPassed;
-
             for (var k in this._assessments._byPageId) {
 
                 var assessments = this._assessments._byPageId[k];
@@ -183,23 +180,10 @@ define([
                 for (var i = 0, l = assessments.length; i < l; i++) {
                     var assessmentState = assessments[i].getState();
 
-                    var isComplete = false;
+                    if (assessmentState.includeInTotalScore && !assessmentState.isPass) continue;
 
-                    if (requireAssessmentPassed) {
-                        
-                        if (!assessmentState.includeInTotalScore) {
-                            isComplete = assessmentState.isComplete;
-                        } else if (assessmentState.isPass) {
-                            isComplete = assessmentState.isComplete;
-                        }
-
-                    } else {
-
-                        isComplete = assessmentState.isComplete;
-                    }
-
-                    if ( isComplete ) {
-                        assessmentsPassed+=1; 
+                    if (assessmentState.isComplete) {
+                        assessmentsPassed++; 
                     }
                 }
 
@@ -313,7 +297,6 @@ define([
             return {
                 isComplete: isComplete,
                 isPercentageBased: assessmentsConfig._isPercentageBased,
-                requireAssessmentPassed: assessmentsConfig._requireAssessmentPassed,
                 isPass: isPass,
                 scoreAsPercent: scoreAsPercent,
                 maxScore: maxScore,
