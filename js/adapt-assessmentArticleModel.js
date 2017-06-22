@@ -236,7 +236,9 @@ define([
             
             var questionModels = _.shuffle(blockModels);
 
-            questionModels = questionModels.slice(0, randomisationModel._blockCount);
+            if (randomisationModel._blockCount > 0) {
+                questionModels = questionModels.slice(0, randomisationModel._blockCount);
+            }
             
             return questionModels;
         },
