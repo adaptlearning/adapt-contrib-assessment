@@ -24,15 +24,16 @@
                   "required": true,
                   "title": "Send Total Score to LMS",
                   "inputType": "Checkbox",
-                  "help": "If enabled, an overall assessment score will be submitted to the LMS",
+                  "help": "Specifies whether the total score (as a percentage) should be sent to the LMS.",
                   "validators": []
                 },
                 "_isPercentageBased": {
                   "type": "boolean",
                   "required": true,
+                  "default": true,
                   "title": "Percentage based",
                   "inputType": "Checkbox",
-                  "help": "If enabled, the assessment score will be converted to a percentage",
+                  "help": "Determines whether the value of 'Pass mark' should be treated as a percentage (default) or as the raw score.",
                   "validators": []
                 },
                 "_scoreToPass": {
@@ -41,7 +42,7 @@
                   "title": "Pass mark",
                   "inputType": "Number",
                   "default": 60,
-                  "help": "The minimum score required to pass the assessment",
+                  "help": "The minimum score required by the learner to pass the assessment.",
                   "validators": ["number"]
                 },
                 "_requireAssessmentPassed": {
@@ -78,41 +79,72 @@
                 "_id": {
                   "type": "string",
                   "required": true,
-                  "title": "Assessment ID",
+                  "title": "Assessment Name",
                   "default": "",
                   "inputType": "Text",
                   "validators": [],
-                  "help": "Unique name for the assessment"
+                  "help": "Unique name for the assessment. This is required by other plugins such as the 'Assessment Results' component to identify the assessment and display its variables."
                 },
-                "_banks": {
-                  "type": "object",
+                "_attempts": {
+                  "type": "number",
                   "required": false,
-                  "title": "Question Banks",
-                  "properties": {
-                    "_isEnabled": {
-                      "type": "boolean",
-                      "required": false,
-                      "title": "Enabled",
-                      "inputType": "Checkbox",
-                      "validators": []
-                    },
-                    "_split": {
-                      "type": "string",
-                      "required": true,
-                      "title": "Split",
-                      "default": "",
-                      "inputType": "Text",
-                      "validators": [],
-                      "help": "This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The position of the number in the list corresponds to the _quizBankID assigned to a block."
-                    },
-                    "_randomisation": {
-                      "type": "boolean",
-                      "required": false,
-                      "title": "Randomised Banks",
-                      "inputType": "Checkbox",
-                      "validators": []
-                    }
-                  }
+                  "title": "Attempts Allowed",
+                  "inputType": "Number",
+                  "default": -1,
+                  "validators": ["number"],
+                  "help": "Controls the number of attempts the user is allowed to have on this assessment. Set to -1 (or 0) to allow infinite attempts."
+                },
+                "_isPercentageBased": {
+                  "type": "boolean",
+                  "required": true,
+                  "default": true,
+                  "title": "Percentage based",
+                  "inputType": "Checkbox",
+                  "help": "Determines whether the value of 'Pass mark' should be treated as a percentage (default) or as the raw score.",
+                  "validators": []
+                },
+                "_scoreToPass": {
+                  "type": "number",
+                  "required": false,
+                  "title": "Pass mark",
+                  "inputType": "Number",
+                  "default": 60,
+                  "help": "The minimum score required by the learner to pass the assessment.",
+                  "validators": ["number"]
+                },
+                "_includeInTotalScore": {
+                  "type": "boolean",
+                  "required": true,
+                  "title": "Include in Total Score",
+                  "inputType": "Checkbox",
+                  "help": "Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to 'Assessment Weight'.",
+                  "validators": []
+                },
+                "_assessmentWeight": {
+                  "type": "number",
+                  "required": false,
+                  "title": "Assessment Weight",
+                  "inputType": "Number",
+                  "default": 1,
+                  "help": "If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment, i.e. 1 equals 100%, 0.5 is 50%, etc.",
+                  "validators": ["number"]
+                },
+                "_suppressMarking": {
+                  "type": "boolean",
+                  "required": true,
+                  "title": "Suppress Marking",
+                  "inputType": "Checkbox",
+                  "help": "Determines whether question marking should be delayed until completion of the assessment or until all attempts have been exhausted.",
+                  "validators": []
+                },
+                "_isResetOnRevisit": {
+                  "type": "boolean",
+                  "required": true,
+                  "default": false,
+                  "title": "Reset on Revisit",
+                  "inputType": "Checkbox",
+                  "help": "Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page.",
+                  "validators": []
                 },
                 "_randomisation": {
                   "type": "object",
@@ -124,19 +156,52 @@
                       "required": false,
                       "title": "Enabled",
                       "inputType": "Checkbox",
+                      "help": "If randomisation is enabled, a specified number of blocks will be displayed to the user in a random order.",
                       "validators": []
                     },
                     "_blockCount": {
                       "type": "number",
                       "required": false,
-                      "default": 1,
+                      "default": -1,
                       "title": "Block Count",
                       "inputType": "Number",
                       "validators": ["number"],
-                      "help": "The number of blocks to present to the learner"
+                      "help": "The number of blocks to present to the learner. Set to -1 (or 0) to display all blocks."
                     }
                   }
                 },
+                "_banks": {
+                  "type": "object",
+                  "required": false,
+                  "title": "Question Banks",
+                  "properties": {
+                    "_isEnabled": {
+                      "type": "boolean",
+                      "required": false,
+                      "title": "Enabled",
+                      "inputType": "Checkbox",
+                      "help": "Enables associating blocks of question components with a 'bank', allowing questions to be grouped then rendered via the 'Split' property.",
+                      "validators": []
+                    },
+                    "_split": {
+                      "type": "string",
+                      "required": true,
+                      "title": "Split",
+                      "default": "",
+                      "inputType": "Text",
+                      "validators": [],
+                      "help": "This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each question bank. The position of the number in the list corresponds to the 'Bank ID' assigned, e.g. \"3,2\" would display three questions from Bank 1 and two from Bank 2."
+                    },
+                    "_randomisation": {
+                      "type": "boolean",
+                      "required": false,
+                      "title": "Randomise Question Banks",
+                      "inputType": "Checkbox",
+                      "help": "Controls whether the questions will be displayed in a random order.",
+                      "validators": []
+                    }
+                  }
+                },                
                 "_questions": {
                   "type": "object",
                   "required": false,
@@ -153,13 +218,15 @@
                         "options": ["soft", "hard"]
                       },
                       "validators": [],
-                      "help": "Determines whether the question will register as completed when reset. When assigned a value of soft, the learner may continue to interact with it, but the complete attribute remains set to true. When assigned hard, complete is set to false, and the learner will be forced to complete it again if it is reset."
+                      "help": "Determines whether the question will register as completed when reset. When assigned a value of 'soft', the learner may continue to interact with it, but the complete attribute remains set to true. When assigned 'hard', complete is set to false, and the learner will be forced to complete it again if it is reset."
                     },
                     "_canShowFeedback": {
                       "type": "boolean",
                       "required": false,
                       "title": "Show Feedback",
                       "inputType": "Checkbox",
+                      "default": false,
+                      "help": "Allows the user to view feedback on their answer.",
                       "validators": []
                     },
                     "_canShowMarking": {
@@ -167,6 +234,8 @@
                       "required": false,
                       "title": "Show Marking",
                       "inputType": "Checkbox",
+                      "default": false,
+                      "help": "Displays ticks and crosses on question completion.",
                       "validators": []
                     },
                     "_canShowModelAnswer": {
@@ -174,64 +243,11 @@
                       "required": false,
                       "title": "Show Model Answer",
                       "inputType": "Checkbox",
+                      "default": false,
+                      "help": "Allows the user to view the 'model answer' should they answer the question incorrectly.",
                       "validators": []
                     }
                   }
-                },
-                "_suppressMarking": {
-                  "type":"boolean",
-                  "required":false,
-                  "title": "Suppress marking until assessment completion",
-                  "inputType": { "type": "Boolean", "options": [false, true]},
-                  "default": true,
-                  "validators": [],
-                  "help": "If enabled, individual question marking will only occur when the user has used up all assessment attempts or has passed the assessment. Note: this is dependent on 'Show Marking' being enabled on the question component."
-                },
-                "_isPercentageBased": {
-                  "type": "boolean",
-                  "required": true,
-                  "title": "Percentage based",
-                  "inputType": "Checkbox",
-                  "validators": []
-                },
-                "_scoreToPass": {
-                  "type": "number",
-                  "required": false,
-                  "title": "Pass mark",
-                  "inputType": "Number",
-                  "default": 60,
-                  "validators": ["number"]
-                },
-                "_includeInTotalScore": {
-                  "type": "boolean",
-                  "required": true,
-                  "title": "Include in Total Score",
-                  "inputType": "Checkbox",
-                  "validators": []
-                },
-                "_assessmentWeight": {
-                  "type": "number",
-                  "required": false,
-                  "title": "Assessment Weight",
-                  "inputType": "Number",
-                  "default": 1,
-                  "validators": ["number"]
-                },
-                "_isResetOnRevisit": {
-                  "type": "boolean",
-                  "required": true,
-                  "title": "Reset on Revisit",
-                  "inputType": "Checkbox",
-                  "validators": []
-                },
-                "_attempts": {
-                  "type": "number",
-                  "required": false,
-                  "title": "Attempts Allowed",
-                  "inputType": "Number",
-                  "default": -1,
-                  "validators": ["number"],
-                  "help": "Controls the number of attempts available to the user. Set to -1 to allow infinite attempts."
                 }
               }
             }
@@ -248,11 +264,11 @@
                 "_quizBankID": {
                   "type": "number",
                   "required": false,
-                  "title": "Quiz Bank ID",
+                  "title": "Bank ID",
                   "inputType": "Number",
                   "default": 1,
                   "validators": ["number"],
-                  "help": "Organize questions into banks/buckets. ID's are coordinated with positions in the _split attribute in the parent article."
+                  "help": "Used to group blocks of question components into associated banks. This works in conjunction with the 'Split' property when question banks are in use."
                 }
               }
             }
