@@ -49,16 +49,6 @@ define([
                     break;
             }
 
-
-            //if assessment passed required and assessment included in total
-            //set attemptsleft to infinite
-            var centralAssessmentState = Adapt.assessment.getState();
-
-            if (assessmentConfig._includeInTotalScore &&
-                centralAssessmentState.requireAssessmentPassed) {
-                attemptsLeft = "infinite";
-            }
-
             this.set({
                 '_currentQuestionComponentIds': [],
                 '_assessmentCompleteInSession': false,
