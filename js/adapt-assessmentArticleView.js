@@ -33,7 +33,6 @@ define([
             if (state.id != this.model.get("_assessment")._id) return;
 
             console.log("assessment complete", state, model);
-
         },
 
         _onAssessmentReset: function(state, model) {
