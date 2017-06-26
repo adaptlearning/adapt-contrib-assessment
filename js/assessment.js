@@ -242,7 +242,7 @@ define([
 
         get: function(id) {
             if (id === undefined) {
-                return this._assessments.slice(0);
+                return this._assessments[0];
             } else {
                 return this._assessments._byAssessmentId[id];
             }
