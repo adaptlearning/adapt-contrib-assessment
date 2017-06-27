@@ -155,6 +155,10 @@ define([
         },
 
         _getStateByAssessmentId: function(assessmentId) {
+            if (assessmentId === undefined) {
+                return null;
+            }
+                
             return this._assessments._byAssessmentId[assessmentId].getState();
         },
 
@@ -227,8 +231,18 @@ define([
             }
             this._assessments._byPageId[pageId].push(assessmentModel);
 
-            if (assessmentId) {
-                this._assessments._byAssessmentId[assessmentId] = assessmentModel;
+            if (assessmentId !== undefined) {
+                if (assessmentId === '') {
+                    console.warn("An assessment has been registered with an empty value for 'id'");
+                }
+
+                if (!this._assessments._byAssessmentId[assessmentId]) {
+                    this._assessments._byAssessmentId[assessmentId] = assessmentModel;
+                } else {
+                    console.warn("An assessment with an id of '" + assessmentId + "' already exists!");
+                }
+            } else {
+                console.warn("An assessment has been registered with an undefined value for 'id'");
             }
 
             this._assessments.push(assessmentModel);
@@ -241,7 +255,7 @@ define([
         },
 
         get: function(id) {
-            if (id === undefined) {
+            if (id === undefined ) {
                 return this._assessments.slice(0);
             } else {
                 return this._assessments._byAssessmentId[id];
