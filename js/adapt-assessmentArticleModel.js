@@ -80,7 +80,6 @@ define([
             //save original children
             this._originalChildModels = this.getChildren().models;
             //collect all question components
-            //collect all question components
             this._currentQuestionComponents = _.filter(this.findDescendantModels("components"), function(comp) {
                 return comp.get('_isQuestionType') === true;
             });
