@@ -234,16 +234,16 @@ define([
 
             if (assessmentId !== undefined) {
                 if (assessmentId === '') {
-                    Adapt.log.warn("An assessment has been registered with an empty value for 'id'");
+                    Adapt.log.warn("An assessment has been registered with an empty value for '_id'");
                 }
 
                 if (!this._assessments._byAssessmentId[assessmentId]) {
                     this._assessments._byAssessmentId[assessmentId] = assessmentModel;
                 } else {
-                    Adapt.log.warn("An assessment with an id of '" + assessmentId + "' already exists!");
+                    Adapt.log.warn("An assessment with an '_id' of '" + assessmentId + "' already exists!");
                 }
             } else {
-                Adapt.log.warn("An assessment has been registered with an undefined value for 'id'");
+                Adapt.log.warn("An assessment has been registered with an undefined value for '_id'");
             }
 
             this._assessments.push(assessmentModel);
