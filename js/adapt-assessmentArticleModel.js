@@ -80,9 +80,12 @@ define([
             //save original children
             this._originalChildModels = this.getChildren().models;
             //collect all question components
-            this._currentQuestionComponents = this.findDescendants("components").where({_isQuestionType: true});
-            var currentQuestionsCollection = new Backbone.Collection(this._currentQuestionComponents);
-            this.set("_currentQuestionComponentIds", currentQuestionsCollection.pluck("_id"));
+            this._currentQuestionComponents = _.filter(this.findDescendantModels("components"), function(comp) {
+                return comp.get('_isQuestionType') === true;
+            });
+            this.set("_currentQuestionComponentIds", _.map(this._currentQuestionComponents, function(comp) {
+                return comp.get("_id");
+            }));
 
             this._setAssessmentOwnershipOnChildrenModels();
 
@@ -142,9 +145,12 @@ define([
 
             this.getChildren().models = quizModels;
 
-            this._currentQuestionComponents = this.findDescendants('components').where({_isQuestionType: true});
-            var currentQuestionsCollection = new Backbone.Collection(this._currentQuestionComponents);
-            this.set("_currentQuestionComponentIds", currentQuestionsCollection.pluck("_id"));
+            this._currentQuestionComponents = _.filter(this.findDescendantModels('components'), function(comp) {
+                return comp.get('_isQuestionType') === true;
+            });
+            this.set("_currentQuestionComponentIds", _.map(this._currentQuestionComponents, function(comp) {
+                return comp.get("_id");
+            }));
 
             var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) || force === true;
 
@@ -667,7 +673,7 @@ define([
 
             if (!banksActive && !randomisationActive) {
                 // include presentation component IDs in save state so that blocks without questions aren't removed
-                this.findDescendants("components").each(function(component) {
+                _.each(this.findDescendantModels("components"), function(component) {
                     var componentModel = {
                         _id: component.get("_id"),
                         _isCorrect: component.get("_isCorrect") === undefined ? null : component.get("_isCorrect")
