@@ -202,6 +202,22 @@ define([
             }
         },
 
+        _addToAssessmentIdMap: function(id, model) {
+            if (id === undefined) {
+                Adapt.log.warn("An assessment has been registered with an undefined value for '_id'");
+                return;
+            }
+
+            if (id === '') {
+                Adapt.log.warn("An assessment has been registered with an empty value for '_id'");
+            }
+
+            if (!this._assessments._byAssessmentId[id]) {
+                this._assessments._byAssessmentId[id] = model;
+            } else {
+                Adapt.log.warn("An assessment with an _id of '" + id + "' already exists!");
+            }
+        },
 
     //Public functions
 
@@ -216,19 +232,7 @@ define([
 
             this._assessments._byPageId[pageId].push(assessmentModel);
 
-            if (assessmentId !== undefined) {
-                if (assessmentId === '') {
-                    Adapt.log.warn("An assessment has been registered with an empty value for '_id'");
-                }
-
-                if (!this._assessments._byAssessmentId[assessmentId]) {
-                    this._assessments._byAssessmentId[assessmentId] = assessmentModel;
-                } else {
-                    Adapt.log.warn("An assessment with an '_id' of '" + assessmentId + "' already exists!");
-                }
-            } else {
-                Adapt.log.warn("An assessment has been registered with an undefined value for '_id'");
-            }
+            this._addToAssessmentIdMap(assessmentId, assessmentModel);
 
             this._assessments.push(assessmentModel);
 
