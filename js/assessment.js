@@ -36,7 +36,7 @@ define([
             if (assessmentId === undefined) return;
 
             if (!this._getStateByAssessmentId(assessmentId)) {
-                console.warn("assessments: state was not registered when assessment was created");
+                Adapt.log.warn("assessments: state was not registered when assessment was created");
             }
 
             this.saveState();
@@ -154,6 +154,10 @@ define([
         },
 
         _getStateByAssessmentId: function(assessmentId) {
+            if (assessmentId === undefined) {
+                return null;
+            }
+                
             return this._assessments._byAssessmentId[assessmentId].getState();
         },
 
@@ -198,6 +202,22 @@ define([
             }
         },
 
+        _addToAssessmentIdMap: function(id, model) {
+            if (id === undefined) {
+                Adapt.log.warn("An assessment has been registered with an undefined value for '_id'");
+                return;
+            }
+
+            if (id === '') {
+                Adapt.log.warn("An assessment has been registered with an empty value for '_id'");
+            }
+
+            if (!this._assessments._byAssessmentId[id]) {
+                this._assessments._byAssessmentId[id] = model;
+            } else {
+                Adapt.log.warn("An assessment with an _id of '" + id + "' already exists!");
+            }
+        },
 
     //Public functions
 
@@ -209,11 +229,10 @@ define([
             if (this._assessments._byPageId[pageId] === undefined) {
                 this._assessments._byPageId[pageId] = [];
             }
+
             this._assessments._byPageId[pageId].push(assessmentModel);
 
-            if (assessmentId) {
-                this._assessments._byAssessmentId[assessmentId] = assessmentModel;
-            }
+            this._addToAssessmentIdMap(assessmentId, assessmentModel);
 
             this._assessments.push(assessmentModel);
 
