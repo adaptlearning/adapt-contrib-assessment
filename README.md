@@ -39,15 +39,13 @@ With the [Adapt CLI](https://github.com/adaptlearning/adapt-cli) installed, run 
 #### *course.json*  
 The following attributes, set within *course.json*, configure the defaults for all assessments in the course. These attributes can be overridden on a per assessment basis by setting attributes of the same names in *articles.json*.
 
-**_assessment** (object): The Assessment object that contains values for **_scoreToPass**, **_isPercentageBased**, **_postTotalScoreToLms**, and **_requireAssessmentPassed**.
+**_assessment** (object): The Assessment object that contains values for **_scoreToPass**, **_isPercentageBased** and **_postTotalScoreToLms**.
 
 >**_scoreToPass** (integer): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **_isPercentageBased** is set to `true`.
 
 >**_isPercentageBased** (boolean): Determines whether the value of **_scoreToPass** should be treated as a percentage or as the raw score. For example, if **_isPercentageBased** is set to `true`, a **_scoreToPass** value of `60` will be treated as `60%`.
 
 >**_postTotalScoreToLms** (boolean): Specifies whether the total score (as a percentage) should be sent to the LMS. Acceptable values are `true` or `false`.   
-
->**_requireAssessmentPassed** (boolean): Determines if a pass is required for each assessment to be completed.
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
@@ -72,7 +70,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >>**_isEnabled** (boolean): Turns on or off the ability to use question banks.  
 
->>**_split** (string): This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The *position* of the numberal in the list corresponds to the **_quizBankID** assigned to a block. The *value* of the number determines how many questions to retrieve randomly from that particular quiz bank. For example, a **_split** with a value of "2,1" would pick 2 questions from bank 1 (`"_quizBankID": "1"`) and 1 question from bank 2 (`"_quizBankID": "2"`).  
+>>**_split** (string): This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The *position* of the numeral in the list corresponds to the **_quizBankID** assigned to a block. The *value* of the number determines how many questions to retrieve randomly from that particular quiz bank. For example, a **_split** with a value of "2,1" would pick 2 questions from bank 1 (`"_quizBankID": "1"`) and 1 question from bank 2 (`"_quizBankID": "2"`).  
 
 >>**_randomisation** (boolean): Determines whether the questions will be displayed in the same order as the blocks are ordered in *blocks.json* or will be shuffled before they are presented to the learner. Acceptable values are `true` or `false`.
 
@@ -168,8 +166,8 @@ If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://
 **Important:** if targetting IE8, it is recommended to limit each assessment to a maximum of 12 questions. When using question banks, the recommendation is a limit of 32 questions with a maximum of 12 questions drawn. These limits are recommended to help avoid the popup warning "A script on this page is causing Internet Explorer to run slowly". See https://support.microsoft.com/en-gb/kb/175500 for more information.
 
 ----------------------------
-**Version number:**  2.0.10   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
-**Framework versions:** 2.0.15
+**Version number:**  2.1.0   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
+**Framework versions:** 2.1.3
 **Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)    
 **Accessibility support:** WAI AA   
 **RTL support:** yes  

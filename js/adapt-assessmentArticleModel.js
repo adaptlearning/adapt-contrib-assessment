@@ -49,16 +49,6 @@ define([
                     break;
             }
 
-
-            //if assessment passed required and assessment included in total
-            //set attemptsleft to infinite
-            var centralAssessmentState = Adapt.assessment.getState();
-
-            if (assessmentConfig._includeInTotalScore &&
-                centralAssessmentState.requireAssessmentPassed) {
-                attemptsLeft = "infinite";
-            }
-
             this.set({
                 '_currentQuestionComponentIds': [],
                 '_assessmentCompleteInSession': false,
@@ -80,9 +70,12 @@ define([
             //save original children
             this._originalChildModels = this.getChildren().models;
             //collect all question components
-            this._currentQuestionComponents = this.findDescendants("components").where({_isQuestionType: true});
-            var currentQuestionsCollection = new Backbone.Collection(this._currentQuestionComponents);
-            this.set("_currentQuestionComponentIds", currentQuestionsCollection.pluck("_id"));
+            this._currentQuestionComponents = _.filter(this.findDescendantModels("components"), function(comp) {
+                return comp.get('_isQuestionType') === true;
+            });
+            this.set("_currentQuestionComponentIds", _.map(this._currentQuestionComponents, function(comp) {
+                return comp.get("_id");
+            }));
 
             this._setAssessmentOwnershipOnChildrenModels();
 
@@ -142,9 +135,12 @@ define([
 
             this.getChildren().models = quizModels;
 
-            this._currentQuestionComponents = this.findDescendants('components').where({_isQuestionType: true});
-            var currentQuestionsCollection = new Backbone.Collection(this._currentQuestionComponents);
-            this.set("_currentQuestionComponentIds", currentQuestionsCollection.pluck("_id"));
+            this._currentQuestionComponents = _.filter(this.findDescendantModels('components'), function(comp) {
+                return comp.get('_isQuestionType') === true;
+            });
+            this.set("_currentQuestionComponentIds", _.map(this._currentQuestionComponents, function(comp) {
+                return comp.get("_id");
+            }));
 
             var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) || force === true;
 
@@ -155,6 +151,8 @@ define([
 
                     finalise.apply(this);
                 }, this));
+            } else {
+                finalise.apply(this);
             }
 
             function finalise() {
@@ -169,7 +167,7 @@ define([
 
                 Adapt.assessment.saveState();
 
-                if (typeof callback == 'function') callback();
+                if (typeof callback == 'function') callback.apply(this);
             }
         },
 
@@ -234,8 +232,10 @@ define([
 
             var questionModels = _.shuffle(blockModels);
 
-            questionModels = questionModels.slice(0, randomisationModel._blockCount);
-
+            if (randomisationModel._blockCount > 0) {
+                questionModels = questionModels.slice(0, randomisationModel._blockCount);
+            }
+            
             return questionModels;
         },
 
@@ -507,7 +507,9 @@ define([
         _reloadPage: function() {
             this._forceResetOnRevisit = true;
 
-            Backbone.history.navigate("#/id/"+Adapt.location._currentId, { replace:true, trigger: true });
+            _.delay(function() {
+                Backbone.history.navigate("#/id/"+Adapt.location._currentId, { replace:true, trigger: true });
+            }, 250);
         },
 
         _resetQuestions: function(callback) {
@@ -580,6 +582,19 @@ define([
         },
 
         reset: function(force, callback) {
+            
+            if (this._isResetInProgress) {
+                // prevent multiple resets from executing. 
+                // keep callbacks in queue for when current reset is finished
+                this.once("reset", function() {
+                    this._isResetInProgress = false;
+                    if (typeof callback == 'function') {
+                        callback(true);
+                    }
+                });
+                return;
+            }
+            
             var assessmentConfig = this.getConfig();
 
             //check if forcing reset via page revisit or force parameter
@@ -593,7 +608,9 @@ define([
                     !assessmentConfig._isResetOnRevisit && 
                     !isPageReload && 
                     !force) {
-                if (typeof callback == 'function') callback(false);
+                if (typeof callback == 'function') {
+                    callback(false);
+                }
                 return false;
             }
             
@@ -614,13 +631,24 @@ define([
             }
 
             if (!isPageReload) {
-                //only perform this section when not attempting to reload the page
+                // only perform this section when not attempting to reload the page
+                // wait for reset to trigger
+                this.once("reset", function() {
+                    this._isResetInProgress = false;
+                    if (typeof callback == 'function') {
+                        callback(true);
+                    }
+                });
+                this._isResetInProgress = true;
+                // perform asynchronous reset
                 this._setupAssessmentData(force, function() {
-                    if (typeof callback == 'function') callback(true);
+                    this.trigger("reset");
                 });
             } else {
                 this._reloadPage();
-                if (typeof callback == 'function') callback(true);
+                if (typeof callback == 'function') {
+                    callback(true);
+                }
             }
 
             return true;
@@ -635,7 +663,7 @@ define([
 
             if (!banksActive && !randomisationActive) {
                 // include presentation component IDs in save state so that blocks without questions aren't removed
-                this.findDescendants("components").each(function(component) {
+                _.each(this.findDescendantModels("components"), function(component) {
                     var componentModel = {
                         _id: component.get("_id"),
                         _isCorrect: component.get("_isCorrect") === undefined ? null : component.get("_isCorrect")
