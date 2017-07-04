@@ -44,15 +44,6 @@
                   "default": 60,
                   "help": "The minimum score required by the learner to pass the assessment.",
                   "validators": ["number"]
-                },
-                "_requireAssessmentPassed": {
-                  "type": "boolean",
-                  "required": true,
-                  "title": "Require Assessment Pass",
-                  "inputType": "Checkbox",
-                  "default": false,
-                  "help": "If enabled, the learner must pass the assessment. Note: if 'Send Total Score to LMS' is also set to 'true', this will force an infinite number of attempts on any assessment.",
-                  "validators": []
                 }
               }
             }
