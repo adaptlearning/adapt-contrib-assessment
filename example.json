@@ -17,6 +17,7 @@
             "_canShowMarking": false,
             "_canShowModelAnswer": false
         },
+        "_suppressMarking": false,
         "_isPercentageBased" : true,
         "_scoreToPass" : 75,
         "_includeInTotalScore": true,
@@ -34,6 +35,5 @@
     "_assessment": {
         "_postTotalScoreToLms": true,
         "_isPercentageBased": true,
-        "_scoreToPass": 75,
-        "_requireAssessmentPassed": true
+        "_scoreToPass": 75
     }

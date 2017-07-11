@@ -1,10 +1,10 @@
 define([
-    'coreJS/adapt',
-    'coreViews/articleView',
-    'coreModels/articleModel',
+    'core/js/adapt',
+    'core/js/views/articleView',
+    'core/js/models/articleModel',
     './adapt-assessmentArticleView',
     './adapt-assessmentArticleModel',
-    './assessment',
+    './assessment'
 ], function(Adapt, ArticleView, ArticleModel, AdaptAssessmentArticleView, AdaptAssessmentArticleModel) {
 
     /*  

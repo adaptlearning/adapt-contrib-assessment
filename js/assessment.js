@@ -1,5 +1,5 @@
 define([
-    'coreJS/adapt'
+    'core/js/adapt'
 ], function(Adapt) {
 
     /*
@@ -10,7 +10,6 @@ define([
         "_postTotalScoreToLms": true,
         "_isPercentageBased": true,
         "_scoreToPass": 100,
-        "_requireAssessmentPassed": false,
         "_isDefaultsLoaded": true
     };
 
@@ -26,6 +25,7 @@ define([
         initialize: function() {
             this.listenTo(Adapt, "assessments:complete", this._onAssessmentsComplete);
             this.listenTo(Adapt, "router:location", this._checkResetAssessmentsOnRevisit);
+            this.listenTo(Adapt, "app:dataReady", this._onDataReady);
         },
 
         _onAssessmentsComplete: function(state) {
@@ -36,7 +36,7 @@ define([
             if (assessmentId === undefined) return;
 
             if (!this._getStateByAssessmentId(assessmentId)) {
-                console.warn("assessments: state was not registered when assessment was created");
+                Adapt.log.warn("assessments: state was not registered when assessment was created");
             }
 
             this.saveState();
@@ -74,12 +74,29 @@ define([
             var pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
             if (pageAssessmentModels === undefined) return;
 
+            /*
+                Here we further hijack the router to ensure the asynchronous assessment
+                reset completes before routing completes
+            */
+
+            Adapt.trigger('plugin:beginWait');
+
             for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
                 var pageAssessmentModel = pageAssessmentModels[i];
-                pageAssessmentModel.reset();
+                pageAssessmentModel.reset(false, function() {
+                    // N.B. this callback is asynchronous so [i] may have been incremented
+                    if (i >= l - 1) Adapt.trigger('plugin:endWait');
+                });
             }
 
             this._setPageProgress();
+        },
+
+        _onDataReady: function() {
+            this._assessments = _.extend([], {
+                _byPageId: {},
+                _byAssessmentId: {}
+            });
         },
 
         _checkAssessmentsComplete: function() {
@@ -137,6 +154,10 @@ define([
         },
 
         _getStateByAssessmentId: function(assessmentId) {
+            if (assessmentId === undefined) {
+                return null;
+            }
+                
             return this._assessments._byAssessmentId[assessmentId].getState();
         },
 
@@ -153,8 +174,6 @@ define([
         _setPageProgress: function() {
             //set _subProgressTotal and _subProgressComplete on pages that have assessment progress indicator requirements
             
-            var requireAssessmentPassed = this.getConfig()._requireAssessmentPassed;
-
             for (var k in this._assessments._byPageId) {
 
                 var assessments = this._assessments._byPageId[k];
@@ -165,23 +184,10 @@ define([
                 for (var i = 0, l = assessments.length; i < l; i++) {
                     var assessmentState = assessments[i].getState();
 
-                    var isComplete;
+                    if (assessmentState.includeInTotalScore && !assessmentState.isPass) continue;
 
-                    if (requireAssessmentPassed) {
-                        
-                        if (!assessmentState.includeInTotalScore) {
-                            isComplete = assessmentState.isComplete;
-                        } else if (assessmentState.isPass) {
-                            isComplete = assessmentState.isComplete;
-                        }
-
-                    } else {
-
-                        isComplete = assessmentState.isComplete;
-                    }
-
-                    if ( isComplete ) {
-                        assessmentsPassed+=1; 
+                    if (assessmentState.isComplete) {
+                        assessmentsPassed++; 
                     }
                 }
 
@@ -196,6 +202,22 @@ define([
             }
         },
 
+        _addToAssessmentIdMap: function(id, model) {
+            if (id === undefined) {
+                Adapt.log.warn("An assessment has been registered with an undefined value for '_id'");
+                return;
+            }
+
+            if (id === '') {
+                Adapt.log.warn("An assessment has been registered with an empty value for '_id'");
+            }
+
+            if (!this._assessments._byAssessmentId[id]) {
+                this._assessments._byAssessmentId[id] = model;
+            } else {
+                Adapt.log.warn("An assessment with an _id of '" + id + "' already exists!");
+            }
+        },
 
     //Public functions
 
@@ -207,11 +229,10 @@ define([
             if (this._assessments._byPageId[pageId] === undefined) {
                 this._assessments._byPageId[pageId] = [];
             }
+
             this._assessments._byPageId[pageId].push(assessmentModel);
 
-            if (assessmentId) {
-                this._assessments._byAssessmentId[assessmentId] = assessmentModel;
-            }
+            this._addToAssessmentIdMap(assessmentId, assessmentModel);
 
             this._assessments.push(assessmentModel);
 
@@ -244,7 +265,7 @@ define([
         getConfig: function () {
             var assessmentsConfig = Adapt.course.get("_assessment");
 
-            if (assessmentsConfig && assessmentsConfig._isDefaultLoaded) {
+            if (assessmentsConfig && assessmentsConfig._isDefaultsLoaded) {
                 return assessmentsConfig;
             }
 
@@ -278,7 +299,6 @@ define([
                 totalAssessments++;
                 maxScore += state.maxScore / state.assessmentWeight;
                 score += state.score / state.assessmentWeight;
-                isPass = isPass === false ? false : state.isPass;
             }
 
             var isComplete = assessmentsComplete == totalAssessments;
@@ -286,7 +306,7 @@ define([
             var scoreAsPercent = Math.round((score / maxScore) * 100);
 
             if ((assessmentsConfig._scoreToPass || 100) && isComplete) {
-                if (assessmentsConfig._isPercentageBased || true) {
+                if (assessmentsConfig._isPercentageBased !== false) {
                     if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
                 } else {
                     if (score >= assessmentsConfig._scoreToPass) isPass = true;
@@ -296,7 +316,6 @@ define([
             return {
                 isComplete: isComplete,
                 isPercentageBased: assessmentsConfig._isPercentageBased,
-                requireAssessmentPassed: assessmentsConfig._requireAssessmentPassed,
                 isPass: isPass,
                 scoreAsPercent: scoreAsPercent,
                 maxScore: maxScore,
@@ -304,7 +323,7 @@ define([
                 assessmentsComplete: assessmentsComplete,
                 assessments: totalAssessments
             };
-        },
+        }
 
     }, Backbone.Events);
 
