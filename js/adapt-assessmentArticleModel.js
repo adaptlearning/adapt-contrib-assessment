@@ -763,6 +763,7 @@ define([
                 id: assessmentConfig._id,
                 type: "article-assessment",
                 pageId: this.getParent().get("_id"),
+                articleId: this.get("_id"),
                 isEnabled: assessmentConfig._isEnabled,
                 isComplete: this.get("_isAssessmentComplete"),
                 isPercentageBased: assessmentConfig._isPercentageBased,
