@@ -259,12 +259,7 @@
                   "inputType": "Number",
                   "default": 1,
                   "help": "Used to group blocks of question components into associated banks. This works in conjunction with the 'Split' property when question banks are in use.",
-                  "validators": [
-                    {
-                      "type": "range",
-                      "min": 1
-                    }
-                  ],
+                  "validators": ["number"],
                   "editorAttrs": {
                     "step": 1,
                     "min": 1
