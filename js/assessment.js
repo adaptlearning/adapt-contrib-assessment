@@ -68,22 +68,24 @@ define([
          * Allow navigating to an assessment via the URL.
          */
         _handleRoute: function(plugin, id) {
-            if (plugin === 'assessment' && typeof id !== 'undefined') {
-                // Check the 'id' passed is that of an article.
-                if (!Adapt.findById(id)) {
-                    // The 'id' passed may have been the assessment _id/name, not the article _id.
-                    var assessment = Adapt.assessment._assessments._byAssessmentId[id];
-                    if (assessment) {
-                        // Set 'id' to the article _id.
-                        id = assessment._id;
-                    } else {
-                        Adapt.log.warn('Assessment not found with _id: ' + id);
-                        return;
-                    }
-                }
-
-                Backbone.history.navigate('#/' + id, { trigger: true, replace: true });
+            if (plugin !== 'assessment' || id === undefined) {
+                return;
             }
+
+            // Check the 'id' passed is that of an article.
+            if (!Adapt.findById(id)) {
+                // The 'id' passed may have been the assessment _id/name, not the article _id.
+                var assessment = Adapt.assessment._assessments._byAssessmentId[id];
+                if (assessment) {
+                    // Set 'id' to the article _id.
+                    id = assessment._id;
+                } else {
+                    Adapt.log.warn('Assessment not found with _id: ' + id);
+                    return;
+                }
+            }
+
+            Backbone.history.navigate('#/id/' + id, { trigger: true, replace: true });
         },
 
         _checkResetAssessmentsOnRevisit: function(toObject) {
