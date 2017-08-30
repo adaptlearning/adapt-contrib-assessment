@@ -68,7 +68,7 @@ define([
          * Allow navigating to an assessment via the URL.
          */
         _handleRoute: function(plugin, id) {
-            if (plugin !== 'assessment' || id === undefined) {
+            if (plugin !== 'assessment' && plugin !== 'article-assessment' || id === undefined) {
                 return;
             }
 
@@ -85,7 +85,10 @@ define([
                 }
             }
 
-            Backbone.history.navigate('#/id/' + id, { trigger: true, replace: true });
+            _.defer(function() {
+                // Defer this call so that the router's _canNavigate flag is true.
+                Backbone.history.navigate('#/id/' + id, { trigger: true, replace: true });
+            });
         },
 
         _checkResetAssessmentsOnRevisit: function(toObject) {
