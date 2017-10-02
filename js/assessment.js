@@ -79,15 +79,18 @@ define([
                 reset completes before routing completes
             */
 
-            Adapt.trigger('plugin:beginWait');
+            Adapt.wait.for(function(end) {
 
-            for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
-                var pageAssessmentModel = pageAssessmentModels[i];
-                pageAssessmentModel.reset(false, function() {
-                    // N.B. this callback is asynchronous so [i] may have been incremented
-                    if (i >= l - 1) Adapt.trigger('plugin:endWait');
-                });
-            }
+                for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
+                    var pageAssessmentModel = pageAssessmentModels[i];
+                    pageAssessmentModel.reset(false, function() {
+                        // N.B. this callback is asynchronous so [i] may have been incremented
+                        if (i < l - 1) return;
+                        end();
+                    });
+                }
+
+            });
 
             this._setPageProgress();
         },
