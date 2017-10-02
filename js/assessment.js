@@ -78,17 +78,27 @@ define([
                 Here we further hijack the router to ensure the asynchronous assessment
                 reset completes before routing completes
             */
+            Adapt.wait.for(function resetAllAssessments(allAssessmentHaveReset) {
 
-            Adapt.wait.for(function(end) {
+                var numberOfAssessments = pageAssessmentModels.length;
+                var numberOfResetAssessments = 0;
+                var forceAssessmentReset = false;
 
-                for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
-                    var pageAssessmentModel = pageAssessmentModels[i];
-                    pageAssessmentModel.reset(false, function() {
-                        // N.B. this callback is asynchronous so [i] may have been incremented
-                        if (i < l - 1) return;
-                        end();
+                pageAssessmentModels.forEach(function(model) {
+
+                    model.reset(forceAssessmentReset, function() {
+
+                        numberOfResetAssessments++;
+                        var haveAllModelsReset = (numberOfResetAssessments === numberOfAssessments);
+                        if (!haveAllModelsReset) {
+                            return;
+                        }
+
+                        allAssessmentHaveReset();
+
                     });
-                }
+
+                });
 
             });
 
