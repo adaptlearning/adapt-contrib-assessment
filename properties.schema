@@ -137,6 +137,15 @@
                   "help": "Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page.",
                   "validators": []
                 },
+                "_allowResetIfPassed": {
+                  "type": "boolean",
+                  "required": true,
+                  "default": false,
+                  "title": "allow to retrying on Passed Assessment",
+                  "inputType": "Checkbox",
+                  "help": "Controls whether the assessment allow to be reset even once passed and even if there are attempts remaining.",
+                  "validators": []
+                },
                 "_randomisation": {
                   "type": "object",
                   "required": false,
