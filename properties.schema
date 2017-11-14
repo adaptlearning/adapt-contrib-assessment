@@ -105,7 +105,7 @@
                 },
                 "_includeInTotalScore": {
                   "type": "boolean",
-                  "required": true,
+                  "default": true,
                   "title": "Include in Total Score",
                   "inputType": "Checkbox",
                   "help": "Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to 'Assessment Weight'.",
