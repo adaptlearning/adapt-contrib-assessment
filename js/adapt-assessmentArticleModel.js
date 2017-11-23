@@ -627,7 +627,7 @@ define([
             
             var allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
             //stop resetting if no attempts left and allowResetIfPassed is false
-            if (!this._isAttemptsLeft() && !force && !isAllowResetIfPassed) {
+            if (!this._isAttemptsLeft() && !force && !allowResetIfPassed) {
                 if (typeof callback == 'function') callback(false);
                 return false;
             }
