@@ -141,9 +141,9 @@
                   "type": "boolean",
                   "required": true,
                   "default": false,
-                  "title": "Allow the learner to retry the assessment even if they have already passed it?",
+                  "title": "Allow retry once passed?",
                   "inputType": "Checkbox",
-                  "help": "Controls whether the assessment is allowed to be reset once passed and with attempts remaining.",
+                  "help": "Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining).",
                   "validators": []
                 },
                 "_randomisation": {
