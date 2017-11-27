@@ -20,7 +20,8 @@ define([
         "_assessmentWeight": 1,
         "_isResetOnRevisit": true,
         "_reloadPageOnReset": true,
-        "_attempts": "infinite"
+        "_attempts": "infinite",
+        "_allowResetIfPassed": false
     };
 
     var AssessmentModel = {
@@ -623,9 +624,10 @@ define([
                 this.set({'_attemptsLeft':this.get('_attempts')});
                 this.set({'_attemptsSpent':0});
             }
-
-            //stop resetting if no attempts left
-            if (!this._isAttemptsLeft() && !force) {
+            
+            var allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
+            //stop resetting if no attempts left and allowResetIfPassed is false
+            if (!this._isAttemptsLeft() && !force && !allowResetIfPassed) {
                 if (typeof callback == 'function') callback(false);
                 return false;
             }
@@ -780,6 +782,7 @@ define([
                 attemptInProgress: this.get("_attemptInProgress"),
                 lastAttemptScoreAsPercent: this.get('_lastAttemptScoreAsPercent'),
                 questions: this.get("_questions"),
+                allowResetIfPassed: assessmentConfig._allowResetIfPassed,
                 questionModels: new Backbone.Collection(this._currentQuestionComponents)
             };
 
