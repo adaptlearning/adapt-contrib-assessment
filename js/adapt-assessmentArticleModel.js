@@ -761,6 +761,8 @@ define([
             this.set("_questions", questions);
 
             this._checkIsPass();
+            
+            Adapt.trigger("assessments:restored", this.getState(), this);
         },
 
         getState: function() {
