@@ -374,14 +374,7 @@ define([
             var scoreAsPercent = this.get("_scoreAsPercent");
             var score = this.get("_score");
 
-            var isPass = false;
-            if (score && scoreAsPercent) {
-                if (isPercentageBased) {
-                    isPass = (scoreAsPercent >= scoreToPass) ? true : false;
-                } else {
-                    isPass = (score >= scoreToPass) ? true : false;
-                }
-            }
+            var isPass = isPercentageBased ? scoreAsPercent >= scoreToPass : score >= scoreToPass;
 
             this.set("_isPass", isPass);
         },
