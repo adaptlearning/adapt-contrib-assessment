@@ -96,6 +96,8 @@ The following attributes are appended to a particular article within *articles.j
 
 >**_attempts** (number): Controls the number of attempts available to the user. Any of the following values may be used to indicate an infinite number of attempts: `-1`, `0`, `null`, `undefined`, `"infinite"`.  
 
+>**_allowResetIfPassed** (boolean): Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining). Acceptable values are `true` or `false`.  
+
 <div float align=right><a href="#top">Back to Top</a></div>
 
 #### *blocks.json*  
