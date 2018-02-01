@@ -78,7 +78,7 @@ define([
                 var assessment = Adapt.assessment._assessments._byAssessmentId[id];
                 if (assessment) {
                     // Set 'id' to the article _id.
-                    id = assessment._id;
+                    id = assessment.get('_id');
                 } else {
                     Adapt.log.warn('Assessment not found with _id: ' + id);
                     return;
