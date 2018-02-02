@@ -717,7 +717,7 @@ define([
 
             this.set("_isAssessmentComplete", isComplete);
             this.set("_assessmentCompleteInSession", false);
-            this.set("_attemptsSpent", attemptsSpent );
+            this.set("_attemptsSpent", attemptsSpent);
             this.set("_attemptInProgress", attemptInProgress);
 
             this.set('_attemptsLeft', (attempts === "infinite" ? attempts : attempts - attemptsSpent));
@@ -746,7 +746,7 @@ define([
 
             this.set("_questions", questions);
 
-            this._checkIsPass();
+            if (isComplete) this._checkIsPass();
         },
 
         getState: function() {
