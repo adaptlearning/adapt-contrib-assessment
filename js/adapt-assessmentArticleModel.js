@@ -106,7 +106,12 @@ define([
             var assessmentConfig = this.getConfig();
             var state = this.getState();
             var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass) || force === true;
+            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) || force === true;
 
+            if (shouldResetAssessment || shouldResetQuestions) {
+                Adapt.trigger('assessments:preReset', this.getState(), this);
+            }
+            
             var quizModels;
             if (shouldResetAssessment) {
                 this.set("_numberOfQuestionsAnswered", 0);
@@ -143,8 +148,6 @@ define([
                 return comp.get("_id");
             }));
 
-            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) || force === true;
-
             if (shouldResetAssessment || shouldResetQuestions) {
                 this._resetQuestions(_.bind(function() {
                     this.set("_attemptInProgress", true);
@@ -169,6 +172,10 @@ define([
                 Adapt.assessment.saveState();
 
                 if (typeof callback == 'function') callback.apply(this);
+                
+                if (shouldResetAssessment || shouldResetQuestions) {
+                    Adapt.trigger('assessments:postReset', this.getState(), this);
+                }
             }
         },
 
@@ -747,6 +754,9 @@ define([
             this.set("_questions", questions);
 
             if (isComplete) this._checkIsPass();
+            
+            Adapt.trigger("assessments:restored", this.getState(), this);
+
         },
 
         getState: function() {
