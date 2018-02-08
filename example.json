@@ -21,6 +21,7 @@
         "_isPercentageBased" : true,
         "_scoreToPass" : 75,
         "_includeInTotalScore": true,
+        "_includeInPageProgress": true,
         "_assessmentWeight": 1,
         "_isResetOnRevisit": false,
         "_allowResetIfPassed": false,

@@ -111,6 +111,14 @@
                   "help": "Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to 'Assessment Weight'.",
                   "validators": []
                 },
+                "_includeInPageProgress": {
+                  "type": "boolean",
+                  "default": true,
+                  "title": "Include in Page Progress",
+                  "inputType": "Checkbox",
+                  "help": "Determines if the result from this assessment should be included in any progress display.",
+                  "validators": []
+                },
                 "_assessmentWeight": {
                   "type": "number",
                   "required": false,

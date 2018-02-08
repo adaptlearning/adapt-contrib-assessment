@@ -4,11 +4,11 @@
 It is not a single [question component](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components). It is an extension that provides a score for all the [question components](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components) contained within a single [article](https://github.com/adaptlearning/adapt_framework/wiki/Framework-in-five-minutes#content-structure) and that communicates the score to the LMS if so configured. It does not display results. Results are presented with the [Assessment Results](https://github.com/adaptlearning/adapt-contrib-assessmentResults) component (for the results from a single assessment) or the [Assessment Results Total](https://github.com/adaptlearning/adapt-contrib-assessmentResultsTotal) component (for the results from multiple assessments).
 
 >**Important:**  
->The **Assessment** extension applies to the entire article. Since `_randomisation` may reorder blocks within the article, it is highly recommended to include only question components within the assessment article. 
-> 
+>The **Assessment** extension applies to the entire article. Since `_randomisation` may reorder blocks within the article, it is highly recommended to include only question components within the assessment article.
+>
 > **The Results component must be placed in a separate article, *not* within the assessment article.**
-> 
->Blocks inside an assessment article must contain a question. Any blocks containing only presentation components will not be rendered when the article is restored. 
+>
+>Blocks inside an assessment article must contain a question. Any blocks containing only presentation components will not be rendered when the article is restored.
 
 [Visit the **Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for explanations of key properties and for more information about its functionality such as [restoring state upon revisit](https://github.com/adaptlearning/adapt-contrib-assessment/wiki/Restore-assessment-state).
 
@@ -52,7 +52,7 @@ The following attributes, set within *course.json*, configure the defaults for a
 #### *articles.json*  
 The following attributes are appended to a particular article within *articles.json*. Multiple assessments may be used within a course, but they must be configured in separate articles.
 
-**_assessment** (object): The Assessment object that contains values for **_isEnabled**, **_id**, **_isPercentageBased**, **_scoreToPass**, **_banks**, **_randomisation**,  **_questions**, **_includeInTotalScore**, **_assessmentWeight**, **_isResetOnRevisit**, and **_attempts**.  
+**_assessment** (object): The Assessment object that contains values for **_isEnabled**, **_id**, **_isPercentageBased**, **_scoreToPass**, **_banks**, **_randomisation**,  **_questions**, **_includeInTotalScore**, **_includeInPageProgress**, **_assessmentWeight**, **_isResetOnRevisit**, and **_attempts**.  
 
 >**_isEnabled** (boolean): Turns the assessment on or off. Acceptable values are `true` or `false`.
 
@@ -65,6 +65,8 @@ The following attributes are appended to a particular article within *articles.j
 >**_scoreToPass** (number): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **_isPercentageBased** is set to `true`.    
 
 >**_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to _assessmentWeight.   
+
+>**_includeInPageProgress** (boolean): Determines if the passed/failed status from this assessment should be in the page progress display.    
 
 >**_banks** (object): If **_banks** is enabled, its attributes determine which questions from a series of question banks/buckets will be presented to the learner. Contains values for **_isEnabled**, **_split**, and **_randomisation**.   (Use either **_banks** or **_randomisation**; the value of their **_isEnabled** attributes must be opposite booleans. If **_banks** is enabled, blocks must be organized into questions banks by adding the **_quizBankID** attribute referenced below.)
 
@@ -168,9 +170,9 @@ If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://
 **Important:** if targetting IE8, it is recommended to limit each assessment to a maximum of 12 questions. When using question banks, the recommendation is a limit of 32 questions with a maximum of 12 questions drawn. These limits are recommended to help avoid the popup warning "A script on this page is causing Internet Explorer to run slowly". See https://support.microsoft.com/en-gb/kb/175500 for more information.
 
 ----------------------------
-**Version number:**  2.2.0   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
+**Version number:**  2.2.0   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a>
 **Framework versions:** 2.2+
-**Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors) 
-**Accessibility support:** WAI AA 
-**RTL support:** yes 
-**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, IE11, IE10, IE9, IE8, IE Mobile 11, Safari 10+11 for macOS+iOS, Opera 
+**Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)
+**Accessibility support:** WAI AA
+**RTL support:** yes
+**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, IE11, IE10, IE9, IE8, IE Mobile 11, Safari 10+11 for macOS+iOS, Opera

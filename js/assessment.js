@@ -92,8 +92,8 @@ define([
         },
 
         _checkResetAssessmentsOnRevisit: function(toObject) {
-            /* 
-                Here we hijack router:location to reorganise the assessment blocks 
+            /*
+                Here we hijack router:location to reorganise the assessment blocks
                 this must happen before trickle listens to block completion
             */
             if (toObject._contentType !== "page") return;
@@ -165,11 +165,11 @@ define([
             });
             Adapt.course.set("_assessment", assessmentsConfig);
         },
-        
+
         _postScoreToLms: function() {
             var assessmentsConfig = this.getConfig();
             if (assessmentsConfig._postTotalScoreToLms === false) return;
-            
+
             var completionState = this.getState();
             //post completion to spoor
             _.defer(function() {
@@ -185,7 +185,7 @@ define([
             if (assessmentId === undefined) {
                 return null;
             }
-                
+
             return this._assessments._byAssessmentId[assessmentId].getState();
         },
 
@@ -201,7 +201,7 @@ define([
 
         _setPageProgress: function() {
             //set _subProgressTotal and _subProgressComplete on pages that have assessment progress indicator requirements
-            
+
             for (var k in this._assessments._byPageId) {
 
                 var assessments = this._assessments._byPageId[k];
@@ -212,10 +212,10 @@ define([
                 for (var i = 0, l = assessments.length; i < l; i++) {
                     var assessmentState = assessments[i].getState();
 
-                    if (assessmentState.includeInTotalScore && !assessmentState.isPass) continue;
+                    if (assessmentState.includeInPageProgress && assessmentState.includeInTotalScore && !assessmentState.isPass) continue;
 
                     if (assessmentState.isComplete) {
-                        assessmentsPassed++; 
+                        assessmentsPassed++;
                     }
                 }
 
@@ -307,7 +307,7 @@ define([
 
             return assessmentsConfig;
         },
-        
+
         getState: function() {
             var assessmentsConfig = this.getConfig();
 
@@ -330,7 +330,7 @@ define([
             }
 
             var isComplete = assessmentsComplete == totalAssessments;
-            
+
             var scoreAsPercent = Math.round((score / maxScore) * 100);
 
             if ((assessmentsConfig._scoreToPass || 100) && isComplete) {
