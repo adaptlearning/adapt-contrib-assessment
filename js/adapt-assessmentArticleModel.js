@@ -785,6 +785,7 @@ define([
                 attemptInProgress: this.get("_attemptInProgress"),
                 lastAttemptScoreAsPercent: this.get('_lastAttemptScoreAsPercent'),
                 questions: this.get("_questions"),
+                resetType: assessmentConfig._questions._resetType,
                 allowResetIfPassed: assessmentConfig._allowResetIfPassed,
                 questionModels: new Backbone.Collection(this._currentQuestionComponents)
             };
