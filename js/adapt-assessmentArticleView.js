@@ -31,12 +31,6 @@ define([
         },
 
         setupQuestionNumbering: function() {
-
-            // var currentArticle = this.model.get('_id');
-            // var currentAssessment =  Adapt.assessment.get().filter(function(assessment) {
-            //     return assessment.attributes._id = currentArticle;
-            // })[0];
-
             Handlebars.registerHelper("questionNumber", function getQuestionNumber() {
                 var currentArticle = this._parent.attributes._parentId;
                 var currentAssessment =  Adapt.assessment.get().filter(function(assessment) {
