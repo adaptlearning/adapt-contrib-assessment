@@ -32,17 +32,25 @@ define([
 
         setupQuestionNumbering: function() {
 
-            var currentArticle = this.model.get('_id');
-            var currentAssessment =  Adapt.assessment.get().filter(function(assessment) {
-                return assessment.attributes._id = currentArticle;
-            })[0];
+            // var currentArticle = this.model.get('_id');
+            // var currentAssessment =  Adapt.assessment.get().filter(function(assessment) {
+            //     return assessment.attributes._id = currentArticle;
+            // })[0];
 
             Handlebars.registerHelper("questionNumber", function getQuestionNumber() {
+                var currentArticle = this._parent.attributes._parentId;
+                var currentAssessment =  Adapt.assessment.get().filter(function(assessment) {
+                    return assessment.attributes._id === currentArticle;
+                })[0];
                 var questionComponents = currentAssessment._currentQuestionComponents;
                 return questionComponents.indexOf(Adapt.findById(this._id)) + 1;
             });
 
             Handlebars.registerHelper("totalQuestions", function getTotalQuestions() {
+                var currentArticle = this._parent.attributes._parentId
+                var currentAssessment =  Adapt.assessment.get().filter(function(assessment) {
+                    return assessment.attributes._id === currentArticle;
+                })[0];
                 var questionComponents = currentAssessment._currentQuestionComponents;
                 return questionComponents.length;
             });
