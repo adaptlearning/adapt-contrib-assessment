@@ -15,6 +15,7 @@ define([
                     this.$el.addClass('no-marking');
                 }
             }
+            this.setupQuestionNumbering();
             this.$el.addClass('assessment');
         },
 
@@ -27,6 +28,24 @@ define([
         _removeEventListeners: function() {
             this.stopListening(Adapt, "assessments:complete", this._onAssessmentComplete);
             this.stopListening(Adapt, "assessments:reset", this._onAssessmentReset);
+        },
+
+        setupQuestionNumbering: function() {
+
+            var currentArticle = this.model.get('_id');
+            var currentAssessment =  Adapt.assessment.get().filter(function(assessment) {
+                return assessment.attributes._id = currentArticle;
+            })[0];
+
+            Handlebars.registerHelper("questionNumber", function getQuestionNumber() {
+                var questionComponents = currentAssessment._currentQuestionComponents;
+                return questionComponents.indexOf(Adapt.findById(this._id)) + 1;
+            });
+
+            Handlebars.registerHelper("totalQuestions", function getTotalQuestions() {
+                var questionComponents = currentAssessment._currentQuestionComponents;
+                return questionComponents.length;
+            });
         },
 
         _onAssessmentComplete: function(state, model) {
