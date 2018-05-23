@@ -15,7 +15,6 @@ define([
                     this.$el.addClass('no-marking');
                 }
             }
-            this._setupQuestionNumbering();
             this.$el.addClass('assessment');
         },
 
@@ -28,26 +27,6 @@ define([
         _removeEventListeners: function() {
             this.stopListening(Adapt, "assessments:complete", this._onAssessmentComplete);
             this.stopListening(Adapt, "assessments:reset", this._onAssessmentReset);
-        },
-
-        _setupQuestionNumbering: function() {
-            var getRelatedQuestions = function(model) {
-                var currentAssessmentId = model.get('_assessmentId');
-                var currentAssessment =  Adapt.assessment.get(currentAssessmentId);
-                return currentAssessment.getState().questionModels;
-            }
-
-            Handlebars.registerHelper("questionNumber", function getQuestionNumber() {
-                var model = this.view.model;
-                if (!model.get('_isPartOfAssessment')) return;
-                return getRelatedQuestions(model).indexOf(model) + 1;
-            });
-
-            Handlebars.registerHelper("questionCount", function getTotalQuestions() {
-                var model = this.view.model;
-                if (!model.get('_isPartOfAssessment')) return;
-                return getRelatedQuestions(model).length;
-            });
         },
 
         _onAssessmentComplete: function(state, model) {
