@@ -85,15 +85,15 @@ define([
         _setAssessmentOwnershipOnChildrenModels: function() {
             //mark all children components as belonging to an assessment
             var assessmentConfig = this.get('_assessment');
-            var blockModelConfig = {
+            var childConfig = {
                 _isPartOfAssessment: true,
                 _assessmentId: assessmentConfig._id
-            }
+            };
             for (var i = 0, l = this._originalChildModels.length; i < l; i++) {
                 var blockModel = this._originalChildModels[i];
-                blockModel.set(blockModelConfig);
+                blockModel.set(childConfig);
                 //make sure components are set to _isPartOfAssessment for plp checking
-                blockModel.setOnChildren(blockModelConfig);
+                blockModel.setOnChildren(childConfig);
             }
         },
 
