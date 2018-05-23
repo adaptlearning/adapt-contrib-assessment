@@ -84,14 +84,17 @@ define([
 
         _setAssessmentOwnershipOnChildrenModels: function() {
             //mark all children components as belonging to an assessment
+            var assessmentConfig = this.get('_assessment');
             for (var i = 0, l = this._originalChildModels.length; i < l; i++) {
                 var blockModel = this._originalChildModels[i];
                 blockModel.set({
-                    _isPartOfAssessment: true
+                    _isPartOfAssessment: true,
+                    _assessmentId: assessmentConfig._id
                 });
                 //make sure components are set to _isPartOfAssessment for plp checking
                 blockModel.setOnChildren({
-                    _isPartOfAssessment: true
+                    _isPartOfAssessment: true,
+                    _assessmentId: assessmentConfig._id
                 });
             }
         },
@@ -111,7 +114,7 @@ define([
             if (shouldResetAssessment || shouldResetQuestions) {
                 Adapt.trigger('assessments:preReset', this.getState(), this);
             }
-            
+
             var quizModels;
             if (shouldResetAssessment) {
                 this.set("_numberOfQuestionsAnswered", 0);
@@ -163,7 +166,7 @@ define([
                 if (!state.isComplete) {
                     this.set("_attemptInProgress", true);
                 }
-                
+
                 this._overrideQuestionComponentSettings();
                 this._setupQuestionListeners();
                 this._checkNumberOfQuestionsAnswered();
@@ -172,7 +175,7 @@ define([
                 Adapt.assessment.saveState();
 
                 if (typeof callback == 'function') callback.apply(this);
-                
+
                 if (shouldResetAssessment || shouldResetQuestions) {
                     Adapt.trigger('assessments:postReset', this.getState(), this);
                 }
@@ -213,8 +216,8 @@ define([
             for (var i = 0, l = banks.length; i < l; i++) {
                 var bank = banks[i];
                 bankId = (i+1);
-                var questionBank = new QuestionBank(bankId, 
-                                                this.get("_id"), 
+                var questionBank = new QuestionBank(bankId,
+                                                this.get("_id"),
                                                 bank,
                                                 true);
 
@@ -243,7 +246,7 @@ define([
             if (randomisationModel._blockCount > 0) {
                 questionModels = questionModels.slice(0, randomisationModel._blockCount);
             }
-            
+
             return questionModels;
         },
 
@@ -286,6 +289,7 @@ define([
 
         _removeQuestionListeners: function() {
             var questionComponents = this._currentQuestionComponents;
+            if (!questionComponents) return;
             for (var i = 0, l = questionComponents.length; i < l; i++) {
                 var question = questionComponents[i];
                 this.stopListening(question, 'change:_isInteractionComplete', this._onQuestionCompleted);
@@ -385,7 +389,7 @@ define([
 
             this.set("_isPass", isPass);
         },
-        
+
         _getMarkingSettings: function() {
             var markingSettings = {};
 
@@ -583,9 +587,9 @@ define([
         },
 
         reset: function(force, callback) {
-            
+
             if (this._isResetInProgress) {
-                // prevent multiple resets from executing. 
+                // prevent multiple resets from executing.
                 // keep callbacks in queue for when current reset is finished
                 this.once("reset", function() {
                     this._isResetInProgress = false;
@@ -595,7 +599,7 @@ define([
                 });
                 return;
             }
-            
+
             var assessmentConfig = this.getConfig();
 
             //check if forcing reset via page revisit or force parameter
@@ -605,16 +609,16 @@ define([
             var isPageReload = this._checkReloadPage();
 
             //stop resetting if not complete or not allowed
-            if (this.get("_assessmentCompleteInSession") && 
-                    !assessmentConfig._isResetOnRevisit && 
-                    !isPageReload && 
+            if (this.get("_assessmentCompleteInSession") &&
+                    !assessmentConfig._isResetOnRevisit &&
+                    !isPageReload &&
                     !force) {
                 if (typeof callback == 'function') {
                     callback(false);
                 }
                 return false;
             }
-            
+
             //check if new session and questions not restored
             var wereQuestionsRestored = this._checkIfQuestionsWereRestored();
             force = force || wereQuestionsRestored;
@@ -624,7 +628,7 @@ define([
                 this.set({'_attemptsLeft':this.get('_attempts')});
                 this.set({'_attemptsSpent':0});
             }
-            
+
             var allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
             //stop resetting if no attempts left and allowResetIfPassed is false
             if (!this._isAttemptsLeft() && !force && !allowResetIfPassed) {
@@ -672,7 +676,7 @@ define([
                     };
 
                     indexByIdQuestions.push(componentModel);
-                    
+
                 });
 
                 indexByIdQuestions = _.indexBy(indexByIdQuestions, "_id");
@@ -754,7 +758,7 @@ define([
             this.set("_questions", questions);
 
             if (isComplete) this._checkIsPass();
-            
+
             Adapt.trigger("assessments:restored", this.getState(), this);
 
         },

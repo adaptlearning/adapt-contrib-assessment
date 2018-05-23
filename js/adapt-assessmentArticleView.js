@@ -15,7 +15,7 @@ define([
                     this.$el.addClass('no-marking');
                 }
             }
-            this.setupQuestionNumbering();
+            this._setupQuestionNumbering();
             this.$el.addClass('assessment');
         },
 
@@ -30,23 +30,23 @@ define([
             this.stopListening(Adapt, "assessments:reset", this._onAssessmentReset);
         },
 
-        setupQuestionNumbering: function() {
+        _setupQuestionNumbering: function() {
+            var getRelatedQuestions = function(model) {
+                var currentAssessmentId = model.get('_assessmentId');
+                var currentAssessment =  Adapt.assessment.get(currentAssessmentId);
+                return currentAssessment.getState().questionModels;
+            }
+
             Handlebars.registerHelper("questionNumber", function getQuestionNumber() {
-                var currentArticle = this._parent.attributes._parentId;
-                var currentAssessment =  Adapt.assessment.get().filter(function(assessment) {
-                    return assessment.attributes._id === currentArticle;
-                })[0];
-                var questionComponents = currentAssessment._currentQuestionComponents;
-                return questionComponents.indexOf(Adapt.findById(this._id)) + 1;
+                var model = this.view.model;
+                if (!model.get('_isPartOfAssessment')) return;
+                return getRelatedQuestions(model).indexOf(model) + 1;
             });
 
-            Handlebars.registerHelper("totalQuestions", function getTotalQuestions() {
-                var currentArticle = this._parent.attributes._parentId
-                var currentAssessment =  Adapt.assessment.get().filter(function(assessment) {
-                    return assessment.attributes._id === currentArticle;
-                })[0];
-                var questionComponents = currentAssessment._currentQuestionComponents;
-                return questionComponents.length;
+            Handlebars.registerHelper("questionCount", function getTotalQuestions() {
+                var model = this.view.model;
+                if (!model.get('_isPartOfAssessment')) return;
+                return getRelatedQuestions(model).length;
             });
         },
 
