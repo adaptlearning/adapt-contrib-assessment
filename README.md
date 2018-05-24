@@ -107,6 +107,16 @@ The following attributes are appended to a particular article within *articles.j
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
+#### *components.json*
+
+**Numbering randomised questions**
+
+Two Handlebars Helpers are provided if you wish to have randomised questions named in sequential order. These can be used in the question's displayTitle in components.json.
+
+`"displayTitle": "Question {{question_number}} of {{question_count}}"`
+
+
+
 ### Events
 
 **assessments:register**   
