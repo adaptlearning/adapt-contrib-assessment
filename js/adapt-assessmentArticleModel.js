@@ -106,7 +106,7 @@ define([
             var assessmentConfig = this.getConfig();
             var state = this.getState();
             var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass) || force === true;
-            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) || force === true;
+            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit && (state.allowResetIfPassed || !state.isPass)) || force === true;
 
             if (shouldResetAssessment || shouldResetQuestions) {
                 Adapt.trigger('assessments:preReset', this.getState(), this);
