@@ -23,6 +23,7 @@
         "_includeInTotalScore": true,
         "_assessmentWeight": 1,
         "_isResetOnRevisit": false,
+        "_allowResetIfPassed": false,
         "_attempts": 2
     }
 

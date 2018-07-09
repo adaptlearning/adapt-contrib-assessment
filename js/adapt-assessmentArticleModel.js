@@ -20,7 +20,8 @@ define([
         "_assessmentWeight": 1,
         "_isResetOnRevisit": true,
         "_reloadPageOnReset": true,
-        "_attempts": "infinite"
+        "_attempts": "infinite",
+        "_allowResetIfPassed": false
     };
 
     var AssessmentModel = {
@@ -105,7 +106,12 @@ define([
             var assessmentConfig = this.getConfig();
             var state = this.getState();
             var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass) || force === true;
+            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit && (state.allowResetIfPassed || !state.isPass)) || force === true;
 
+            if (shouldResetAssessment || shouldResetQuestions) {
+                Adapt.trigger('assessments:preReset', this.getState(), this);
+            }
+            
             var quizModels;
             if (shouldResetAssessment) {
                 this.set("_numberOfQuestionsAnswered", 0);
@@ -142,8 +148,6 @@ define([
                 return comp.get("_id");
             }));
 
-            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit !== false && !state.isPass) || force === true;
-
             if (shouldResetAssessment || shouldResetQuestions) {
                 this._resetQuestions(_.bind(function() {
                     this.set("_attemptInProgress", true);
@@ -168,6 +172,10 @@ define([
                 Adapt.assessment.saveState();
 
                 if (typeof callback == 'function') callback.apply(this);
+                
+                if (shouldResetAssessment || shouldResetQuestions) {
+                    Adapt.trigger('assessments:postReset', this.getState(), this);
+                }
             }
         },
 
@@ -373,14 +381,7 @@ define([
             var scoreAsPercent = this.get("_scoreAsPercent");
             var score = this.get("_score");
 
-            var isPass = false;
-            if (score && scoreAsPercent) {
-                if (isPercentageBased) {
-                    isPass = (scoreAsPercent >= scoreToPass) ? true : false;
-                } else {
-                    isPass = (score >= scoreToPass) ? true : false;
-                }
-            }
+            var isPass = isPercentageBased ? (scoreAsPercent >= scoreToPass) : (score >= scoreToPass);
 
             this.set("_isPass", isPass);
         },
@@ -623,9 +624,10 @@ define([
                 this.set({'_attemptsLeft':this.get('_attempts')});
                 this.set({'_attemptsSpent':0});
             }
-
-            //stop resetting if no attempts left
-            if (!this._isAttemptsLeft() && !force) {
+            
+            var allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
+            //stop resetting if no attempts left and allowResetIfPassed is false
+            if (!this._isAttemptsLeft() && !force && !allowResetIfPassed) {
                 if (typeof callback == 'function') callback(false);
                 return false;
             }
@@ -722,7 +724,7 @@ define([
 
             this.set("_isAssessmentComplete", isComplete);
             this.set("_assessmentCompleteInSession", false);
-            this.set("_attemptsSpent", attemptsSpent );
+            this.set("_attemptsSpent", attemptsSpent);
             this.set("_attemptInProgress", attemptInProgress);
 
             this.set('_attemptsLeft', (attempts === "infinite" ? attempts : attempts - attemptsSpent));
@@ -751,7 +753,10 @@ define([
 
             this.set("_questions", questions);
 
-            this._checkIsPass();
+            if (isComplete) this._checkIsPass();
+            
+            Adapt.trigger("assessments:restored", this.getState(), this);
+
         },
 
         getState: function() {
@@ -780,6 +785,8 @@ define([
                 attemptInProgress: this.get("_attemptInProgress"),
                 lastAttemptScoreAsPercent: this.get('_lastAttemptScoreAsPercent'),
                 questions: this.get("_questions"),
+                resetType: assessmentConfig._questions._resetType,
+                allowResetIfPassed: assessmentConfig._allowResetIfPassed,
                 questionModels: new Backbone.Collection(this._currentQuestionComponents)
             };
 

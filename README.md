@@ -66,7 +66,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >**_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to _assessmentWeight.   
 
->**_banks** (object): If **_banks** is enabled, its attributes determine which questions from a series of question banks/buckets will be presented to the learner. Contains values for **_isEnabled**, **_split**, and **_randomisation**.   (Use either **_banks** or **_randomisation**; the value of their **_isEnabled** attributes must be opposite booleans. If **_banks** is enabled, blocks must be organized into questions banks by adding the **_quizBankID** attribute referenced below.)
+>**_banks** (object): If **_banks** is enabled, its attributes determine which questions from a series of question banks/buckets will be presented to the learner. Contains values for **_isEnabled**, **_split**, and **_randomisation**.   (Use either **_banks** or **_randomisation**; the value of their **_isEnabled** attributes must be opposite booleans. If **_banks** is enabled, blocks must be organized into questions banks by adding the **_quizBankID** attribute referenced below. You must also have at least two banks; if you only have one bank of questions then the **_randomisation** functionality is likely to be more appropriate to your needs).
 
 >>**_isEnabled** (boolean): Turns on or off the ability to use question banks.  
 
@@ -95,6 +95,8 @@ The following attributes are appended to a particular article within *articles.j
 >**_isResetOnRevisit** (boolean): Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page. Acceptable values are `true` or `false`.   
 
 >**_attempts** (number): Controls the number of attempts available to the user. Any of the following values may be used to indicate an infinite number of attempts: `-1`, `0`, `null`, `undefined`, `"infinite"`.  
+
+>**_allowResetIfPassed** (boolean): Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining). Acceptable values are `true` or `false`.  
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
@@ -166,9 +168,9 @@ If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://
 **Important:** if targetting IE8, it is recommended to limit each assessment to a maximum of 12 questions. When using question banks, the recommendation is a limit of 32 questions with a maximum of 12 questions drawn. These limits are recommended to help avoid the popup warning "A script on this page is causing Internet Explorer to run slowly". See https://support.microsoft.com/en-gb/kb/175500 for more information.
 
 ----------------------------
-**Version number:**  2.1.2   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
-**Framework versions:** 2.2
-**Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)    
-**Accessibility support:** WAI AA   
-**RTL support:** yes  
-**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge 12, IE 11, IE10, IE9, IE8, IE Mobile 11, Safari iOS 9+10, Safari OS X 9+10, Opera    
+**Version number:**  2.2.0   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
+**Framework versions:** 2.2+
+**Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors) 
+**Accessibility support:** WAI AA 
+**RTL support:** yes 
+**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, IE11, IE10, IE9, IE8, IE Mobile 11, Safari 10+11 for macOS+iOS, Opera 
