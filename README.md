@@ -52,7 +52,7 @@ The following attributes, set within *course.json*, configure the defaults for a
 #### *articles.json*  
 The following attributes are appended to a particular article within *articles.json*. Multiple assessments may be used within a course, but they must be configured in separate articles.
 
-**_assessment** (object): The Assessment object that contains values for **_isEnabled**, **_id**, **_isPercentageBased**, **_scoreToPass**, **_banks**, **_randomisation**,  **_questions**, **_includeInTotalScore**, **_assessmentWeight**, **_isResetOnRevisit**, and **_attempts**.  
+**_assessment** (object): The Assessment object that contains values for **_isEnabled**, **_id**, **_isPercentageBased**, **_scoreToPass**, **_banks**, **_randomisation**,  **_questions**, **_includeInTotalScore**, **_assessmentWeight**, **_isResetOnRevisit**, **_isResetIfFailed** and **_attempts**.  
 
 >**_isEnabled** (boolean): Turns the assessment on or off. Acceptable values are `true` or `false`.
 
@@ -92,7 +92,9 @@ The following attributes are appended to a particular article within *articles.j
 
 >**_assessmentWeight** (number): If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100%.    
 
->**_isResetOnRevisit** (boolean): Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page. Acceptable values are `true` or `false`.   
+>**_isResetOnRevisit** (boolean): Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page. Acceptable values are `true` or `false`.
+
+>**_isResetIfFailed** (boolean): Controls whether the assessment should be reset automatically (up to the number of available attempts) if a previous attempt (in a previous session) has failed. Acceptable values are `true` or `false`. Note: This is only applicable in stateful systems.
 
 >**_attempts** (number): Controls the number of attempts available to the user. Any of the following values may be used to indicate an infinite number of attempts: `-1`, `0`, `null`, `undefined`, `"infinite"`.  
 

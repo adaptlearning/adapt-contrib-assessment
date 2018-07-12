@@ -137,6 +137,15 @@
                   "help": "Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page.",
                   "validators": []
                 },
+                "_isResetIfFailed": {
+                  "type": "boolean",
+                  "required": true,
+                  "default": false,
+                  "title": "Reset if Failed",
+                  "inputType": "Checkbox",
+                  "help": "Controls whether the assessment should be reset automatically (up to the number of available attempts) if a previous attempt (in a previous session) has failed. Note: This is only applicable in stateful systems.",
+                  "validators": []
+                },
                 "_allowResetIfPassed": {
                   "type": "boolean",
                   "required": true,
