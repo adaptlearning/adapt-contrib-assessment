@@ -19,6 +19,7 @@ define([
         "_includeInTotalScore": true,
         "_assessmentWeight": 1,
         "_isResetOnRevisit": true,
+        "_isResetIfFailed": true,
         "_reloadPageOnReset": true,
         "_attempts": "infinite",
         "_allowResetIfPassed": false
@@ -105,8 +106,9 @@ define([
         _setupAssessmentData: function(force, callback) {
             var assessmentConfig = this.getConfig();
             var state = this.getState();
-            var shouldResetAssessment = (!this.get("_attemptInProgress") && !state.isPass) || force === true;
-            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit && (state.allowResetIfPassed || !state.isPass)) || force === true;
+
+            var shouldResetAssessment = (!this.get("_attemptInProgress") && (assessmentConfig._isResetIfFailed && !state.isPass)) || force === true;
+            var shouldResetQuestions = (assessmentConfig._isResetOnRevisit && (assessmentConfig._isResetIfFailed && (state.allowResetIfPassed || !state.isPass))) || force === true;
 
             if (shouldResetAssessment || shouldResetQuestions) {
                 Adapt.trigger('assessments:preReset', this.getState(), this);
@@ -785,7 +787,6 @@ define([
                 attemptInProgress: this.get("_attemptInProgress"),
                 lastAttemptScoreAsPercent: this.get('_lastAttemptScoreAsPercent'),
                 questions: this.get("_questions"),
-                resetType: assessmentConfig._questions._resetType,
                 allowResetIfPassed: assessmentConfig._allowResetIfPassed,
                 questionModels: new Backbone.Collection(this._currentQuestionComponents)
             };
