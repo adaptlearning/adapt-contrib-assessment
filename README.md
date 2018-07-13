@@ -111,9 +111,7 @@ The following attributes are appended to a particular article within *articles.j
 
 **Numbering randomised questions**
 
-Two Handlebars Helpers are provided if you wish to have randomised questions named in sequential order. These can be used in the question's displayTitle in components.json.
-
-`"displayTitle": "Question {{question_number}} of {{question_count}}"`
+If you need to display sequential question numbers within the component title when the questions are presented in a random order, the variables `{{questionNumber}}` and `{{questionCount}}` can be used within the `displayTitle` & `title` text.
 
 
 
