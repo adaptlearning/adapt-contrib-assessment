@@ -22,7 +22,7 @@
         "_scoreToPass" : 75,
         "_includeInTotalScore": true,
         "_assessmentWeight": 1,
-        "_isResetOnRevisit": false,
+        "_isResetOnRevisit": true,
         "_isResetIfFailed": true,
         "_allowResetIfPassed": false,
         "_attempts": 2
