@@ -248,28 +248,25 @@ define([
         },
 
         _setupQuestionNumbering: function() {
-            var getRelatedQuestions = function(model) {
-                var currentAssessmentId = model._assessmentId;
+            var getRelatedQuestions = function(data) {
+                var currentAssessmentId = data._assessmentId;
                 var currentAssessment =  Adapt.assessment.get(currentAssessmentId);
                 return currentAssessment.getState().questionModels;
             };
 
             Handlebars.registerHelper("questionNumber", function getQuestionNumber() {
-                var model = this.view ? this.view.model.attributes : this;
-                if (!model._isPartOfAssessment) return;
+                var data = this.view ? this.view.model.toJSON() : this;
+                if (!data._isPartOfAssessment) return;
                 
-                var related = getRelatedQuestions(model)
-                    .map(function(question) {
-                        return question.attributes._id;
-                    })
+                var related = getRelatedQuestions(data).pluck('_id')
 
-                return related.indexOf(model._id) + 1;
+                return related.indexOf(data._id) + 1;
             });
 
             Handlebars.registerHelper("questionCount", function getTotalQuestions() {
-                var model = this.view ? this.view.model.attributes : this;
-                if (!model._isPartOfAssessment) return;
-                return getRelatedQuestions(model).length;
+                var data = this.view ? this.view.model.toJSON() : this;
+                if (!data._isPartOfAssessment) return;
+                return getRelatedQuestions(data).length;
             });
         },
 
