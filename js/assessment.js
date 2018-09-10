@@ -21,12 +21,14 @@ define([
             _byPageId: {},
             _byAssessmentId: {}
         }),
-
+        
         initialize: function() {
-            this.listenTo(Adapt, "assessments:complete", this._onAssessmentsComplete);
-            this.listenTo(Adapt, "router:location", this._checkResetAssessmentsOnRevisit);
-            this.listenTo(Adapt, "router:plugin", this._handleRoute);
-            this.listenTo(Adapt, "app:dataReady", this._onDataReady);
+            this.listenTo(Adapt, {
+                "assessments:complete": this._onAssessmentsComplete, 
+                "router:location": this._checkResetAssessmentsOnRevisit,
+                "router:plugin": this._handleRoute,
+                "app:dataReady": this._onDataReady
+            });
         },
 
         _onAssessmentsComplete: function(state) {
@@ -45,8 +47,6 @@ define([
             this._setPageProgress();
 
             this._checkAssessmentsComplete();
-
-            //need to add spoor assessment state saving
 
         },
 
@@ -106,16 +106,29 @@ define([
                 Here we further hijack the router to ensure the asynchronous assessment
                 reset completes before routing completes
             */
+            Adapt.wait.for(function resetAllAssessments(allAssessmentHaveReset) {
 
-            Adapt.trigger('plugin:beginWait');
+                var numberOfAssessments = pageAssessmentModels.length;
+                var numberOfResetAssessments = 0;
+                var forceAssessmentReset = false;
 
-            for (var i = 0, l = pageAssessmentModels.length; i < l; i++) {
-                var pageAssessmentModel = pageAssessmentModels[i];
-                pageAssessmentModel.reset(false, function() {
-                    // N.B. this callback is asynchronous so [i] may have been incremented
-                    if (i >= l - 1) Adapt.trigger('plugin:endWait');
+                pageAssessmentModels.forEach(function(model) {
+
+                    model.reset(forceAssessmentReset, function() {
+
+                        numberOfResetAssessments++;
+                        var haveAllModelsReset = (numberOfResetAssessments === numberOfAssessments);
+                        if (!haveAllModelsReset) {
+                            return;
+                        }
+
+                        allAssessmentHaveReset();
+
+                    });
+
                 });
-            }
+
+            });
 
             this._setPageProgress();
         },
