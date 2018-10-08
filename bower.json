@@ -1,7 +1,7 @@
 {
   "name": "adapt-contrib-assessment",
   "version": "2.2.0",
-  "framework": ">=2.2",
+  "framework": ">=3",
   "homepage": "https://github.com/adaptlearning/adapt-contrib-assessment",
   "issues": "https://github.com/adaptlearning/adapt_framework/issues/new",
   "displayName" : "Assessment",
