@@ -32,6 +32,9 @@
         "_quizBankID": 1
     }
 
+    //components
+    "displayTitle": "Question {{question_number}} of {{question_count}}"
+
     //course.json
     "_assessment": {
         "_postTotalScoreToLms": true,

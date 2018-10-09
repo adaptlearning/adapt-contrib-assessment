@@ -107,6 +107,14 @@ The following attributes are appended to a particular article within *articles.j
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
+#### *components.json*
+
+**Numbering randomised questions**
+
+If you need to display sequential question numbers within the component title when the questions are presented in a random order, the variables `{{questionNumber}}` and `{{questionCount}}` can be used within the `displayTitle` & `title` text.
+
+
+
 ### Events
 
 **assessments:register**   
