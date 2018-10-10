@@ -667,7 +667,7 @@ define([
 
             if (!banksActive && !randomisationActive) {
                 // include presentation component IDs in save state so that blocks without questions aren't removed
-                _.each(this.findDescendantModels('components'), function(component) {
+                this.findDescendantModels('components').forEach(function(component) {
                     var componentModel = {
                         _id: component.get('_id'),
                         _isCorrect: component.get('_isCorrect') === undefined ? null : component.get('_isCorrect')
