@@ -7,11 +7,11 @@ define([
     './assessment'
 ], function(Adapt, ArticleView, ArticleModel, AdaptAssessmentArticleView, AdaptAssessmentArticleModel) {
 
-    /*  
+    /*
         Here we are extending the articleView and articleModel in Adapt.
         This is to accomodate the assessment functionality on the article.
         The advantage of this method is that the assessment behaviour can utilize all of the predefined article behaviour in both the view and the model.
-    */  
+    */
 
     //Extends core/js/views/articleView.js
     var ArticleViewInitialize = ArticleView.prototype.initialize;

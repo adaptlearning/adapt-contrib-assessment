@@ -1,5 +1,5 @@
 define(function(require) {
-    
+
     var QuestionBank = function(quizBankid, articleId, numQuestionBlocks, uniqueQuestions) {
 
         this._id = quizBankid;
@@ -39,13 +39,13 @@ define(function(require) {
                     questionBlocks.push(question);
                 }
             }
-                
+
             return questionBlocks;
         },
 
         checkResetUnunsedBlocks: function() {
             if (this.unUsedQuestionBlocks !== undefined && this._uniqueQuestions) return;
-            
+
             this.unUsedQuestionBlocks = this.questionBlocks.slice(0);
         },
 
@@ -63,7 +63,7 @@ define(function(require) {
 
             return questionBlock;
         }
-        
+
     };
 
     return QuestionBank;

@@ -21,10 +21,10 @@ define([
             _byPageId: {},
             _byAssessmentId: {}
         }),
-        
+
         initialize: function() {
             this.listenTo(Adapt, {
-                "assessments:complete": this._onAssessmentsComplete, 
+                "assessments:complete": this._onAssessmentsComplete,
                 "router:location": this._checkResetAssessmentsOnRevisit,
                 "router:plugin": this._handleRoute,
                 "app:dataReady": this._onDataReady
@@ -270,7 +270,7 @@ define([
             Handlebars.registerHelper("questionNumber", function getQuestionNumber() {
                 var data = this.view ? this.view.model.toJSON() : this;
                 if (!data._isPartOfAssessment) return;
-                
+
                 var related = getRelatedQuestions(data).pluck('_id')
 
                 return related.indexOf(data._id) + 1;
