@@ -85,10 +85,7 @@ define([
                 }
             }
 
-            _.defer(function() {
-                // Defer this call so that the router's _canNavigate flag is true.
-                Backbone.history.navigate('#/id/' + id, { trigger: true, replace: true });
-            });
+            _.defer(Backbone.history.navigate, '#/id/' + id, { trigger: true, replace: true });// Defer this call so that the router's _canNavigate flag is true.
         },
 
         _checkResetAssessmentsOnRevisit: function(toObject) {
@@ -180,14 +177,9 @@ define([
         },
 
         _postScoreToLms: function() {
-            var assessmentsConfig = this.getConfig();
-            if (assessmentsConfig._postTotalScoreToLms === false) return;
+            if (this.getConfig()._postTotalScoreToLms === false) return;
 
-            var completionState = this.getState();
-            //post completion to spoor
-            _.defer(function() {
-                Adapt.trigger('assessment:complete', completionState);
-            });
+            _.defer(Adapt.trigger, 'assessment:complete', this.getState());
         },
 
         _getAssessmentByPageId: function(pageId) {
