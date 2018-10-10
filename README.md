@@ -177,7 +177,7 @@ If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://
 
 ----------------------------
 **Version number:**  2.3.0   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
-**Framework versions:** 3+  
+**Framework versions:** 3.2+  
 **Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)  
 **Accessibility support:** WAI AA  
 **RTL support:** yes  

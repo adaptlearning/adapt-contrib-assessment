@@ -71,10 +71,8 @@ define([
             //save original children
             this._originalChildModels = this.getChildren().models;
             //collect all question components
-            this._currentQuestionComponents = _.filter(this.findDescendantModels('components'), function(comp) {
-                return comp.get('_isQuestionType') === true;
-            });
-            this.set('_currentQuestionComponentIds', _.map(this._currentQuestionComponents, function(comp) {
+            this._currentQuestionComponents = this.findDescendantModels('components', {where: { _isQuestionType: true }});
+            this.set('_currentQuestionComponentIds', this._currentQuestionComponents.map(function(comp) {
                 return comp.get('_id');
             }));
 
@@ -144,20 +142,18 @@ define([
 
             this.getChildren().models = quizModels;
 
-            this._currentQuestionComponents = _.filter(this.findDescendantModels('components'), function(comp) {
-                return comp.get('_isQuestionType') === true;
-            });
-            this.set('_currentQuestionComponentIds', _.map(this._currentQuestionComponents, function(comp) {
+            this._currentQuestionComponents = this.findDescendantModels('components', {where: { _isQuestionType: true }});
+            this.set('_currentQuestionComponentIds', this._currentQuestionComponents.map(function(comp) {
                 return comp.get('_id');
             }));
 
             if (shouldResetAssessment || shouldResetQuestions) {
-                this._resetQuestions(_.bind(function() {
+                this._resetQuestions(function() {
                     this.set('_attemptInProgress', true);
                     Adapt.trigger('assessments:reset', this.getState(), this);
 
                     finalise.apply(this);
-                }, this));
+                }.bind(this));
             } else {
                 finalise.apply(this);
             }
