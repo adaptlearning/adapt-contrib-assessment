@@ -19,14 +19,18 @@ define([
         },
 
         _setupEventListeners: function() {
-            this.listenTo(Adapt, 'assessments:complete', this._onAssessmentComplete);
-            this.listenTo(Adapt, 'assessments:reset', this._onAssessmentReset);
-            this.listenTo(Adapt, 'remove', this._onRemove);
+            this.listenTo(Adapt, {
+                'assessments:complete': this._onAssessmentComplete,
+                'assessments:reset': this._onAssessmentReset,
+                'remove': this._onRemove
+            });
         },
 
         _removeEventListeners: function() {
-            this.stopListening(Adapt, 'assessments:complete', this._onAssessmentComplete);
-            this.stopListening(Adapt, 'assessments:reset', this._onAssessmentReset);
+            this.stopListening(Adapt, {
+                'assessments:complete': this._onAssessmentComplete,
+                'assessments:reset': this._onAssessmentReset
+            });
         },
 
         _onAssessmentComplete: function(state, model) {
