@@ -33,7 +33,7 @@
     }
 
     //components
-    "displayTitle": "Question {{question_number}} of {{question_count}}"
+    "displayTitle": "Question {{questionNumber}} of {{questionCount}}"
 
     //course.json
     "_assessment": {
