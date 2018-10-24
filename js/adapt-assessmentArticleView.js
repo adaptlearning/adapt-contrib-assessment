@@ -22,7 +22,7 @@ define([
             this.listenTo(Adapt, {
                 'assessments:complete': this._onAssessmentComplete,
                 'assessments:reset': this._onAssessmentReset,
-                'remove': this._onRemove
+                remove: this._onRemove
             });
         },
 

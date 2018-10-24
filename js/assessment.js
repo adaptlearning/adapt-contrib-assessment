@@ -7,10 +7,10 @@ define([
     */
 
     var assessmentsConfigDefaults = {
-        '_postTotalScoreToLms': true,
-        '_isPercentageBased': true,
-        '_scoreToPass': 100,
-        '_isDefaultsLoaded': true
+        _postTotalScoreToLms: true,
+        _isPercentageBased: true,
+        _scoreToPass: 100,
+        _isDefaultsLoaded: true
     };
 
     Adapt.assessment = _.extend({
@@ -169,9 +169,9 @@ define([
         _setupSingleAssessmentConfiguration: function(assessmentState) {
             var assessmentsConfig = Adapt.course.get('_assessment');
             $.extend(true, assessmentsConfig, {
-                '_postTotalScoreToLms': assessmentState.includeInTotalScore,
-                '_isPercentageBased': assessmentState.isPercentageBased,
-                '_scoreToPass': assessmentState.scoreToPass
+                _postTotalScoreToLms: assessmentState.includeInTotalScore,
+                _isPercentageBased: assessmentState.isPercentageBased,
+                _scoreToPass: assessmentState.scoreToPass
             });
             Adapt.course.set('_assessment', assessmentsConfig);
         },
@@ -226,8 +226,10 @@ define([
 
                 try {
                     var pageModel = Adapt.findById(k);
-                    pageModel.set('_subProgressTotal', assessmentsTotal);
-                    pageModel.set('_subProgressComplete', assessmentsPassed);
+                    pageModel.set({
+                        _subProgressTotal: assessmentsTotal,
+                        _subProgressComplete: assessmentsPassed
+                    });
                 } catch(e) {
 
                 }
