@@ -85,7 +85,10 @@ define([
                 }
             }
 
-            _.defer(Backbone.history.navigate, '#/id/' + id, { trigger: true, replace: true });// Defer this call so that the router's _canNavigate flag is true.
+            _.defer(function() {
+                // Defer this call so that the router's _canNavigate flag is true.
+                Backbone.history.navigate('#/id/' + id, { trigger: true, replace: true });
+            });
         },
 
         _checkResetAssessmentsOnRevisit: function(toObject) {
@@ -179,7 +182,10 @@ define([
         _postScoreToLms: function() {
             if (this.getConfig()._postTotalScoreToLms === false) return;
 
-            _.defer(Adapt.trigger, 'assessment:complete', this.getState());
+            var completionState = this.getState();
+            _.defer(function() {
+                Adapt.trigger('assessment:complete', completionState);
+            });
         },
 
         _getAssessmentByPageId: function(pageId) {
