@@ -35,7 +35,7 @@ define(function(require) {
                 } else {
                     if (usedQuestionBlocks.length === 0) break;
                     var index = Math.floor(Math.random() * (usedQuestionBlocks.length-1));
-                    question = usedQuestionBlocks.splice(index,1)[0];
+                    question = usedQuestionBlocks.splice(index, 1)[0];
                     questionBlocks.push(question);
                 }
             }
@@ -51,7 +51,7 @@ define(function(require) {
 
         getRandomQuestion: function() {
             if (this.unUsedQuestionBlocks !== undefined && this.unUsedQuestionBlocks.length < 1) {
-               console.warn("assessment:"+this._articleId+" No more unique questions for _assessment._quizBankID " + this._id);
+               console.warn('assessment:'+ this._articleId +' No more unique questions for _assessment._quizBankID ' + this._id);
                return undefined;
             }
 

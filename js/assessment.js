@@ -7,10 +7,10 @@ define([
     */
 
     var assessmentsConfigDefaults = {
-        "_postTotalScoreToLms": true,
-        "_isPercentageBased": true,
-        "_scoreToPass": 100,
-        "_isDefaultsLoaded": true
+        _postTotalScoreToLms: true,
+        _isPercentageBased: true,
+        _scoreToPass: 100,
+        _isDefaultsLoaded: true
     };
 
     Adapt.assessment = _.extend({
@@ -24,10 +24,10 @@ define([
 
         initialize: function() {
             this.listenTo(Adapt, {
-                "assessments:complete": this._onAssessmentsComplete,
-                "router:location": this._checkResetAssessmentsOnRevisit,
-                "router:plugin": this._handleRoute,
-                "app:dataReady": this._onDataReady
+                'assessments:complete': this._onAssessmentsComplete,
+                'router:location': this._checkResetAssessmentsOnRevisit,
+                'router:plugin': this._handleRoute,
+                'app:dataReady': this._onDataReady
             });
         },
 
@@ -39,7 +39,7 @@ define([
             if (assessmentId === undefined) return;
 
             if (!this._getStateByAssessmentId(assessmentId)) {
-                Adapt.log.warn("assessments: state was not registered when assessment was created");
+                Adapt.log.warn('assessments: state was not registered when assessment was created');
             }
 
             this.saveState();
@@ -53,7 +53,7 @@ define([
         _restoreModelState: function(assessmentModel) {
 
             if (!this._saveStateModel) {
-                this._saveStateModel = Adapt.offlineStorage.get("assessment");
+                this._saveStateModel = Adapt.offlineStorage.get('assessment');
             }
             if (this._saveStateModel) {
                 var state = assessmentModel.getState();
@@ -96,7 +96,7 @@ define([
                 Here we hijack router:location to reorganise the assessment blocks
                 this must happen before trickle listens to block completion
             */
-            if (toObject._contentType !== "page") return;
+            if (toObject._contentType !== 'page') return;
 
             //initialize assessment on page visit before pageView:preRender (and trickle)
             var pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
@@ -170,23 +170,21 @@ define([
         },
 
         _setupSingleAssessmentConfiguration: function(assessmentState) {
-            var assessmentsConfig = Adapt.course.get("_assessment");
+            var assessmentsConfig = Adapt.course.get('_assessment');
             $.extend(true, assessmentsConfig, {
-                "_postTotalScoreToLms": assessmentState.includeInTotalScore,
-                "_isPercentageBased": assessmentState.isPercentageBased,
-                "_scoreToPass": assessmentState.scoreToPass
+                _postTotalScoreToLms: assessmentState.includeInTotalScore,
+                _isPercentageBased: assessmentState.isPercentageBased,
+                _scoreToPass: assessmentState.scoreToPass
             });
-            Adapt.course.set("_assessment", assessmentsConfig);
+            Adapt.course.set('_assessment', assessmentsConfig);
         },
 
         _postScoreToLms: function() {
-            var assessmentsConfig = this.getConfig();
-            if (assessmentsConfig._postTotalScoreToLms === false) return;
+            if (this.getConfig()._postTotalScoreToLms === false) return;
 
             var completionState = this.getState();
-            //post completion to spoor
             _.defer(function() {
-                Adapt.trigger("assessment:complete", completionState);
+                Adapt.trigger('assessment:complete', completionState);
             });
         },
 
@@ -234,8 +232,10 @@ define([
 
                 try {
                     var pageModel = Adapt.findById(k);
-                    pageModel.set("_subProgressTotal", assessmentsTotal);
-                    pageModel.set("_subProgressComplete", assessmentsPassed);
+                    pageModel.set({
+                        _subProgressTotal: assessmentsTotal,
+                        _subProgressComplete: assessmentsPassed
+                    });
                 } catch(e) {
 
                 }
@@ -245,18 +245,18 @@ define([
 
         _addToAssessmentIdMap: function(id, model) {
             if (id === undefined) {
-                Adapt.log.warn("An assessment has been registered with an undefined value for '_id'");
+                Adapt.log.warn('An assessment has been registered with an undefined value for "_id"');
                 return;
             }
 
             if (id === '') {
-                Adapt.log.warn("An assessment has been registered with an empty value for '_id'");
+                Adapt.log.warn('An assessment has been registered with an empty value for "_id"');
             }
 
             if (!this._assessments._byAssessmentId[id]) {
                 this._assessments._byAssessmentId[id] = model;
             } else {
-                Adapt.log.warn("An assessment with an _id of '" + id + "' already exists!");
+                Adapt.log.warn('An assessment with an _id of "' + id + '" already exists!');
             }
         },
 
@@ -267,16 +267,16 @@ define([
                 return currentAssessment.getState().questionModels;
             };
 
-            Handlebars.registerHelper("questionNumber", function getQuestionNumber() {
+            Handlebars.registerHelper('questionNumber', function getQuestionNumber() {
                 var data = this.view ? this.view.model.toJSON() : this;
                 if (!data._isPartOfAssessment) return;
 
-                var related = getRelatedQuestions(data).pluck('_id')
+                var related = getRelatedQuestions(data).pluck('_id');
 
                 return related.indexOf(data._id) + 1;
             });
 
-            Handlebars.registerHelper("questionCount", function getTotalQuestions() {
+            Handlebars.registerHelper('questionCount', function getTotalQuestions() {
                 var data = this.view ? this.view.model.toJSON() : this;
                 if (!data._isPartOfAssessment) return;
                 return getRelatedQuestions(data).length;
@@ -302,7 +302,7 @@ define([
 
             this._restoreModelState(assessmentModel);
 
-            Adapt.trigger("assessments:register", state, assessmentModel);
+            Adapt.trigger('assessments:register', state, assessmentModel);
 
             this._setPageProgress();
 
@@ -325,11 +325,11 @@ define([
                 this._saveStateModel[state.id] = assessmentModel.getSaveState();
             }
 
-            Adapt.offlineStorage.set("assessment", this._saveStateModel);
+            Adapt.offlineStorage.set('assessment', this._saveStateModel);
         },
 
         getConfig: function () {
-            var assessmentsConfig = Adapt.course.get("_assessment");
+            var assessmentsConfig = Adapt.course.get('_assessment');
 
             if (assessmentsConfig && assessmentsConfig._isDefaultsLoaded) {
                 return assessmentsConfig;
@@ -341,7 +341,7 @@ define([
                 assessmentsConfig = $.extend(true, {}, assessmentsConfigDefaults, assessmentsConfig);
             }
 
-            Adapt.course.set("_assessment", assessmentsConfig);
+            Adapt.course.set('_assessment', assessmentsConfig);
 
             return assessmentsConfig;
         },
