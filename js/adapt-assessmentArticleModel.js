@@ -613,7 +613,7 @@ define([
             force = force || wereQuestionsRestored;
             // the assessment is going to be reset so we must reset attempts
             // otherwise assessment may not be set up properly in next session
-            if (wereQuestionsRestored && !this._isAttemptsLeft()) {
+            if (force && !this._isAttemptsLeft()) {
                 this.set({
                     _attemptsLeft: this.get('_attempts'),
                     _attemptsSpent: 0
