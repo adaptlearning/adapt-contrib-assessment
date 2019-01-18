@@ -1,4 +1,4 @@
-    //articles.json
+    // articles.json
     "_assessment": {
         "_isEnabled":true,
         "_id": "Assessment 1",
@@ -27,15 +27,15 @@
         "_attempts": 2
     }
 
-    //blocks.json
+    // blocks.json
     "_assessment": {
         "_quizBankID": 1
     }
 
-    //components
+    // components
     "displayTitle": "Question {{questionNumber}} of {{questionCount}}"
 
-    //course.json
+    // course.json
     "_assessment": {
         "_postTotalScoreToLms": true,
         "_isPercentageBased": true,
