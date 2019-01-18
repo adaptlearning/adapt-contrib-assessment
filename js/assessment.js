@@ -386,6 +386,7 @@ define([
         scoreAsPercent: scoreAsPercent,
         maxScore: maxScore,
         score: score,
+        scoreToPass: assessmentsConfig._scoreToPass,
         assessmentsComplete: assessmentsComplete,
         assessments: totalAssessments
       };
