@@ -12,10 +12,10 @@ define([
 
         var config = this.model.getConfig();
         if (config && config._questions && config._questions._canShowMarking === false) {
-          this.$el.addClass('no-marking');
+          this.$el.addClass('has-no-marking');
         }
       }
-      this.$el.addClass('assessment');
+      this.$el.addClass('is-assessment');
     },
 
     _setupEventListeners: function() {
