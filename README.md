@@ -39,13 +39,11 @@ With the [Adapt CLI](https://github.com/adaptlearning/adapt-cli) installed, run 
 #### *course.json*  
 The following attributes, set within *course.json*, configure the defaults for all assessments in the course. These attributes can be overridden on a per assessment basis by setting attributes of the same names in *articles.json*.
 
-**_assessment** (object): The Assessment object that contains values for **_scoreToPass**, **_isPercentageBased** and **_postTotalScoreToLms**.
+**_assessment** (object): The Assessment object that contains values for **_scoreToPass** and **_isPercentageBased**.
 
 >**_scoreToPass** (integer): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **_isPercentageBased** is set to `true`.
 
 >**_isPercentageBased** (boolean): Determines whether the value of **_scoreToPass** should be treated as a percentage or as the raw score. For example, if **_isPercentageBased** is set to `true`, a **_scoreToPass** value of `60` will be treated as `60%`.
-
->**_postTotalScoreToLms** (boolean): Specifies whether the total score (as a percentage) should be sent to the LMS. Acceptable values are `true` or `false`.   
 
 <div float align=right><a href="#top">Back to Top</a></div>
 

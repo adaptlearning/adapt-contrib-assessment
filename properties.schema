@@ -19,14 +19,6 @@
               "required": false,
               "legend": "Assessment",
               "properties": {
-                "_postTotalScoreToLms": {
-                  "type": "boolean",
-                  "required": true,
-                  "title": "Send Total Score to LMS",
-                  "inputType": "Checkbox",
-                  "help": "Specifies whether the total score (as a percentage) should be sent to the LMS.",
-                  "validators": []
-                },
                 "_isPercentageBased": {
                   "type": "boolean",
                   "required": true,
