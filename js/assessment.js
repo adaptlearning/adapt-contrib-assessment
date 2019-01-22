@@ -5,9 +5,7 @@ define([
     /*
         Here we setup a registry for all assessments
     */
-
     var assessmentsConfigDefaults = {
-        _postTotalScoreToLms: true,
         _isPercentageBased: true,
         _scoreToPass: 100,
         _isDefaultsLoaded: true
@@ -164,7 +162,9 @@ define([
                 this._setupSingleAssessmentConfiguration(assessmentStates[0]);
             }
 
-            this._postScoreToLms();
+            _.defer(function() {
+                Adapt.trigger('assessment:complete', this.getState());
+            });
 
             return true;
         },
@@ -172,20 +172,10 @@ define([
         _setupSingleAssessmentConfiguration: function(assessmentState) {
             var assessmentsConfig = Adapt.course.get('_assessment');
             $.extend(true, assessmentsConfig, {
-                _postTotalScoreToLms: assessmentState.includeInTotalScore,
                 _isPercentageBased: assessmentState.isPercentageBased,
                 _scoreToPass: assessmentState.scoreToPass
             });
             Adapt.course.set('_assessment', assessmentsConfig);
-        },
-
-        _postScoreToLms: function() {
-            if (this.getConfig()._postTotalScoreToLms === false) return;
-
-            var completionState = this.getState();
-            _.defer(function() {
-                Adapt.trigger('assessment:complete', completionState);
-            });
         },
 
         _getAssessmentByPageId: function(pageId) {
