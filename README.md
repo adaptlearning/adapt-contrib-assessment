@@ -101,7 +101,7 @@ The following attributes are appended to a particular article within *articles.j
 #### *blocks.json*  
 **_assessment** (object): The Assessment object that contains a value for **_quizBankID**.
 
->**_quizBankID** (string): Add the **_quizBankID** attribute to your assessment blocks in order to organize them into question banks/buckets. IDs are coordinated with positions in the **_split** attribute. Quiz bank IDs are a 1-based index. The first position in the list corresponds to `"_quizBankID": 1`, the second position corresponds to `"_quizBankID": 2`, and so on. A value of '2,1' in **_split** would pick 2 questions from `"_quizBankID": 1` and one question from `"_quizBankID": 2`.  
+>**\_quizBankID** (number): Add the **\_quizBankID** attribute to your assessment blocks in order to organize them into question banks/buckets. IDs are coordinated with positions in the **\_split** attribute. Quiz bank IDs are a 1-based index. The first position in the list corresponds to `"_quizBankID": 1`, the second position corresponds to `"_quizBankID": 2`, and so on. A value of '2,1' in **\_split** would pick 2 questions from `"_quizBankID": 1` and one question from `"_quizBankID": 2`.  
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
