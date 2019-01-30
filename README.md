@@ -39,13 +39,11 @@ With the [Adapt CLI](https://github.com/adaptlearning/adapt-cli) installed, run 
 #### *course.json*  
 The following attributes, set within *course.json*, configure the defaults for all assessments in the course. These attributes can be overridden on a per assessment basis by setting attributes of the same names in *articles.json*.
 
-**_assessment** (object): The Assessment object that contains values for **_scoreToPass**, **_isPercentageBased** and **_postTotalScoreToLms**.
+**_assessment** (object): The Assessment object that contains values for **_scoreToPass** and **_isPercentageBased**.
 
 >**_scoreToPass** (integer): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **_isPercentageBased** is set to `true`.
 
 >**_isPercentageBased** (boolean): Determines whether the value of **_scoreToPass** should be treated as a percentage or as the raw score. For example, if **_isPercentageBased** is set to `true`, a **_scoreToPass** value of `60` will be treated as `60%`.
-
->**_postTotalScoreToLms** (boolean): Specifies whether the total score (as a percentage) should be sent to the LMS. Acceptable values are `true` or `false`.   
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
@@ -103,7 +101,7 @@ The following attributes are appended to a particular article within *articles.j
 #### *blocks.json*  
 **_assessment** (object): The Assessment object that contains a value for **_quizBankID**.
 
->**_quizBankID** (string): Add the **_quizBankID** attribute to your assessment blocks in order to organize them into question banks/buckets. IDs are coordinated with positions in the **_split** attribute. Quiz bank IDs are a 1-based index. The first position in the list corresponds to `"_quizBankID": 1`, the second position corresponds to `"_quizBankID": 2`, and so on. A value of '2,1' in **_split** would pick 2 questions from `"_quizBankID": 1` and one question from `"_quizBankID": 2`.  
+>**\_quizBankID** (number): Add the **\_quizBankID** attribute to your assessment blocks in order to organize them into question banks/buckets. IDs are coordinated with positions in the **\_split** attribute. Quiz bank IDs are a 1-based index. The first position in the list corresponds to `"_quizBankID": 1`, the second position corresponds to `"_quizBankID": 2`, and so on. A value of '2,1' in **\_split** would pick 2 questions from `"_quizBankID": 1` and one question from `"_quizBankID": 2`.  
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
@@ -176,7 +174,7 @@ If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://
 **Important:** if targetting IE8, it is recommended to limit each assessment to a maximum of 12 questions. When using question banks, the recommendation is a limit of 32 questions with a maximum of 12 questions drawn. These limits are recommended to help avoid the popup warning "A script on this page is causing Internet Explorer to run slowly". See https://support.microsoft.com/en-gb/kb/175500 for more information.
 
 ----------------------------
-**Version number:**  2.3.2   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
+**Version number:**  3.0.0   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a> 
 **Framework versions:** 3.2+  
 **Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)  
 **Accessibility support:** WAI AA  

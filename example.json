@@ -37,7 +37,6 @@
 
     // course.json
     "_assessment": {
-        "_postTotalScoreToLms": true,
         "_isPercentageBased": true,
         "_scoreToPass": 75
     }
