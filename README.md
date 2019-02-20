@@ -82,6 +82,8 @@ The following attributes are appended to a particular article within *articles.j
 
 >>**_resetType** (string): Determines whether the question component will register as completed when reset. When assigned a value of `soft`, the learner may continue to interact with it, but the component's `_isComplete` attribute remains set to `true`. When assigned `hard`, `_isComplete` is set to `false`, and the learner will be forced to complete it again if it is reset. Other plug-ins, such as [Page Level  Progress](https://github.com/adaptlearning/adapt-contrib-pageLevelProgress) and [Trickle](https://github.com/adaptlearning/adapt-contrib-trickle), base their behavior on the value of a component's `_isComplete` attribute. Acceptable values are `hard` or `soft`.
 
+>>**_resetIncorrectOnly** (boolean): When assigned true, it will reset those questions which answered incorrectly , and the learner will be forced to complete it again if it is reset.
+
 >>**_canShowFeedback** (boolean): Determines whether question components within the assessment will be permitted to show its feedback. Acceptable values are `true` or `false`.
 
 >>**_canShowMarking** (boolean): Determines whether question components within the assessment will show the marking after the user has answered. Acceptable values are `true` or `false`.
