@@ -13,6 +13,7 @@
         },
         "_questions": {
             "_resetType": "hard",
+            "_resetIncorrectOnly": false,
             "_canShowFeedback": false,
             "_canShowMarking": false,
             "_canShowModelAnswer": false
