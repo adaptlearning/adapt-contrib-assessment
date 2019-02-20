@@ -514,7 +514,14 @@ define([
             function step() {
                 for (var j = 0, count=Math.min(syncIterations, len-i); j < count; i++, j++) {
                     var question = qs[i];
-                    question.reset(assessmentConfig._questions._resetType, true);
+                    
+                    if(assessmentConfig._questions._resetIncorrectOnly) {
+                        if (!question.get('_isCorrect')) {
+                            question.reset(assessmentConfig._questions._resetType, true);
+                        }
+                    } else {
+                        question.reset(assessmentConfig._questions._resetType, true);
+                    }
                 }
 
                 i == len ? callback() : setTimeout(step);
