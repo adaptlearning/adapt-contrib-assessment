@@ -212,6 +212,15 @@
                       "validators": [],
                       "help": "Determines whether the question will register as completed when reset. When assigned a value of 'soft', the learner may continue to interact with it, but the complete attribute remains set to true. When assigned 'hard', complete is set to false, and the learner will be forced to complete it again if it is reset."
                     },
+                    "_resetIncorrectOnly":{
+                      "type": "boolean",
+                      "required": false,
+                      "title": "Reset Incorrect Only",
+                      "inputType": "Checkbox",
+                      "default": false,
+                      "help": "Allows the user to reset Incorrect answers only.",
+                      "validators": []
+                    },
                     "_canShowFeedback": {
                       "type": "boolean",
                       "required": false,
