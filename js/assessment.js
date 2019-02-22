@@ -164,7 +164,7 @@ define([
 
       _.defer(function() {
         Adapt.trigger('assessment:complete', this.getState());
-      });
+      }.bind(this));
 
       return true;
     },
