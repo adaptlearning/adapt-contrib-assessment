@@ -112,6 +112,15 @@
                   "help": "If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment, i.e. 1 equals 100%, 0.5 is 50%, etc.",
                   "validators": ["number"]
                 },
+                "_resetIncorrectOnly":{
+                  "type": "boolean",
+                  "required": false,
+                  "title": "Reset Incorrect Only",
+                  "inputType": "Checkbox",
+                  "default": false,
+                  "help": "Determines whether only incorrectly answered questions - or all questions - will be reset when the assessment is reset/retried.",
+                  "validators": []
+                },
                 "_suppressMarking": {
                   "type": "boolean",
                   "required": true,
@@ -211,15 +220,6 @@
                       },
                       "validators": [],
                       "help": "Determines whether the question will register as completed when reset. When assigned a value of 'soft', the learner may continue to interact with it, but the complete attribute remains set to true. When assigned 'hard', complete is set to false, and the learner will be forced to complete it again if it is reset."
-                    },
-                    "_resetIncorrectOnly":{
-                      "type": "boolean",
-                      "required": false,
-                      "title": "Reset Incorrect Only",
-                      "inputType": "Checkbox",
-                      "default": false,
-                      "help": "Allows the user to reset Incorrect answers only.",
-                      "validators": []
                     },
                     "_canShowFeedback": {
                       "type": "boolean",
