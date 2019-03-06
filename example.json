@@ -13,11 +13,11 @@
         },
         "_questions": {
             "_resetType": "hard",
-            "_resetIncorrectOnly": false,
             "_canShowFeedback": false,
             "_canShowMarking": false,
             "_canShowModelAnswer": false
         },
+        "_resetIncorrectOnly": false,        
         "_suppressMarking": false,
         "_isPercentageBased" : true,
         "_scoreToPass" : 75,
