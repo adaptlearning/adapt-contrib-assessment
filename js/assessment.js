@@ -136,7 +136,10 @@ define([
         _byPageId: {},
         _byAssessmentId: {}
       });
+
+      this._restoredCount = 0;
     },
+    
 
     _checkAssessmentsComplete: function() {
       var allAssessmentsComplete = true;
@@ -291,12 +294,19 @@ define([
       this._assessments.push(assessmentModel);
 
       this._restoreModelState(assessmentModel);
+      this._restoredCount++;
 
       Adapt.trigger('assessments:register', state, assessmentModel);
 
       this._setPageProgress();
 
       this._setupQuestionNumbering();
+
+      if (this._restoredCount === this._assessments.length) {
+        // Since all assessments have been stored, broadcast an
+        // event which has the collated state.
+        Adapt.trigger('assessment:restored', this.getState());
+      }
     },
 
     get: function(id) {
