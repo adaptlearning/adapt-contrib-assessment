@@ -256,14 +256,14 @@ define([
             var getRelatedQuestions = function(data) {
                 var currentAssessmentId = data._assessmentId;
                 var currentAssessment =  Adapt.assessment.get(currentAssessmentId);
-                return currentAssessment.getState().questions;
+                return currentAssessment.getState().questionModels;
             };
 
             Handlebars.registerHelper('questionNumber', function getQuestionNumber() {
                 var data = this.view ? this.view.model.toJSON() : this;
                 if (!data._isPartOfAssessment) return;
 
-                var related = _.pluck(getRelatedQuestions(data), '_id');
+                var related = getRelatedQuestions(data).pluck('_id');
 
                 return related.indexOf(data._id) + 1;
             });
