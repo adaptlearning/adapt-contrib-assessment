@@ -127,7 +127,7 @@ Triggered when the user submits the last question of the last assessment and the
 **assessments:complete**   
 Triggered when the user submits the last question of one of the assessments. Returns `stateObject`, `assessmentModel`   
 
-**assessment:restored**
+**assessment:restored**  
 Triggered when all the assessments have been restored from 'offline storage' (typically SCORM or xAPI). Returns `stateObject`  
 <div float align=right><a href="#top">Back to Top</a></div>
 
