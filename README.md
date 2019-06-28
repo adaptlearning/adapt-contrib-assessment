@@ -54,52 +54,52 @@ The following attributes are appended to a particular article within *articles.j
 
 >**_isEnabled** (boolean): Turns the assessment on or off. Acceptable values are `true` or `false`.
 
->**_id** (string): This is a unique name for the assessment. This value is used by other plug-ins, such as [adapt-contrib-assessmentResults](https://github.com/adaptlearning/adapt-contrib-assessmentResults), to identify the assessment and to display its variables.
+>**\_id** (string): This is a unique name for the assessment. This value is used by other plug-ins, such as [adapt-contrib-assessmentResults](https://github.com/adaptlearning/adapt-contrib-assessmentResults), to identify the assessment and to display its variables.
 
->**_suppressMarking** (boolean): Suppresses the assessment question marking until completion of the assessment or until all attempts have been exhausted. Acceptable values are `true` or `false`.
+>**\_suppressMarking** (boolean): Suppresses the assessment question marking until completion of the assessment or until all attempts have been exhausted. Acceptable values are `true` or `false`.
 
->**_isPercentageBased** (boolean): Determines whether the value of **_scoreToPass** should be treated as a percentage or as the raw score. For example, if **_isPercentageBased** is set to `true`, a **_scoreToPass** value of `60` will be treated as `60%`.   
+>**\_isPercentageBased** (boolean): Determines whether the value of **_scoreToPass** should be treated as a percentage or as the raw score. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.   
 
->**_scoreToPass** (number): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **_isPercentageBased** is set to `true`.    
+>**\_scoreToPass** (number): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **_isPercentageBased** is set to `true`.    
 
->**_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to _assessmentWeight.   
+>**\_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to _assessmentWeight.   
 
->**_banks** (object): If **_banks** is enabled, its attributes determine which questions from a series of question banks/buckets will be presented to the learner. Contains values for **_isEnabled**, **_split**, and **_randomisation**.   (Use either **_banks** or **_randomisation**; the value of their **_isEnabled** attributes must be opposite booleans. If **_banks** is enabled, blocks must be organized into questions banks by adding the **_quizBankID** attribute referenced below. You must also have at least two banks; if you only have one bank of questions then the **_randomisation** functionality is likely to be more appropriate to your needs).
+>**\_banks** (object): If **\_banks** is enabled, its attributes determine which questions from a series of question banks/buckets will be presented to the learner. Contains values for **\_isEnabled**, **\_split**, and **\_randomisation**.   (Use either **\_banks** or **\_randomisation**; the value of their **\_isEnabled** attributes must be opposite booleans. If **\_banks** is enabled, blocks must be organized into questions banks by adding the **\_quizBankID** attribute referenced below. You must also have at least two banks; if you only have one bank of questions then the **\_randomisation** functionality is likely to be more appropriate to your needs).
 
->>**_isEnabled** (boolean): Turns on or off the ability to use question banks.  
+>>**\_isEnabled** (boolean): Turns on or off the ability to use question banks.  
 
->>**_split** (string): This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The *position* of the numeral in the list corresponds to the **_quizBankID** assigned to a block. The *value* of the number determines how many questions to retrieve randomly from that particular quiz bank. For example, a **_split** with a value of "2,1" would pick 2 questions from bank 1 (`"_quizBankID": "1"`) and 1 question from bank 2 (`"_quizBankID": "2"`).  
+>>**\_split** (string): This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The *position* of the numeral in the list corresponds to the **\_quizBankID** assigned to a block. The *value* of the number determines how many questions to retrieve randomly from that particular quiz bank. For example, a **\_split** with a value of "2,1" would pick 2 questions from bank 1 (`"_quizBankID": "1"`) and 1 question from bank 2 (`"_quizBankID": "2"`).  
 
->>**_randomisation** (boolean): Determines whether the questions will be displayed in the same order as the blocks are ordered in *blocks.json* or will be shuffled before they are presented to the learner. Acceptable values are `true` or `false`.
+>>**\_randomisation** (boolean): Determines whether the questions will be displayed in the same order as the blocks are ordered in *blocks.json* or will be shuffled before they are presented to the learner. Acceptable values are `true` or `false`.
 
->**_randomisation** (object): If **_randomisation** is enabled, its attributes control how many random questions will be presented to the learner. Contains values for **_isEnabled** and **_blockCount**. Questions and the order in which they are presented are maintained throughout an attempt, should a learner leave the assessment incomplete and return later. (Use either **_randomisation** or **_banks**; the value of their **_isEnabled** attributes must be opposite booleans.)
+>**\_randomisation** (object): If **\_randomisation** is enabled, its attributes control how many random questions will be presented to the learner. Contains values for **\_isEnabled** and **\_blockCount**. Questions and the order in which they are presented are maintained throughout an attempt, should a learner leave the assessment incomplete and return later. (Use either **\_randomisation** or **\_banks**; the value of their **\_isEnabled** attributes must be opposite booleans.)
 
->>**_isEnabled** (boolean): Turns on or off the ability to use **_randomisation**.      
+>>**\_isEnabled** (boolean): Turns on or off the ability to use **\_randomisation**.      
 
->>**_blockCount** (number): The number of blocks to present to the learner. (Questions are presented by blocks. If one component occupies a block, it will be presented alone. If multiple components occupy a block, they will always appear together.)
+>>**\_blockCount** (number): The number of blocks to present to the learner. (Questions are presented by blocks. If one component occupies a block, it will be presented alone. If multiple components occupy a block, they will always appear together.)
 
->**_questions** (object): Contains attributes for overriding question component behaviours. Contains values for **_resetType**, **_canShowFeedback**, **_canShowMarking** and **_canShowModelAnswer**.
+>**\_questions** (object): Contains attributes for overriding question component behaviours. Contains values for **\_resetType**, **\_canShowFeedback**, **\_canShowMarking** and **\_canShowModelAnswer**.
 
->>**_resetType** (string): Determines whether the question component will register as completed when reset. When assigned a value of `soft`, the learner may continue to interact with it, but the component's `_isComplete` attribute remains set to `true`. When assigned `hard`, `_isComplete` is set to `false`, and the learner will be forced to complete it again if it is reset. Other plug-ins, such as [Page Level  Progress](https://github.com/adaptlearning/adapt-contrib-pageLevelProgress) and [Trickle](https://github.com/adaptlearning/adapt-contrib-trickle), base their behavior on the value of a component's `_isComplete` attribute. Acceptable values are `hard` or `soft`.
+>>**\_resetType** (string): Determines whether the question component will register as completed when reset. When assigned a value of `soft`, the learner may continue to interact with it, but the component's `_isComplete` attribute remains set to `true`. When assigned `hard`, `_isComplete` is set to `false`, and the learner will be forced to complete it again if it is reset. Other plug-ins, such as [Page Level  Progress](https://github.com/adaptlearning/adapt-contrib-pageLevelProgress) and [Trickle](https://github.com/adaptlearning/adapt-contrib-trickle), base their behavior on the value of a component's `_isComplete` attribute. Acceptable values are `hard` or `soft`.
 
->>**_canShowFeedback** (boolean): Determines whether question components within the assessment will be permitted to show its feedback. Acceptable values are `true` or `false`.
+>>**\_canShowFeedback** (boolean): Determines whether question components within the assessment will be permitted to show its feedback. Acceptable values are `true` or `false`.
 
->>**_canShowMarking** (boolean): Determines whether question components within the assessment will show the marking after the user has answered. Acceptable values are `true` or `false`.
+>>**\_canShowMarking** (boolean): Determines whether question components within the assessment will show the marking after the user has answered. Acceptable values are `true` or `false`.
 
->>**_canShowModelAnswer** (boolean): Determines whether question components within the assessment will show the [**_showCorrectAnswer** button](https://github.com/adaptlearning/adapt_framework/wiki/Core-Buttons) or not if the user answers incorrectly. Acceptable values are `true` or `false`.
+>>**\_canShowModelAnswer** (boolean): Determines whether question components within the assessment will show the [**_showCorrectAnswer** button](https://github.com/adaptlearning/adapt_framework/wiki/Core-Buttons) or not if the user answers incorrectly. Acceptable values are `true` or `false`.
 
->**_assessmentWeight** (number): If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100%.    
+>**\_assessmentWeight** (number): If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100%.    
 
->**_isResetOnRevisit** (boolean): Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page. Acceptable values are `true` or `false`.   
+>**\_isResetOnRevisit** (boolean): Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page. Acceptable values are `true` or `false`.   
 
->**_attempts** (number): Controls the number of attempts available to the user. Any of the following values may be used to indicate an infinite number of attempts: `-1`, `0`, `null`, `undefined`, `"infinite"`.  
+>**\_attempts** (number): Controls the number of attempts available to the user. Any of the following values may be used to indicate an infinite number of attempts: `-1`, `0`, `null`, `undefined`, `"infinite"`.  
 
->**_allowResetIfPassed** (boolean): Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining). Acceptable values are `true` or `false`.  
+>**\_allowResetIfPassed** (boolean): Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining). Acceptable values are `true` or `false`.  
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
 #### *blocks.json*  
-**_assessment** (object): The Assessment object that contains a value for **_quizBankID**.
+**\_assessment** (object): The Assessment object that contains a value for **\_quizBankID**.
 
 >**\_quizBankID** (number): Add the **\_quizBankID** attribute to your assessment blocks in order to organize them into question banks/buckets. IDs are coordinated with positions in the **\_split** attribute. Quiz bank IDs are a 1-based index. The first position in the list corresponds to `"_quizBankID": 1`, the second position corresponds to `"_quizBankID": 2`, and so on. A value of '2,1' in **\_split** would pick 2 questions from `"_quizBankID": 1` and one question from `"_quizBankID": 2`.  
 
@@ -116,7 +116,7 @@ If you need to display sequential question numbers within the component title wh
 ### Events
 
 **assessments:register**   
-Triggered when an assessment is registered. Occurs between app:dataReady and adapt:initialize events. Returns `stateObject`, `assessmentModel`  
+Triggered when an assessment is registered. Occurs between `app:dataReady` and `adapt:initialize` events. Returns `stateObject`, `assessmentModel`  
 
 **assessments:reset**  
 Triggered when an assessment is reset. Returns `stateObject`, `assessmentModel`  
@@ -157,7 +157,7 @@ A description of the stateObject returned by the assessments:events is as follow
 | questions                 | object array | Contains an array of question objects { _id: string, _isCorrect: bool, title: string, displayTitle: string } |
 
 
-A description of the stateObject returned by the assessment:complete event is as follows:  
+A description of the stateObject returned by the `assessment:complete` event is as follows:  
 
 | Attribute                 | Type         | Description|
 | :-------------------------|:-------------|:-----|
