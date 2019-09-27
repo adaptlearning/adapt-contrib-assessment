@@ -62,7 +62,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >**\_isPercentageBased** (boolean): Determines whether the value of **\_scoreToPass** should be treated as a percentage or as the raw score. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.   
 
->**\_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to _assessmentWeight.   
+>**\_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to **\_assessmentWeight.**   
 
 >**\_assessmentWeight** (number): If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100%.    
 
