@@ -257,14 +257,14 @@ define([
       var getRelatedQuestions = function(data) {
         var currentAssessmentId = data._assessmentId;
         var currentAssessment =  Adapt.assessment.get(currentAssessmentId);
-        return currentAssessment.getState().questionModels;
+        return currentAssessment.getState().questions;
       };
 
       Handlebars.registerHelper('questionNumber', function getQuestionNumber() {
         var data = this.view ? this.view.model.toJSON() : this;
         if (!data._isPartOfAssessment) return;
 
-        var related = getRelatedQuestions(data).pluck('_id');
+        var related = _.pluck(getRelatedQuestions(data), '_id');
 
         return related.indexOf(data._id) + 1;
       });
