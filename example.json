@@ -1,7 +1,21 @@
-    //articles.json
+    // course.json
     "_assessment": {
-        "_isEnabled":true,
+        "_scoreToPass": 75,
+        "_isPercentageBased": true
+    }
+
+    // articles.json
+    "_assessment": {
+        "_isEnabled": true,
         "_id": "Assessment 1",
+        "_suppressMarking": false,
+        "_scoreToPass" : 75,
+        "_isPercentageBased" : true,
+        "_includeInTotalScore": true,
+        "_assessmentWeight": 1,
+        "_isResetOnRevisit": false,
+        "_attempts": 2,
+        "_allowResetIfPassed": false,
         "_banks": {
             "_isEnabled": true,
             "_split": "2,1",
@@ -16,27 +30,13 @@
             "_canShowFeedback": false,
             "_canShowMarking": false,
             "_canShowModelAnswer": false
-        },
-        "_suppressMarking": false,
-        "_isPercentageBased" : true,
-        "_scoreToPass" : 75,
-        "_includeInTotalScore": true,
-        "_assessmentWeight": 1,
-        "_isResetOnRevisit": false,
-        "_allowResetIfPassed": false,
-        "_attempts": 2
+        }
     }
 
-    //blocks.json
+    // blocks.json
     "_assessment": {
         "_quizBankID": 1
     }
 
-    //components
+    // components
     "displayTitle": "Question {{questionNumber}} of {{questionCount}}"
-
-    //course.json
-    "_assessment": {
-        "_isPercentageBased": true,
-        "_scoreToPass": 75
-    }
