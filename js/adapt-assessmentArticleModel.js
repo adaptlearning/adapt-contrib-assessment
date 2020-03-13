@@ -498,8 +498,10 @@ define([
       return true;
     },
 
-    _reloadPage: function() {
+    _reloadPage: function(callback) {
       this._forceResetOnRevisit = true;
+
+      this.listenToOnce(Adapt, 'pageView:ready', callback);
 
       _.delay(function() {
         Backbone.history.navigate('#/id/' + Adapt.location._currentId, { replace:true, trigger: true });
@@ -642,10 +644,11 @@ define([
           this.trigger('reset');
         });
       } else {
-        this._reloadPage();
-        if (typeof callback == 'function') {
-          callback(true);
-        }
+        this._reloadPage(function() {
+          if (typeof callback == 'function') {
+            callback(true);
+          }
+        });
       }
 
       return true;
