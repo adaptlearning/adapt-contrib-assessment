@@ -211,11 +211,14 @@ define([
 
         var assessments = this._assessments._byPageId[k];
 
-        var assessmentsTotal = assessments.length;
+        var assessmentsTotal = 0;
         var assessmentsPassed = 0;
 
         for (var i = 0, l = assessments.length; i < l; i++) {
           var assessmentState = assessments[i].getState();
+
+          if (!assessmentState.isAvailable) continue;
+          assessmentsTotal++;
 
           if (assessmentState.includeInTotalScore && !assessmentState.isPass) continue;
 
