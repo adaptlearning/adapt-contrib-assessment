@@ -766,6 +766,7 @@ define([
         pageId: this.getParent().get('_id'),
         articleId: this.get('_id'),
         isEnabled: assessmentConfig._isEnabled,
+        isAvailable: this.get('_isAvailable'),
         isComplete: this.get('_isAssessmentComplete'),
         isPercentageBased: assessmentConfig._isPercentageBased,
         scoreToPass: assessmentConfig._scoreToPass,
