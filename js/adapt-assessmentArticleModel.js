@@ -222,6 +222,7 @@ define([
       for (var j = 0, count = children.length; j < count; j++) {
         var blockModel = children[j];
         var blockAssessmentConfig = blockModel.get('_assessment');
+        if (!blockAssessmentConfig) continue;
         bankId = blockAssessmentConfig._quizBankID;
         this._questionBanks[bankId].addBlock(blockModel);
       }
