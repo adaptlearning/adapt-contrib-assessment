@@ -702,10 +702,9 @@ define([
       var scoreAsPercent;
 
       let blocks = blockData[0].map(trackingId => Adapt.data.findWhere({ _trackingId: trackingId }));
-      let restoredChildrenModels = blocks;
 
-      if (restoredChildrenModels.length) {
-        this.getChildren().models = restoredChildrenModels;
+      if (blocks.length) {
+        this.getChildren().models = blocks;
       }
 
       this.set({
