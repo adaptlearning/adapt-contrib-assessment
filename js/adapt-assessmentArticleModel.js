@@ -704,7 +704,9 @@ define([
       let blocks = blockData[0].map(trackingId => Adapt.data.findWhere({ _trackingId: trackingId }));
       let restoredChildrenModels = blocks;
 
-      if (restoredChildrenModels && restoredChildrenModels.length) this.getChildren().models = restoredChildrenModels;
+      if (restoredChildrenModels && restoredChildrenModels.length) {
+        this.getChildren().models = restoredChildrenModels;
+      }
 
       this.set({
         _isAssessmentComplete: isComplete,
