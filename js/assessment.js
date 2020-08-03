@@ -197,6 +197,7 @@ define([
       var states = {};
       for (var i = 0, l = this._assessments.length; i < l; i++) {
         var assessmentModel = this._assessments[i];
+        if (!assessmentModel.get('_isAvailable')) continue;
         var state = assessmentModel.getState();
         states[state.id] = state;
       }
