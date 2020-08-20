@@ -222,6 +222,7 @@ define([
       for (var j = 0, count = children.length; j < count; j++) {
         var blockModel = children[j];
         var blockAssessmentConfig = blockModel.get('_assessment');
+        if (!blockAssessmentConfig) continue;
         bankId = blockAssessmentConfig._quizBankID;
         this._questionBanks[bankId].addBlock(blockModel);
       }
@@ -656,47 +657,44 @@ define([
 
     getSaveState: function() {
       var state = this.getState();
-      var indexByIdQuestions = [];
+      let blocks;
       var cfg = this.getConfig();
       var banksActive = cfg._banks && cfg._banks._isEnabled && cfg._banks._split.length > 1;
       var randomisationActive = cfg._randomisation && cfg._randomisation._isEnabled;
 
       if (!banksActive && !randomisationActive) {
-        // include presentation component IDs in save state so that blocks without questions aren't removed
-        this.findDescendantModels('components').forEach(function(component) {
-          var componentModel = {
-            _id: component.get('_id'),
-            _isCorrect: component.get('_isCorrect') === undefined ? null : component.get('_isCorrect')
-          };
-
-          indexByIdQuestions.push(componentModel);
-
-        });
-
-        indexByIdQuestions = _.indexBy(indexByIdQuestions, '_id');
+        // include presentation blocks in save state so that blocks without questions aren't removed
+        blocks = this.findDescendantModels('block');
       } else {
-        indexByIdQuestions = _.indexBy(state.questions, '_id');
+        blocks = state.questions.map(question => Adapt.findById(question._id).getParent());
       }
+      blocks = blocks.filter(block => {
+        const trackingId = block.get('_trackingId');
+        return Number.isInteger(trackingId) && trackingId >= 0;
+      });
+      const blockTrackingIds = blocks.map(block => block.get('_trackingId'));
+      const blockCompletion = blocks.map(block => {
+        let questions = block.findDescendantModels('question');
+        return questions.map(question => question.get('_isCorrect') || false);
+      });
+      const blockData = [blockTrackingIds, blockCompletion];
 
-      for (var id in indexByIdQuestions) {
-        if (indexByIdQuestions.hasOwnProperty(id)) {
-          indexByIdQuestions[id] = indexByIdQuestions[id]._isCorrect;
-        }
-      }
-
-      var saveState = [
+      const saveState = [
         state.isComplete ? 1:0,
         state.attemptsSpent,
-        state.maxScore,
+        state.maxScore || 0,
         state.score,
         state.attemptInProgress ? 1:0,
-        indexByIdQuestions
       ];
 
-      return saveState;
+      const dataPackage = [saveState, blockData]
+
+      return dataPackage;
     },
 
-    setRestoreState: function(restoreState) {
+    setRestoreState: function(dataPackage) {
+      const restoreState = dataPackage[0];
+      const blockData = dataPackage[1];
       var id;
       var isComplete = restoreState[0] == 1 ? true : false;
       var attempts = this.get('_attempts');
@@ -706,18 +704,11 @@ define([
       var attemptInProgress = restoreState[4] == 1 ? true : false;
       var scoreAsPercent;
 
-      var indexByIdQuestions = restoreState[5];
+      let blocks = blockData[0].map(trackingId => Adapt.data.findWhere({ _trackingId: trackingId }));
 
-      var blockIds = {};
-      for (id in indexByIdQuestions) {
-        if (indexByIdQuestions.hasOwnProperty(id)) {
-          var blockId = Adapt.findById(id).get('_parentId');
-          blockIds[blockId] = Adapt.findById(blockId);
-        }
+      if (blocks.length) {
+        this.getChildren().models = blocks;
       }
-      var restoredChildrenModels = _.values(blockIds);
-
-      if (indexByIdQuestions) this.getChildren().models = restoredChildrenModels;
 
       this.set({
         _isAssessmentComplete: isComplete,
@@ -741,15 +732,15 @@ define([
       });
 
       var questions = [];
-      for (id in indexByIdQuestions) {
-        if (indexByIdQuestions.hasOwnProperty(id) && Adapt.findById(id).get('_isQuestionType')) {
+      blocks.forEach((block, blockIndex) => {
+        const blockQuestions = block.findDescendantModels('question');
+        blockQuestions.forEach((question, questionIndex) => {
           questions.push({
-            _id: id,
-            _isCorrect: indexByIdQuestions[id]
+            _id: question.get('_id'),
+            _isCorrect: blockData[1][blockIndex][questionIndex]
           });
-        }
-      }
-
+        });
+      });
       this.set('_questions', questions);
 
       if (isComplete) this._checkIsPass();

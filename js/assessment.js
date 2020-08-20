@@ -51,12 +51,12 @@ define([
     _restoreModelState: function(assessmentModel) {
 
       if (!this._saveStateModel) {
-        this._saveStateModel = Adapt.offlineStorage.get('assessment');
+        this._saveStateModel = Adapt.offlineStorage.get('a');
       }
       if (this._saveStateModel) {
         var state = assessmentModel.getState();
         if (this._saveStateModel[state.id]) {
-          assessmentModel.setRestoreState(this._saveStateModel[state.id]);
+          assessmentModel.setRestoreState(Adapt.offlineStorage.deserialize(this._saveStateModel[state.id]));
         }
       }
 
@@ -139,7 +139,7 @@ define([
 
       this._restoredCount = 0;
     },
-    
+
 
     _checkAssessmentsComplete: function() {
       var allAssessmentsComplete = true;
@@ -323,10 +323,10 @@ define([
       this._saveStateModel = {};
       for (var i = 0, assessmentModel; assessmentModel = this._assessments[i++];) {
         var state = assessmentModel.getState();
-        this._saveStateModel[state.id] = assessmentModel.getSaveState();
+        this._saveStateModel[state.id] = Adapt.offlineStorage.serialize(assessmentModel.getSaveState())
       }
 
-      Adapt.offlineStorage.set('assessment', this._saveStateModel);
+      Adapt.offlineStorage.set('a', this._saveStateModel);
     },
 
     getConfig: function () {
