@@ -1,0 +1,38 @@
+{
+  "$anchor": "assessment-course",
+  "$schema": "http://json-schema.org/draft/2019-09/schema#",
+  "type": "object",
+  "$merge": {
+    "source": {
+      "$ref": "course"
+    },
+    "with": {
+      "properties": {
+        "_assessment": {
+          "type": "object",
+          "title": "Assessment",
+          "default": {},
+          "properties": {
+            "_isPercentageBased": {
+              "type": "boolean",
+              "title": "Percentage based",
+              "description": "Determines whether the value of 'Pass mark' should be treated as a percentage (default) or as the raw score.",
+              "default": true
+            },
+            "_scoreToPass": {
+              "type": "number",
+              "title": "Pass mark",
+              "description": "The minimum score required by the learner to pass the assessment.",
+              "default": 60,
+              "_backboneForms": {
+                "validators": [
+                  "number"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

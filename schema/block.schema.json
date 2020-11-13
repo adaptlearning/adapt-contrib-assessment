@@ -1,0 +1,36 @@
+{
+  "$anchor": "assessment-block",
+  "$schema": "http://json-schema.org/draft/2019-09/schema#",
+  "type": "object",
+  "$merge": {
+    "source": {
+      "$ref": "block"
+    },
+    "with": {
+      "properties": {
+        "_assessment": {
+          "type": "object",
+          "title": "Assessment",
+          "default": {},
+          "properties": {
+            "_quizBankID": {
+              "type": "number",
+              "title": "Bank ID",
+              "description": "Used to group blocks of question components into associated banks. This works in conjunction with the 'Split' property when question banks are in use.",
+              "default": 1,
+              "_backboneForms": {
+                "validators": [
+                  "number"
+                ],
+                "editorAttrs": {
+                  "step": 1,
+                  "min": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
