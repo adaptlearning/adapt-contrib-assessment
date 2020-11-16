@@ -78,6 +78,8 @@ define([
 
       this._setAssessmentOwnershipOnChildrenModels();
 
+      // ensure the _questions attribute is set up (see https://github.com/adaptlearning/adapt_framework/issues/2971)
+      this._updateQuestionsState();
     },
 
     _setAssessmentOwnershipOnChildrenModels: function() {
