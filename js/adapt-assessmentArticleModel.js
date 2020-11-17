@@ -697,8 +697,8 @@ define([
       var attemptsSpent = restoreState[1];
       var maxScore = restoreState[2];
       var score = restoreState[3];
+      var scoreAsPercent = score ? Math.round(score / maxScore * 100) : 0;
       var attemptInProgress = restoreState[4] === 1;
-      var scoreAsPercent;
 
       let blocks = blockData[0].map(trackingId => Adapt.data.findWhere({ _trackingId: trackingId }));
 
@@ -713,12 +713,7 @@ define([
         _attemptInProgress: attemptInProgress,
         _attemptsLeft: (attempts === 'infinite' ? attempts : attempts - attemptsSpent),
         _maxScore: maxScore || this._getMaxScore(),
-        _score: score || 0
-      });
-
-      scoreAsPercent = score ? Math.round(score / maxScore * 100) : 0;
-
-      this.set({
+        _score: score || 0,
         _scoreAsPercent: scoreAsPercent,
         _lastAttemptScoreAsPercent: scoreAsPercent
       });
