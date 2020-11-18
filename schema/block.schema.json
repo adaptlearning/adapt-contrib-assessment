@@ -19,9 +19,6 @@
               "description": "Used to group blocks of question components into associated banks. This works in conjunction with the 'Split' property when question banks are in use.",
               "default": 1,
               "_backboneForms": {
-                "validators": [
-                  "number"
-                ],
                 "editorAttrs": {
                   "step": 1,
                   "min": 1

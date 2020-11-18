@@ -28,12 +28,7 @@
               "type": "number",
               "title": "Attempts Allowed",
               "description": "Controls the number of attempts the user is allowed to have on this assessment. Set to -1 (or 0) to allow infinite attempts.",
-              "default": -1,
-              "_backboneForms": {
-                "validators": [
-                  "number"
-                ]
-              }
+              "default": -1
             },
             "_isPercentageBased": {
               "type": "boolean",
@@ -45,12 +40,7 @@
               "type": "number",
               "title": "Pass mark",
               "description": "The minimum score required by the learner to pass the assessment.",
-              "default": 60,
-              "_backboneForms": {
-                "validators": [
-                  "number"
-                ]
-              }
+              "default": 60
             },
             "_includeInTotalScore": {
               "type": "boolean",
@@ -62,12 +52,7 @@
               "type": "number",
               "title": "Assessment Weight",
               "description": "If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment, i.e. 1 equals 100%, 0.5 is 50%, etc.",
-              "default": 1,
-              "_backboneForms": {
-                "validators": [
-                  "number"
-                ]
-              }
+              "default": 1
             },
             "_suppressMarking": {
               "type": "boolean",
@@ -102,12 +87,7 @@
                   "type": "number",
                   "title": "Block Count",
                   "description": "The number of blocks to present to the learner. Set to -1 (or 0) to display all blocks.",
-                  "default": -1,
-                  "_backboneForms": {
-                    "validators": [
-                      "number"
-                    ]
-                  }
+                  "default": -1
                 }
               }
             },
