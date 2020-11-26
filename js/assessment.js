@@ -13,8 +13,7 @@ define([
 
   Adapt.assessment = _.extend({
 
-  // Private functions
-
+    // Private functions
     _assessments: _.extend([], {
       _byPageId: {},
       _byAssessmentId: {}
@@ -140,7 +139,6 @@ define([
       this._restoredCount = 0;
     },
 
-
     _checkAssessmentsComplete: function() {
       var allAssessmentsComplete = true;
       var assessmentToPostBack = 0;
@@ -230,7 +228,7 @@ define([
             _subProgressTotal: assessmentsTotal,
             _subProgressComplete: assessmentsPassed
           });
-        } catch(e) {
+        } catch (e) {
 
         }
 
@@ -257,7 +255,7 @@ define([
     _setupQuestionNumbering: function() {
       var getRelatedQuestions = function(data) {
         var currentAssessmentId = data._assessmentId;
-        var currentAssessment =  Adapt.assessment.get(currentAssessmentId);
+        var currentAssessment = Adapt.assessment.get(currentAssessmentId);
         return currentAssessment.getState().questions;
       };
 
@@ -277,8 +275,7 @@ define([
       });
     },
 
-  // Public functions
-
+    // Public functions
     register: function(assessmentModel) {
       var state = assessmentModel.getState();
       var assessmentId = state.id;
@@ -323,7 +320,7 @@ define([
       this._saveStateModel = {};
       for (var i = 0, assessmentModel; assessmentModel = this._assessments[i++];) {
         var state = assessmentModel.getState();
-        this._saveStateModel[state.id] = Adapt.offlineStorage.serialize(assessmentModel.getSaveState())
+        this._saveStateModel[state.id] = Adapt.offlineStorage.serialize(assessmentModel.getSaveState());
       }
 
       Adapt.offlineStorage.set('a', this._saveStateModel);
@@ -368,7 +365,7 @@ define([
         score += state.score / state.assessmentWeight;
       }
 
-      var isComplete = assessmentsComplete == totalAssessments;
+      var isComplete = assessmentsComplete === totalAssessments;
 
       var scoreAsPercent = Math.round((score / maxScore) * 100);
 

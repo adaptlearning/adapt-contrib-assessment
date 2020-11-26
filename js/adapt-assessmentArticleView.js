@@ -34,13 +34,13 @@ define([
     },
 
     _onAssessmentComplete: function(state, model) {
-      if (state.id != this.model.get('_assessment')._id) return;
+      if (state.id !== this.model.get('_assessment')._id) return;
 
       console.log('assessment complete', state, model);
     },
 
     _onAssessmentReset: function(state, model) {
-      if (state.id != this.model.get('_assessment')._id) return;
+      if (state.id !== this.model.get('_assessment')._id) return;
 
       console.log('assessment reset', state, model);
 
