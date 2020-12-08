@@ -1,6 +1,6 @@
 {
   "name": "adapt-contrib-assessment",
-  "version": "4.2.1",
+  "version": "4.3.0-alpha.2",
   "framework": ">=5.4",
   "homepage": "https://github.com/adaptlearning/adapt-contrib-assessment",
   "issues": "https://github.com/adaptlearning/adapt_framework/issues/new",
