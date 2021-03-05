@@ -16,7 +16,7 @@
             "_quizBankID": {
               "type": "number",
               "title": "Bank ID",
-              "description": "Used to group blocks of question components into associated banks. This works in conjunction with the 'Split' property when question banks are in use.",
+              "description": "Used to group blocks of question components into associated banks. This works in conjunction with the 'Question counts' property when question banks are in use",
               "default": 1,
               "_backboneForms": {
                 "editorAttrs": {

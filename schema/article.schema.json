@@ -15,102 +15,102 @@
           "properties": {
             "_isEnabled": {
               "type": "boolean",
-              "title": "Enabled",
+              "title": "Make this article an assessment",
               "default": false
             },
             "_id": {
               "type": "string",
-              "title": "Assessment Name",
-              "description": "Unique name for the assessment. This is required by other plugins such as the 'Assessment Results' component to identify the assessment and display its variables.",
+              "title": "Assessment ID",
+              "description": "Unique name for the assessment. This is required by other plugins such as the 'Assessment Results' component to identify the assessment and display its variables",
               "default": ""
             },
             "_attempts": {
               "type": "number",
-              "title": "Attempts Allowed",
-              "description": "Controls the number of attempts the user is allowed to have on this assessment. Set to -1 (or 0) to allow infinite attempts.",
+              "title": "Allowed attempts",
+              "description": "Controls the number of attempts the user is allowed to have on this assessment. Set to -1 (or 0) to allow infinite attempts",
               "default": -1
             },
             "_isPercentageBased": {
               "type": "boolean",
-              "title": "Percentage based",
+              "title": "Set pass mark as percentage",
               "description": "Determines whether the value of 'Pass mark' should be treated as a percentage (default) or as the raw score.",
               "default": true
             },
             "_scoreToPass": {
               "type": "number",
               "title": "Pass mark",
-              "description": "The minimum score required by the learner to pass the assessment.",
+              "description": "The minimum score required by the learner to pass the assessment",
               "default": 60
             },
             "_includeInTotalScore": {
               "type": "boolean",
-              "title": "Include in Total Score",
-              "description": "Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to 'Assessment Weight'.",
+              "title": "Include score in course total",
+              "description": "Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to 'Assessment weight'",
               "default": true
             },
             "_assessmentWeight": {
               "type": "number",
-              "title": "Assessment Weight",
+              "title": "Assessment weight",
               "description": "If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment, i.e. 1 equals 100%, 0.5 is 50%, etc.",
               "default": 1
             },
             "_suppressMarking": {
               "type": "boolean",
-              "title": "Suppress Marking",
-              "description": "Determines whether question marking should be delayed until completion of the assessment or until all attempts have been exhausted.",
+              "title": "Suppress marking until complete",
+              "description": "Determines whether question marking should be delayed until completion of the assessment or until all attempts have been exhausted",
               "default": false
             },
             "_isResetOnRevisit": {
               "type": "boolean",
-              "title": "Reset on Revisit",
-              "description": "Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page.",
+              "title": "Reset state on revisit",
+              "description": "Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page",
               "default": false
             },
             "_allowResetIfPassed": {
               "type": "boolean",
-              "title": "Allow retry once passed?",
-              "description": "Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining).",
+              "title": "Allow retry once passed",
+              "description": "Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining)",
               "default": false
             },
             "_randomisation": {
               "type": "object",
-              "title": "Randomised Blocks",
+              "title": "Randomised blocks",
               "default": {},
               "properties": {
                 "_isEnabled": {
                   "type": "boolean",
-                  "title": "Enabled",
-                  "description": "If randomisation is enabled, a specified number of blocks will be displayed to the user in a random order.",
+                  "title": "Enable",
+                  "description": "If randomisation is enabled, a specified number of blocks will be displayed to the user in a random order",
                   "default": false
                 },
                 "_blockCount": {
                   "type": "number",
-                  "title": "Block Count",
-                  "description": "The number of blocks to present to the learner. Set to -1 (or 0) to display all blocks.",
+                  "title": "Block count",
+                  "description": "The number of blocks to present to the learner. Set to -1 (or 0) to display all blocks",
                   "default": -1
                 }
               }
             },
             "_banks": {
               "type": "object",
-              "title": "Question Banks",
+              "title": "Question banks",
               "default": {},
               "properties": {
                 "_isEnabled": {
                   "type": "boolean",
-                  "title": "Enabled",
-                  "description": "Enables associating blocks of question components with a 'bank', allowing questions to be grouped then rendered via the 'Split' property.",
+                  "title": "Enable",
+                  "description": "Enables associating blocks of question components with a 'bank', allowing questions to be grouped then rendered via the 'Question counts' property",
                   "default": false
                 },
                 "_split": {
                   "type": "string",
-                  "title": "Split",
-                  "description": "This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each question bank. The position of the number in the list corresponds to the 'Bank ID' assigned, e.g. \"3,2\" would display three questions from Bank 1 and two from Bank 2.",
+                  "title": "Question counts",
+                  "description": "This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each question bank. The position of the number in the list corresponds to the 'Bank ID' assigned, e.g. \"3,2\" would display three questions from Bank 1 and two from Bank 2",
                   "default": ""
                 },
                 "_randomisation": {
                   "type": "boolean",
-                  "title": "Randomise Question Banks",
+                  "title": "Randomise question banks",
                   "description": "Controls whether the questions will be displayed in a random order.",
                   "default": false
                 }
@@ -118,13 +118,13 @@
             },
             "_questions": {
               "type": "object",
-              "title": "Question Behaviour",
+              "title": "Question overrides",
               "default": {},
               "properties": {
                 "_resetType": {
                   "type": "string",
-                  "title": "Reset Type",
-                  "description": "Determines whether the question will register as completed when reset. When assigned a value of 'soft', the learner may continue to interact with it, but the complete attribute remains set to true. When assigned 'hard', complete is set to false, and the learner will be forced to complete it again if it is reset.",
+                  "title": "Reset type",
+                  "description": "Determines whether the question will register as completed when reset. When assigned a value of 'soft', the learner may continue to interact with it, but the complete attribute remains set to true. When assigned 'hard', complete is set to false, and the learner will be forced to complete it again if it is reset",
                   "default": "soft",
                   "enum": [
                     "soft",
@@ -134,20 +134,20 @@
                 },
                 "_canShowFeedback": {
                   "type": "boolean",
-                  "title": "Show Feedback",
-                  "description": "Allows the user to view feedback on their answer.",
+                  "title": "Enable feedback",
+                  "description": "Allows the user to view feedback on their answer",
                   "default": false
                 },
                 "_canShowMarking": {
                   "type": "boolean",
-                  "title": "Show Marking",
-                  "description": "Displays ticks and crosses on question completion.",
+                  "title": "Enable marking",
+                  "description": "Displays ticks and crosses on question completion",
                   "default": false
                 },
                 "_canShowModelAnswer": {
                   "type": "boolean",
-                  "title": "Show Model Answer",
-                  "description": "Allows the user to view the 'model answer' should they answer the question incorrectly.",
+                  "title": "Enable correct answer toggle",
+                  "description": "Allows the user to view the 'model answer' should they answer the question incorrectly",
                   "default": false
                 }
               }
