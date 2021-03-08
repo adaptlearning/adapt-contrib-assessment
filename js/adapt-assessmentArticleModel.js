@@ -497,11 +497,15 @@ define([
     },
 
     _reloadPage: function(callback) {
+      var assessmentConfig = this.getConfig();
       this._forceResetOnRevisit = true;
-
-      this.listenToOnce(Adapt, 'pageView:ready', callback);
-
-      _.delay(function() {
+      this.listenToOnce(Adapt, 'pageView:ready', async () => {
+        if (assessmentConfig._scrollToOnReset) {
+          await Adapt.navigateToElement(this.get('_id'));
+        }
+        callback();
+      });
+      _.delay(() => {
         Backbone.history.navigate('#/id/' + Adapt.location._currentId, { replace: true, trigger: true });
       }, 250);
     },
