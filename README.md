@@ -72,7 +72,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >**\_allowResetIfPassed** (boolean): Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining). Acceptable values are `true` or `false`.  
 
->**\_scrollToOnReset_** (boolean): Controls whether to scroll to the assessment after reset or to stay at the top of the assessment page. Acceptable values are `true` or `false`.  
+>**\_scrollToOnReset** (boolean): Controls whether to scroll to the assessment after reset or to stay at the top of the assessment page. Acceptable values are `true` or `false`.  
 
 >**\_banks** (object): If **\_banks** is enabled, its attributes determine which questions from a series of question banks/buckets will be presented to the learner. Contains values for **\_isEnabled**, **\_split**, and **\_randomisation**. (Use either **\_banks** or **\_randomisation**; the value of their **\_isEnabled** attributes must be opposite booleans. If **\_banks** is enabled, blocks must be organized into questions banks by adding the **\_quizBankID** attribute referenced below. You must also have at least two banks; if you only have one bank of questions then the **\_randomisation** functionality is likely to be more appropriate to your needs).
 
