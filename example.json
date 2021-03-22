@@ -16,6 +16,7 @@
         "_isResetOnRevisit": false,
         "_attempts": 2,
         "_allowResetIfPassed": false,
+        "_scrollToOnReset": false,
         "_banks": {
             "_isEnabled": true,
             "_split": "2,1",
