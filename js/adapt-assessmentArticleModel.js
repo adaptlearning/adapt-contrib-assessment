@@ -68,16 +68,30 @@ define([
     init: function() {
       // save original children
       this._originalChildModels = this.getChildren().models;
-      // collect all question components
-      this._currentQuestionComponents = this.findDescendantModels('components', { where: { _isQuestionType: true } });
-      this.set('_currentQuestionComponentIds', this._currentQuestionComponents.map(function(comp) {
-        return comp.get('_id');
-      }));
+
+      this.setupCurrentQuestionComponents();
 
       this._setAssessmentOwnershipOnChildrenModels();
 
       // ensure the _questions attribute is set up (see https://github.com/adaptlearning/adapt_framework/issues/2971)
       this._updateQuestionsState();
+    },
+
+    setupCurrentQuestionComponents: function() {
+      this._currentQuestionComponents = this.findDescendantModels('components', { where: { _isQuestionType: true } });
+
+      var assessmentConfig = this.getConfig();
+      this._currentQuestionComponents.forEach((component) => {
+        component.set({
+          _canShowFeedback: assessmentConfig._questions._canShowFeedback,
+          _canShowMarking: assessmentConfig._questions._canShowMarking,
+          _canShowModelAnswer: assessmentConfig._questions._canShowModelAnswer
+        });
+      });
+
+      this.set('_currentQuestionComponentIds', this._currentQuestionComponents.map(function (comp) {
+        return comp.get('_id');
+      }));
     },
 
     _setAssessmentOwnershipOnChildrenModels: function() {
@@ -120,12 +134,12 @@ define([
         });
         this.getChildren().models = this._originalChildModels;
         if (assessmentConfig._banks &&
-            assessmentConfig._banks._isEnabled &&
-            assessmentConfig._banks._split.length > 1) {
+          assessmentConfig._banks._isEnabled &&
+          assessmentConfig._banks._split.length > 1) {
 
           quizModels = this._setupBankedAssessment();
         } else if (assessmentConfig._randomisation &&
-                  assessmentConfig._randomisation._isEnabled) {
+          assessmentConfig._randomisation._isEnabled) {
 
           quizModels = this._setupRandomisedAssessment();
         }
@@ -141,10 +155,7 @@ define([
 
       this.getChildren().models = quizModels;
 
-      this._currentQuestionComponents = this.findDescendantModels('components', { where: { _isQuestionType: true } });
-      this.set('_currentQuestionComponentIds', this._currentQuestionComponents.map(function(comp) {
-        return comp.get('_id');
-      }));
+      this.setupCurrentQuestionComponents();
 
       if (shouldResetAssessment || shouldResetQuestions) {
         this._resetQuestions(function() {
@@ -603,9 +614,9 @@ define([
 
       // stop resetting if not complete or not allowed
       if (this.get('_assessmentCompleteInSession') &&
-          !assessmentConfig._isResetOnRevisit &&
-          !isPageReload &&
-          !force) {
+        !assessmentConfig._isResetOnRevisit &&
+        !isPageReload &&
+        !force) {
         if (typeof callback === 'function') {
           callback(false);
         }
