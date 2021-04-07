@@ -89,7 +89,7 @@ define([
         });
       });
 
-      this.set('_currentQuestionComponentIds', this._currentQuestionComponents.map(function (comp) {
+      this.set('_currentQuestionComponentIds', this._currentQuestionComponents.map(function(comp) {
         return comp.get('_id');
       }));
     },
