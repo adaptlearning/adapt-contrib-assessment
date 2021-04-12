@@ -273,9 +273,11 @@ define([
 
     _onBlockCompleted: function(blockModel, value) {
       if (value === false) return;
-      var questionModel = blockModel.findDescendantModels('question')[0];
-      if (!questionModel) return;
-      this._onQuestionCompleted(questionModel, value);
+      var questionModels = blockModel.findDescendantModels('question');
+      if (!questionModels.length) return;
+      questionModels.forEach(questionModel => {
+        this._onQuestionCompleted(questionModel, value);
+      });
     },
 
     _onQuestionCompleted: function(questionModel, value) {
@@ -551,6 +553,7 @@ define([
         this.once('reset', function() {
           this._isResetInProgress = false;
           if (typeof callback === 'function') {
+            // eslint-disable-next-line standard/no-callback-literal
             callback(true);
           }
         });
@@ -571,6 +574,7 @@ define([
           !isPageReload &&
           !force) {
         if (typeof callback === 'function') {
+          // eslint-disable-next-line standard/no-callback-literal
           callback(false);
         }
         return false;
@@ -591,6 +595,7 @@ define([
       var allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
       // stop resetting if no attempts left and allowResetIfPassed is false
       if (!this._isAttemptsLeft() && !force && !allowResetIfPassed) {
+        // eslint-disable-next-line standard/no-callback-literal
         if (typeof callback === 'function') callback(false);
         return false;
       }
@@ -601,6 +606,7 @@ define([
         this.once('reset', function() {
           this._isResetInProgress = false;
           if (typeof callback === 'function') {
+            // eslint-disable-next-line standard/no-callback-literal
             callback(true);
           }
         });
@@ -612,6 +618,7 @@ define([
       } else {
         this._reloadPage(function() {
           if (typeof callback === 'function') {
+            // eslint-disable-next-line standard/no-callback-literal
             callback(true);
           }
         });
