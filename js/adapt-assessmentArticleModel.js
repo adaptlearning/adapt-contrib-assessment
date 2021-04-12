@@ -274,7 +274,6 @@ define([
     _onBlockCompleted: function(blockModel, value) {
       if (value === false) return;
       var questionModels = blockModel.findDescendantModels('question');
-      if (!questionModels.length) return;
       questionModels.forEach(questionModel => {
         this._onQuestionCompleted(questionModel, value);
       });
