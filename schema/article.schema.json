@@ -33,7 +33,7 @@
             "_isPercentageBased": {
               "type": "boolean",
               "title": "Set pass mark as percentage",
-              "description": "Determines whether the value of 'Pass mark' should be treated as a percentage (default) or as the raw score.",
+              "description": "Determines whether the value of 'Pass mark' should be treated as a percentage (default) or as the raw score",
               "default": true
             },
             "_scoreToPass": {
@@ -111,7 +111,7 @@
                 "_randomisation": {
                   "type": "boolean",
                   "title": "Randomise question banks",
-                  "description": "Controls whether the questions will be displayed in a random order.",
+                  "description": "Controls whether the questions will be displayed in a random order",
                   "default": false
                 }
               }
