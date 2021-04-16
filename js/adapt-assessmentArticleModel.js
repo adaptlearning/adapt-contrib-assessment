@@ -25,6 +25,16 @@ define([
 
   var AssessmentModel = {
 
+    _getCurrentQuestionComponents: function() {
+      return this.findDescendantModels('block')
+        .filter(block => block.get('_isAvailable'))
+        .reduce((questions, block) => questions.concat(block.findDescendantModels('question')), []);
+    },
+
+    _getAllQuestionComponents: function() {
+      return this.findDescendantModels('question');
+    },
+
     // Private functions
     _postInitialize: function() {
       if (!this.isAssessmentEnabled()) return;
@@ -32,7 +42,6 @@ define([
       var assessmentConfig = this.getConfig();
 
       _.extend(this, {
-        _currentQuestionComponents: null,
         _originalChildModels: null,
         _questionBanks: null,
         _forceResetOnRevisit: false
@@ -49,7 +58,6 @@ define([
       }
 
       this.set({
-        _currentQuestionComponentIds: [],
         _assessmentCompleteInSession: false,
         _attemptInProgress: false,
         _isAssessmentComplete: false,
@@ -156,7 +164,6 @@ define([
       this.getChildren().models = quizModels;
 
       this.setupCurrentQuestionComponents();
-
       if (shouldResetAssessment || shouldResetQuestions) {
         this._resetQuestions(function() {
           this.set('_attemptInProgress', true);
@@ -264,40 +271,32 @@ define([
       }
 
       if (!_.isEmpty(newSettings)) {
-        for (var i = 0, l = this._currentQuestionComponents.length; i < l; i++) {
-          this._currentQuestionComponents[i].set(newSettings, { pluginName: '_assessment' });
-        }
+        const questionComponents = this._getAllQuestionComponents();
+        questionComponents.forEach(model => model.set(newSettings, { pluginName: '_assessment' }));
       }
     },
 
     _setupQuestionListeners: function() {
-      var questionComponents = this._currentQuestionComponents;
-      for (var i = 0, l = questionComponents.length; i < l; i++) {
-        var question = questionComponents[i];
-        if (question.get('_isInteractionComplete')) continue;
-        this.listenTo(question, 'change:_isInteractionComplete', this._onQuestionCompleted);
-      }
+      this._removeQuestionListeners();
+      this.listenTo(this.getChildren(), 'change:_isInteractionComplete', this._onBlockCompleted);
     },
 
     _checkNumberOfQuestionsAnswered: function() {
-      var questionComponents = this._currentQuestionComponents;
-      var numberOfQuestionsAnswered = 0;
-      for (var i = 0, l = questionComponents.length; i < l; i++) {
-        var question = questionComponents[i];
-        if (question.get('_isInteractionComplete')) {
-          numberOfQuestionsAnswered++;
-        }
-      }
+      const questionComponents = this._getCurrentQuestionComponents();
+      const numberOfQuestionsAnswered = questionComponents.filter(model => model.get('_isInteractionComplete')).length;
       this.set('_numberOfQuestionsAnswered', numberOfQuestionsAnswered);
     },
 
     _removeQuestionListeners: function() {
-      var questionComponents = this._currentQuestionComponents;
-      if (!questionComponents) return;
-      for (var i = 0, l = questionComponents.length; i < l; i++) {
-        var question = questionComponents[i];
-        this.stopListening(question, 'change:_isInteractionComplete', this._onQuestionCompleted);
-      }
+      this.stopListening(this.getChildren(), 'change:_isInteractionComplete', this._onBlockCompleted);
+    },
+
+    _onBlockCompleted: function(blockModel, value) {
+      if (value === false) return;
+      var questionModels = blockModel.findDescendantModels('question');
+      questionModels.forEach(questionModel => {
+        this._onQuestionCompleted(questionModel, value);
+      });
     },
 
     _onQuestionCompleted: function(questionModel, value) {
@@ -315,11 +314,9 @@ define([
     },
 
     _checkAssessmentComplete: function() {
-      var numberOfQuestionsAnswered = this.get('_numberOfQuestionsAnswered');
-
-      var allQuestionsAnswered = numberOfQuestionsAnswered >= this._currentQuestionComponents.length;
+      const numberOfQuestionsAnswered = this.get('_numberOfQuestionsAnswered');
+      const allQuestionsAnswered = (numberOfQuestionsAnswered >= this._getCurrentQuestionComponents().length);
       if (!allQuestionsAnswered) return;
-
       this._onAssessmentComplete();
     },
 
@@ -357,22 +354,13 @@ define([
     },
 
     _updateQuestionsState: function() {
-      var questions = [];
-
-      var questionComponents = this._currentQuestionComponents;
-      for (var i = 0, l = questionComponents.length; i < l; i++) {
-        var questionComponent = questionComponents[i];
-
-        var questionModel = {
-          _id: questionComponent.get('_id'),
-          _isCorrect: questionComponent.get('_isCorrect') === undefined ? null : questionComponent.get('_isCorrect')
-        };
-
-        // build array of questions
-        questions.push(questionModel);
-
-      }
-
+      const questionComponents = this._getCurrentQuestionComponents();
+      const questions = questionComponents.map(model => ({
+        _id: model.get('_id'),
+        _isCorrect: model.get('_isCorrect') === undefined ?
+          null :
+          model.get('_isCorrect')
+      }));
       this.set('_questions', questions);
     },
 
@@ -415,18 +403,13 @@ define([
 
     _overrideMarkingSettings: function() {
       var newMarkingSettings = this._getMarkingSettings();
-      for (var i = 0, l = this._currentQuestionComponents.length; i < l; i++) {
-        this._currentQuestionComponents[i].set(newMarkingSettings, {
-          pluginName: '_assessment'
-        });
-      }
+      const questionComponents = this._getAllQuestionComponents();
+      questionComponents.forEach(model => model.set(newMarkingSettings, { pluginName: '_assessment' }));
     },
 
     _refreshQuestions: function() {
-      for (var a = 0, b = this._currentQuestionComponents.length; a < b; a++) {
-        var question = this._currentQuestionComponents[a];
-        question.refresh();
-      }
+      const questionComponents = this._getCurrentQuestionComponents();
+      questionComponents.forEach(model => model.refresh());
     },
 
     _shouldSuppressMarking: function() {
@@ -461,27 +444,22 @@ define([
     },
 
     _getScore: function() {
-      var score = 0;
-      var questionComponents = this._currentQuestionComponents;
-      for (var i = 0, l = questionComponents.length; i < l; i++) {
-        var question = questionComponents[i];
-        if (question.get('_isCorrect') &&
-          question.get('_questionWeight')) {
-          score += question.get('_questionWeight');
-        }
-      }
+      const questionComponents = this._getCurrentQuestionComponents();
+      const score = questionComponents.reduce((score, model) => {
+        return model.get('_isCorrect') && model.get('_questionWeight') ?
+          score + model.get('_questionWeight') :
+          score;
+      }, 0);
       return score;
     },
 
     _getMaxScore: function() {
-      var maxScore = 0;
-      var questionComponents = this._currentQuestionComponents;
-      for (var i = 0, l = questionComponents.length; i < l; i++) {
-        var question = questionComponents[i];
-        if (question.get('_questionWeight')) {
-          maxScore += question.get('_questionWeight');
-        }
-      }
+      const questionComponents = this._getCurrentQuestionComponents();
+      const maxScore = questionComponents.reduce((maxScore, model) => {
+        return model.get('_questionWeight') ?
+          maxScore + model.get('_questionWeight') :
+          maxScore;
+      }, 0);
       return maxScore;
     },
 
@@ -525,7 +503,7 @@ define([
       var assessmentConfig = this.getConfig();
       var syncIterations = 1; // number of synchronous iterations to perform
       var i = 0;
-      var qs = this._currentQuestionComponents;
+      var qs = this._getCurrentQuestionComponents();
       var len = qs.length;
 
       function step() {
@@ -598,6 +576,7 @@ define([
         this.once('reset', function() {
           this._isResetInProgress = false;
           if (typeof callback === 'function') {
+            // eslint-disable-next-line standard/no-callback-literal
             callback(true);
           }
         });
@@ -618,6 +597,7 @@ define([
         !isPageReload &&
         !force) {
         if (typeof callback === 'function') {
+          // eslint-disable-next-line standard/no-callback-literal
           callback(false);
         }
         return false;
@@ -638,6 +618,7 @@ define([
       var allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
       // stop resetting if no attempts left and allowResetIfPassed is false
       if (!this._isAttemptsLeft() && !force && !allowResetIfPassed) {
+        // eslint-disable-next-line standard/no-callback-literal
         if (typeof callback === 'function') callback(false);
         return false;
       }
@@ -648,6 +629,7 @@ define([
         this.once('reset', function() {
           this._isResetInProgress = false;
           if (typeof callback === 'function') {
+            // eslint-disable-next-line standard/no-callback-literal
             callback(true);
           }
         });
@@ -659,6 +641,7 @@ define([
       } else {
         this._reloadPage(function() {
           if (typeof callback === 'function') {
+            // eslint-disable-next-line standard/no-callback-literal
             callback(true);
           }
         });
@@ -779,7 +762,7 @@ define([
         questions: this.get('_questions'),
         resetType: assessmentConfig._questions._resetType,
         allowResetIfPassed: assessmentConfig._allowResetIfPassed,
-        questionModels: new Backbone.Collection(this._currentQuestionComponents)
+        questionModels: new Backbone.Collection(this._getCurrentQuestionComponents())
       };
 
       return state;
