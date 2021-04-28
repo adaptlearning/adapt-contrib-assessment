@@ -77,10 +77,23 @@ define([
       // save original children
       this._originalChildModels = this.getChildren().models;
 
+      this.setupCurrentQuestionComponents();
+
       this._setAssessmentOwnershipOnChildrenModels();
 
       // ensure the _questions attribute is set up (see https://github.com/adaptlearning/adapt_framework/issues/2971)
       this._updateQuestionsState();
+    },
+
+    setupCurrentQuestionComponents: function() {
+      const assessmentQuestionsConfig = this.getConfig()._questions;
+      this._getAllQuestionComponents().forEach(component => {
+        component.set({
+          _canShowFeedback: assessmentQuestionsConfig._canShowFeedback,
+          _canShowMarking: assessmentQuestionsConfig._canShowMarking,
+          _canShowModelAnswer: assessmentQuestionsConfig._canShowModelAnswer
+        });
+      });
     },
 
     _setAssessmentOwnershipOnChildrenModels: function() {
@@ -123,12 +136,12 @@ define([
         });
         this.getChildren().models = this._originalChildModels;
         if (assessmentConfig._banks &&
-            assessmentConfig._banks._isEnabled &&
-            assessmentConfig._banks._split.length > 1) {
+          assessmentConfig._banks._isEnabled &&
+          assessmentConfig._banks._split.length > 1) {
 
           quizModels = this._setupBankedAssessment();
         } else if (assessmentConfig._randomisation &&
-                  assessmentConfig._randomisation._isEnabled) {
+          assessmentConfig._randomisation._isEnabled) {
 
           quizModels = this._setupRandomisedAssessment();
         }
@@ -144,6 +157,7 @@ define([
 
       this.getChildren().models = quizModels;
 
+      this.setupCurrentQuestionComponents();
       if (shouldResetAssessment || shouldResetQuestions) {
         this._resetQuestions(function() {
           this.set('_attemptInProgress', true);
@@ -573,9 +587,9 @@ define([
 
       // stop resetting if not complete or not allowed
       if (this.get('_assessmentCompleteInSession') &&
-          !assessmentConfig._isResetOnRevisit &&
-          !isPageReload &&
-          !force) {
+        !assessmentConfig._isResetOnRevisit &&
+        !isPageReload &&
+        !force) {
         if (typeof callback === 'function') {
           // eslint-disable-next-line standard/no-callback-literal
           callback(false);
