@@ -86,20 +86,14 @@ define([
     },
 
     setupCurrentQuestionComponents: function() {
-      this._currentQuestionComponents = this.findDescendantModels('components', { where: { _isQuestionType: true } });
-
-      var assessmentConfig = this.getConfig();
-      this._currentQuestionComponents.forEach((component) => {
+      const assessmentQuestionsConfig = this.getConfig()._questions;
+      this._getAllQuestionComponents().forEach(component => {
         component.set({
-          _canShowFeedback: assessmentConfig._questions._canShowFeedback,
-          _canShowMarking: assessmentConfig._questions._canShowMarking,
-          _canShowModelAnswer: assessmentConfig._questions._canShowModelAnswer
+          _canShowFeedback: assessmentQuestionsConfig._canShowFeedback,
+          _canShowMarking: assessmentQuestionsConfig._canShowMarking,
+          _canShowModelAnswer: assessmentQuestionsConfig._canShowModelAnswer
         });
       });
-
-      this.set('_currentQuestionComponentIds', this._currentQuestionComponents.map(function(comp) {
-        return comp.get('_id');
-      }));
     },
 
     _setAssessmentOwnershipOnChildrenModels: function() {
