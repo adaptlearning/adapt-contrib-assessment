@@ -72,6 +72,8 @@ The following attributes are appended to a particular article within *articles.j
 
 >**\_allowResetIfPassed** (boolean): Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining). Acceptable values are `true` or `false`.  
 
+>**\_scrollToOnReset** (boolean): Controls whether to scroll to the assessment after reset or to stay at the top of the assessment page. Acceptable values are `true` or `false`.  
+
 >**\_banks** (object): If **\_banks** is enabled, its attributes determine which questions from a series of question banks/buckets will be presented to the learner. Contains values for **\_isEnabled**, **\_split**, and **\_randomisation**. (Use either **\_banks** or **\_randomisation**; the value of their **\_isEnabled** attributes must be opposite booleans. If **\_banks** is enabled, blocks must be organized into questions banks by adding the **\_quizBankID** attribute referenced below. You must also have at least two banks; if you only have one bank of questions then the **\_randomisation** functionality is likely to be more appropriate to your needs).
 
 >>**\_isEnabled** (boolean): Turns on or off the ability to use question banks.  
@@ -173,7 +175,7 @@ A description of the stateObject returned by the `assessment:complete` event is 
 If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://github.com/adaptlearning/adapt-contrib-spoor) extension must be enabled. If [question components](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components) are required to display feedback after attempts, the [Tutor](https://github.com/adaptlearning/adapt-contrib-tutor) extension must be enabled. And if it is appropriate to display performance results to the learner, a separate component such as [Assessment Results](https://github.com/adaptlearning/adapt-contrib-assessmentResults) is required.
 
 ----------------------------
-**Version number:**  4.2.1   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a>  
+**Version number:**  4.3.0   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a>  
 **Framework versions:** 5.4+  
 **Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)  
 **Accessibility support:** WAI AA  

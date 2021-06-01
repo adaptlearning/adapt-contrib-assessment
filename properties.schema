@@ -138,6 +138,15 @@
                   "help": "Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining).",
                   "validators": []
                 },
+                "_scrollToOnReset": {
+                  "type": "boolean",
+                  "required": true,
+                  "default": false,
+                  "title": "Scroll to on reset?",
+                  "inputType": "Checkbox",
+                  "help": "Controls whether to scroll to the assessment after reset or to stay at the top of the assessment page.",
+                  "validators": []
+                },
                 "_randomisation": {
                   "type": "object",
                   "required": false,
