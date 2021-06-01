@@ -72,6 +72,12 @@
               "description": "Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining)",
               "default": false
             },
+            "_scrollToOnReset": {
+              "type": "boolean",
+              "title": "Scroll to assessment article on reset",
+              "description": "Controls whether to scroll to the assessment after reset or to stay at the top of the assessment page",
+              "default": false
+            },
             "_randomisation": {
               "type": "object",
               "title": "Randomised blocks",
