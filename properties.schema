@@ -36,6 +36,15 @@
                   "default": 60,
                   "help": "The minimum score required by the learner to pass the assessment.",
                   "validators": ["number"]
+                },
+                "_correctToPass": {
+                  "type": "number",
+                  "required": false,
+                  "title": "Correct mark",
+                  "inputType": "Number",
+                  "default": 60,
+                  "help": "The minimum number of correct questions required by the learner to pass the assessment.",
+                  "validators": ["number"]
                 }
               }
             }
@@ -93,6 +102,15 @@
                   "inputType": "Number",
                   "default": 60,
                   "help": "The minimum score required by the learner to pass the assessment.",
+                  "validators": ["number"]
+                },
+                "_correctToPass": {
+                  "type": "number",
+                  "required": false,
+                  "title": "Correct mark",
+                  "inputType": "Number",
+                  "default": 60,
+                  "help": "The minimum number of correct questions required by the learner to pass the assessment.",
                   "validators": ["number"]
                 },
                 "_includeInTotalScore": {

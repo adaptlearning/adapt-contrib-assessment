@@ -15,6 +15,7 @@ define([
     _suppressMarking: false,
     _isPercentageBased: true,
     _scoreToPass: 100,
+    _correctToPass: 100,
     _includeInTotalScore: true,
     _assessmentWeight: 1,
     _isResetOnRevisit: true,
@@ -321,11 +322,19 @@ define([
       var scoreAsPercent = this._getScoreAsPercent();
       var score = this._getScore();
       var maxScore = this._getMaxScore();
+      const minScore = this._getMinScore();
+      const correctCount = this._getCorrectCount();
+      const correctAsPercent = this._getCorrectAsPercent();
+      const questionCount = this._getQuestionCount();
 
       this.set({
         _scoreAsPercent: scoreAsPercent,
         _score: score,
         _maxScore: maxScore,
+        _minScore: minScore,
+        _correctAsPercent: correctAsPercent,
+        _correctCount: correctCount,
+        _questionCount: questionCount,
         _lastAttemptScoreAsPercent: scoreAsPercent,
         _assessmentCompleteInSession: true,
         _isAssessmentComplete: true
@@ -363,11 +372,14 @@ define([
 
       var isPercentageBased = assessmentConfig._isPercentageBased;
       var scoreToPass = assessmentConfig._scoreToPass;
+      const correctToPass = assessmentConfig._correctToPass || 0;
 
       var scoreAsPercent = this.get('_scoreAsPercent');
       var score = this.get('_score');
+      const correctAsPercent = this.get('_correctAsPercent');
+      const correctCount = this.get('_correctCount');
 
-      var isPass = isPercentageBased ? (scoreAsPercent >= scoreToPass) : (score >= scoreToPass);
+      const isPass = isPercentageBased ? (scoreAsPercent >= scoreToPass && correctAsPercent >= correctToPass) : (score >= scoreToPass && correctCount >= correctToPass);
 
       this.set('_isPass', isPass);
     },
@@ -439,27 +451,41 @@ define([
 
     _getScore: function() {
       const questionComponents = this._getCurrentQuestionComponents();
-      const score = questionComponents.reduce((score, model) => {
-        return model.get('_isCorrect') && model.get('_questionWeight') ?
-          score + model.get('_questionWeight') :
-          score;
-      }, 0);
+      const score = questionComponents.reduce((score, model) => (score += model.score || 0), 0);
       return score;
     },
 
     _getMaxScore: function() {
       const questionComponents = this._getCurrentQuestionComponents();
-      const maxScore = questionComponents.reduce((maxScore, model) => {
-        return model.get('_questionWeight') ?
-          maxScore + model.get('_questionWeight') :
-          maxScore;
-      }, 0);
+      const maxScore = questionComponents.reduce((maxScore, model) => (maxScore += model.maxScore || 0), 0);
       return maxScore;
     },
 
+    _getMinScore: function() {
+      const questionComponents = this._getCurrentQuestionComponents();
+      const minScore = questionComponents.reduce((minScore, model) => (minScore += model.minScore || 0), 0);
+      return minScore;
+    },
+
     _getScoreAsPercent: function() {
-      if (this._getMaxScore() === 0) return 0;
-      return Math.round((this._getScore() / this._getMaxScore()) * 100);
+      const minScore = this._getMinScore();
+      const maxScore = this._getMaxScore();
+      const score = this._getScore();
+      const range = (maxScore - minScore);
+      return (range === 0) ? 0 : Math.round(((score - minScore) / range) * 100);
+    },
+
+    _getCorrectCount: function() {
+      return this._getCurrentQuestionComponents().reduce((count, model) => (count += model.get('_isCorrect') ? 1 : 0), 0);
+    },
+
+    _getQuestionCount: function() {
+      return this._getCurrentQuestionComponents().length;
+    },
+
+    _getCorrectAsPercent: function() {
+      const questionCount = this._getQuestionCount();
+      return (questionCount === 0) ? 0 : Math.round((this._getCorrectCount() / questionCount) * 100);
     },
 
     _getLastAttemptScoreAsPercent: function() {
@@ -673,7 +699,11 @@ define([
         state.attemptsSpent,
         state.maxScore || 0,
         state.score,
-        state.attemptInProgress ? 1 : 0
+        state.attemptInProgress ? 1 : 0,
+        state.minScore || 0,
+        state.correctAsPercent || 0,
+        state.correctCount || 0,
+        state.questionCount || 0
       ];
 
       const dataPackage = [saveState, blockData];
@@ -691,24 +721,16 @@ define([
       var score = restoreState[3];
       var scoreAsPercent = score ? Math.round(score / maxScore * 100) : 0;
       var attemptInProgress = restoreState[4] === 1;
+      const minScore = restoreState[5];
+      const correctAsPercent = restoreState[6];
+      const correctCount = restoreState[7];
+      const questionCount = restoreState[8];
 
       let blocks = blockData[0].map(trackingId => Adapt.data.findWhere({ _trackingId: trackingId }));
 
       if (blocks.length) {
         this.getChildren().models = blocks;
       }
-
-      this.set({
-        _isAssessmentComplete: isComplete,
-        _assessmentCompleteInSession: false,
-        _attemptsSpent: attemptsSpent,
-        _attemptInProgress: attemptInProgress,
-        _attemptsLeft: (attempts === 'infinite' ? attempts : attempts - attemptsSpent),
-        _maxScore: maxScore || this._getMaxScore(),
-        _score: score || 0,
-        _scoreAsPercent: scoreAsPercent,
-        _lastAttemptScoreAsPercent: scoreAsPercent
-      });
 
       var questions = [];
       blocks.forEach((block, blockIndex) => {
@@ -721,6 +743,22 @@ define([
         });
       });
       this.set('_questions', questions);
+
+      this.set({
+        _isAssessmentComplete: isComplete,
+        _assessmentCompleteInSession: false,
+        _attemptsSpent: attemptsSpent,
+        _attemptInProgress: attemptInProgress,
+        _attemptsLeft: (attempts === 'infinite' ? attempts : attempts - attemptsSpent),
+        _maxScore: maxScore || this._getMaxScore(),
+        _minScore: minScore || this._getMinScore(),
+        _score: score || 0,
+        _scoreAsPercent: scoreAsPercent,
+        _correctAsPercent: correctAsPercent || 0,
+        _correctCount: correctCount || 0,
+        _questionCount: questionCount || 0,
+        _lastAttemptScoreAsPercent: scoreAsPercent
+      });
 
       if (isComplete) this._checkIsPass();
 
@@ -745,6 +783,10 @@ define([
         score: this.get('_score'),
         scoreAsPercent: this.get('_scoreAsPercent'),
         maxScore: this.get('_maxScore'),
+        minScore: this.get('_minScore'),
+        correctCount: this.get('_correctCount'),
+        correctAsPercent: this.get('_correctAsPercent'),
+        questionCount: this.get('_questionCount'),
         isPass: this.get('_isPass'),
         includeInTotalScore: assessmentConfig._includeInTotalScore,
         assessmentWeight: assessmentConfig._assessmentWeight,
