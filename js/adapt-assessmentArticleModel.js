@@ -379,8 +379,8 @@ define([
       const correctAsPercent = this.get('_correctAsPercent');
       const correctCount = this.get('_correctCount');
 
-      const isPass = isPercentageBased 
-        ? (scoreAsPercent >= scoreToPass && correctAsPercent >= correctToPass) 
+      const isPass = isPercentageBased
+        ? (scoreAsPercent >= scoreToPass && correctAsPercent >= correctToPass)
         : (score >= scoreToPass && correctCount >= correctToPass);
 
       this.set('_isPass', isPass);
