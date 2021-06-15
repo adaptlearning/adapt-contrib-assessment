@@ -378,12 +378,11 @@ define([
 
       const scoreToPass = assessmentsConfig._scoreToPass;
       const correctToPass = assessmentsConfig._correctToPass;
+      const isPercentageBased = assessmentsConfig._isPercentageBased;
 
-      const isPass = !isComplete
-        ? false
-        : (assessmentsConfig._isPercentageBased !== false)
-          ? scoreAsPercent >= scoreToPass && correctAsPercent >= correctToPass
-          : score >= scoreToPass && correctCount >= correctToPass;
+      const isPass = isComplete && (isPercentageBased ?
+        ? scoreAsPercent >= scoreToPass && correctAsPercent >= correctToPass
+        : score >= scoreToPass && correctCount >= correctToPass);
 
       return {
         isComplete: isComplete,
