@@ -34,7 +34,7 @@
                   "title": "Pass mark",
                   "inputType": "Number",
                   "default": 60,
-                  "help": "The minimum score required by the learner to pass the assessment.",
+                  "help": "The minimum score required by the learner to pass the assessment or the minimum percentage score if 'Percentage based'.",
                   "validators": ["number"]
                 },
                 "_correctToPass": {
@@ -43,7 +43,7 @@
                   "title": "Correct pass mark",
                   "inputType": "Number",
                   "default": 60,
-                  "help": "The minimum number of correct questions required by the learner to pass the assessment.",
+                  "help": "The minimum number of correct questions required by the learner to pass the assessment or the minimum percentage correct if 'Percentage based'.",
                   "validators": ["number"]
                 }
               }
