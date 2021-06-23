@@ -45,7 +45,7 @@ The following attributes, set within *course.json*, configure the defaults for a
 
 >**\_correctToPass** (integer): This is the achievement correctness required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw correctness needed to pass unless **\_isPercentageBased** is set to `true`.  
 
->**\_isPercentageBased** (boolean): Determines whether the value of **\_scoreToPass** should be treated as a percentage or as the raw score. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.  
+>**\_isPercentageBased** (boolean): Determines whether the values of **\_scoreToPass** and **\_correctToPass** should be treated as a percentage or as the raw score and correctness. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.  
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
@@ -64,7 +64,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >**\_correctToPass** (number): This is the achievement correctness required to pass the assessment. The learner's correctness must be greater than or equal to this value. It is the cumulative raw correctness needed to pass unless **\_isPercentageBased** is set to `true`.    
 
->**\_isPercentageBased** (boolean): Determines whether the value of **\_scoreToPass** should be treated as a percentage or as the raw score. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.   
+>**\_isPercentageBased** (boolean): Determines whether the valuex of **\_scoreToPass** and **\_correctToPass** should be treated as a percentage or as the raw score and correctness. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.   
 
 >**\_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to **\_assessmentWeight.**   
 
