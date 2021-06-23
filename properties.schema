@@ -40,7 +40,7 @@
                 "_correctToPass": {
                   "type": "number",
                   "required": false,
-                  "title": "Correct mark",
+                  "title": "Correct pass mark",
                   "inputType": "Number",
                   "default": 60,
                   "help": "The minimum number of correct questions required by the learner to pass the assessment.",
