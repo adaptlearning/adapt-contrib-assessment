@@ -386,15 +386,17 @@ define([
 
       return {
         isComplete: isComplete,
-        isPercentageBased: assessmentsConfig._isPercentageBased,
+        isPercentageBased: isPercentageBased,
         isPass: isPass,
-        scoreAsPercent: scoreAsPercent,
         maxScore: maxScore,
+        minScore: minScore,
         score: score,
-        scoreToPass: assessmentsConfig._scoreToPass,
+        scoreToPass: scoreToPass,
+        scoreAsPercent: scoreAsPercent,
         correctCount: correctCount,
-        questionCount: questionCount,
         correctAsPercent: correctAsPercent,
+        correctToPass: correctToPass,
+        questionCount: questionCount,
         assessmentsComplete: assessmentsComplete,
         assessments: totalAssessments
       };

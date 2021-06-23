@@ -744,7 +744,6 @@ define([
           });
         });
       });
-      this.set('_questions', questions);
 
       this.set({
         _isAssessmentComplete: isComplete,
@@ -758,6 +757,7 @@ define([
         _scoreAsPercent: scoreAsPercent,
         _correctAsPercent: correctAsPercent || 0,
         _correctCount: correctCount || 0,
+        _questions: questions,
         _questionCount: questionCount || 0,
         _lastAttemptScoreAsPercent: scoreAsPercent
       });
@@ -788,6 +788,7 @@ define([
         minScore: this.get('_minScore'),
         correctCount: this.get('_correctCount'),
         correctAsPercent: this.get('_correctAsPercent'),
+        correctToPass: assessmentConfig._correctToPass,
         questionCount: this.get('_questionCount'),
         isPass: this.get('_isPass'),
         includeInTotalScore: assessmentConfig._includeInTotalScore,
