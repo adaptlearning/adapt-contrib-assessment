@@ -92,7 +92,7 @@
                   "default": true,
                   "title": "Percentage based",
                   "inputType": "Checkbox",
-                  "help": "Determines whether the values of the 'Pass mark' should be treated as a percentage (default) or as the raw score and correctness.",
+                  "help": "Determines whether the pass mark values should be treated as percentages (default) or as the raw score and correctness.",
                   "validators": []
                 },
                 "_scoreToPass": {
