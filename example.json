@@ -1,6 +1,7 @@
     // course.json
     "_assessment": {
-        "_scoreToPass": 75,
+        "_scoreToPass": 60,
+        "_correctToPass": 60,
         "_isPercentageBased": true
     }
 
@@ -9,7 +10,8 @@
         "_isEnabled": true,
         "_id": "Assessment 1",
         "_suppressMarking": false,
-        "_scoreToPass" : 75,
+        "_scoreToPass" : 60,
+        "_correctToPass": 60,
         "_isPercentageBased" : true,
         "_includeInTotalScore": true,
         "_assessmentWeight": 1,

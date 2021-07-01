@@ -39,11 +39,13 @@ With the [Adapt CLI](https://github.com/adaptlearning/adapt-cli) installed, run 
 #### *course.json*  
 The following attributes, set within *course.json*, configure the defaults for all assessments in the course. These attributes can be overridden on a per assessment basis by setting attributes of the same names in *articles.json*.
 
-**\_assessment** (object): The Assessment object that contains values for **\_scoreToPass** and **\_isPercentageBased**.
+**\_assessment** (object): The Assessment object that contains values for **\_scoreToPass** and **\_isPercentageBased**.  
 
->**\_scoreToPass** (integer): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **\_isPercentageBased** is set to `true`.
+>**\_scoreToPass** (integer): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **\_isPercentageBased** is set to `true`.  
 
->**\_isPercentageBased** (boolean): Determines whether the value of **\_scoreToPass** should be treated as a percentage or as the raw score. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.
+>**\_correctToPass** (integer): This is the achievement correctness required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw correctness needed to pass unless **\_isPercentageBased** is set to `true`.  
+
+>**\_isPercentageBased** (boolean): Determines whether the values of **\_scoreToPass** and **\_correctToPass** should be treated as percentages or as the raw score and correctness. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.  
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
@@ -60,7 +62,9 @@ The following attributes are appended to a particular article within *articles.j
 
 >**\_scoreToPass** (number): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **\_isPercentageBased** is set to `true`.    
 
->**\_isPercentageBased** (boolean): Determines whether the value of **\_scoreToPass** should be treated as a percentage or as the raw score. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.   
+>**\_correctToPass** (number): This is the achievement correctness required to pass the assessment. The learner's correctness must be greater than or equal to this value. It is the cumulative raw correctness needed to pass unless **\_isPercentageBased** is set to `true`.    
+
+>**\_isPercentageBased** (boolean): Determines whether the values of **\_scoreToPass** and **\_correctToPass** should be treated as percentages or as the raw score and correctness. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.   
 
 >**\_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to **\_assessmentWeight.**   
 
@@ -145,28 +149,44 @@ A description of the stateObject returned by the assessments:events is as follow
 | isPercentageBased         | bool         | Returns a boolean signifying if the assessment scoreToPass is percentage based |
 | scoreToPass               | int          | Defines the threshold score to signify a pass |
 | score                     | int          | Returns the current score of the assessment |
-| scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (maxScore/score) * 100 |
+| scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (maxScore-minScore/score-minScore) * 100 |
 | maxScore                  | int          | Returns the maximum attainable score |
+| minScore                  | int          | Returns the minimum attainable score |
+| correctCount              | int          | Returns the current correctness of the assessment |
+| correctAsPercent          | int          | Returns the current correctness of the assessment as a percentage, (questionCount/correctCount) * 100 |
+| correctToPass             | int          | Defines the threshold correctness to signify a pass |
+| questionCount             | int          | Returns the number of questions in the assessment |
 | isPass                    | bool         | Returns a boolean signifying if the assessment is passed |
-| postScoreToLms            | bool         | Signifies that the assessment score will be posted to the LMS |
+| includeInTotalScore       | bool         | Signifies that the assessment score will be posted to the LMS |
 | assessmentWeight          | int          | Signifies the portion of the total LMS score which is derived from this assessment, (1 = 100%) |
 | attempts                  | int          | The total number of attempts specified by the configuration (0 = infinite) |
 | attemptsSpent             | int          | The total number of attempts spent by the user |
 | attemptsLeft              | int / bool   | The total number of attempts remaining for the user or true if attempts=infinite |
 | lastAttemptScoreAsPercent | int          | Returns the last attempt score |
 | questions                 | object array | Contains an array of question objects { _id: string, _isCorrect: bool, title: string, displayTitle: string } |
+| resetType                 | string       | Returns a string signifying how the questions should be reset, either 'hard' or 'soft'  |
+| allowResetIfPassed        | bool         | Returns a boolean signifying if the assessment can be reset after passing |
+| questionModels            | object       | Contains a collection of the question models |
+
 
 
 A description of the stateObject returned by the `assessment:complete` event is as follows:  
 
 | Attribute                 | Type         | Description|
 | :-------------------------|:-------------|:-----|
-| isPercentageBased         | bool         | Returns a boolean signifying if the assessment scoreToPass is percentage based |
-| scoreToPass               | int          | Defines the threshold score to signify a pass |
-| score                     | int          | Returns the current score of the assessment |
-| scoreAsPercent            | int          | Returns the current score of the assessment as a percentage, (maxScore/score) * 100 |
+| isComplete                | bool         | Returns a boolean signifying if the assessments are complete |
+| isPercentageBased         | bool         | Returns a boolean signifying if the assessments scoreToPass is percentage based |
+| isPass                    | bool         | Returns a boolean signifying if the assessments are passed |
 | maxScore                  | int          | Returns the maximum attainable score |
-| isPass                    | bool         | Returns a boolean signifying if the assessment is passed |
+| minScore                  | int          | Returns the minimum attainable score |
+| score                     | int          | Returns the current score of the assessments |
+| scoreToPass               | int          | Defines the threshold score to signify a pass |
+| scoreAsPercent            | int          | Returns the current score of the assessments as a percentage, (maxScore-minScore/score-minScore) * 100 |
+| correctCount              | int          | Returns the current correctness of the assessments |
+| correctAsPercent          | int          | Returns the current correctness of the assessments as a percentage, (questionCount/correctCount) * 100 |
+| correctToPass             | int          | Defines the threshold correctness to signify a pass |
+| questionCount             | int          | Returns the number of questions in the assessments |
+| assessmentsComplete       | int          | Returns the number of complete assessments |
 | assessments               | int          | Signifies the number of assessments passed to post back to the LMS |
 
 ## Limitations
