@@ -349,7 +349,9 @@ define([
 
       var score = 0;
       var maxScore = 0;
-      var isPass = false;
+      let minScore = 0;
+      let correctCount = 0;
+      let questionCount = 0;
       var totalAssessments = 0;
 
       var states = this._getStatesByAssessmentId();
@@ -362,29 +364,39 @@ define([
         if (state.isComplete) assessmentsComplete++;
         totalAssessments++;
         maxScore += state.maxScore / state.assessmentWeight;
+        minScore += state.minScore / state.assessmentWeight;
         score += state.score / state.assessmentWeight;
+        correctCount += state.correctCount / state.assessmentWeight;
+        questionCount += state.questionCount / state.assessmentWeight;
       }
 
       var isComplete = assessmentsComplete === totalAssessments;
 
-      var scoreAsPercent = Math.round((score / maxScore) * 100);
+      const scoreRange = (maxScore - minScore);
+      const scoreAsPercent = (scoreRange === 0) ? 0 : Math.round(((score - minScore) / scoreRange) * 100);
+      const correctAsPercent = (questionCount === 0) ? 0 : Math.round((correctCount / questionCount) * 100);
 
-      if ((assessmentsConfig._scoreToPass || 100) && isComplete) {
-        if (assessmentsConfig._isPercentageBased !== false) {
-          if (scoreAsPercent >= assessmentsConfig._scoreToPass) isPass = true;
-        } else {
-          if (score >= assessmentsConfig._scoreToPass) isPass = true;
-        }
-      }
+      const scoreToPass = assessmentsConfig._scoreToPass;
+      const correctToPass = assessmentsConfig._correctToPass;
+      const isPercentageBased = assessmentsConfig._isPercentageBased;
+
+      const isPass = isComplete && (isPercentageBased
+        ? scoreAsPercent >= scoreToPass && correctAsPercent >= correctToPass
+        : score >= scoreToPass && correctCount >= correctToPass);
 
       return {
         isComplete: isComplete,
-        isPercentageBased: assessmentsConfig._isPercentageBased,
+        isPercentageBased: isPercentageBased,
         isPass: isPass,
-        scoreAsPercent: scoreAsPercent,
         maxScore: maxScore,
+        minScore: minScore,
         score: score,
-        scoreToPass: assessmentsConfig._scoreToPass,
+        scoreToPass: scoreToPass,
+        scoreAsPercent: scoreAsPercent,
+        correctCount: correctCount,
+        correctAsPercent: correctAsPercent,
+        correctToPass: correctToPass,
+        questionCount: questionCount,
         assessmentsComplete: assessmentsComplete,
         assessments: totalAssessments
       };
