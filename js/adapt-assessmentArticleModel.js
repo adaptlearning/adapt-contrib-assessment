@@ -292,6 +292,9 @@ define([
       questionModels.forEach(questionModel => {
         this._onQuestionCompleted(questionModel, value);
       });
+      if (blockModel.get('_isInteractionComplete')) {
+        this._checkAssessmentComplete();
+      }
     },
 
     _onQuestionCompleted: function(questionModel, value) {
@@ -309,6 +312,8 @@ define([
     },
 
     _checkAssessmentComplete: function() {
+      const hasFinalQuestions = (this.get('_requireCompletionOf') !== Number.POSITIVE_INFINITY);
+      if (!hasFinalQuestions) return;
       const numberOfQuestionsAnswered = this.get('_numberOfQuestionsAnswered');
       const allQuestionsAnswered = (numberOfQuestionsAnswered >= this._getCurrentQuestionComponents().length);
       if (!allQuestionsAnswered) return;
