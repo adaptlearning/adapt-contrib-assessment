@@ -347,10 +347,10 @@ define([
       this._removeQuestionListeners();
 
       if (this._isMarkingSuppressionEnabled() && !this._isAttemptsLeft()) {
-        _.defer(function() {
+        _.defer(() => {
           this._overrideMarkingSettings();
           this._refreshQuestions();
-        }.bind(this));
+        });
       }
 
       Adapt.trigger('assessments:complete', this.getState(), this);
@@ -595,7 +595,7 @@ define([
       if (this._isResetInProgress) {
         // prevent multiple resets from executing.
         // keep callbacks in queue for when current reset is finished
-        this.once('reset', function() {
+        this.once('reset', () => {
           this._isResetInProgress = false;
           if (typeof callback === 'function') {
             // eslint-disable-next-line standard/no-callback-literal
@@ -648,7 +648,7 @@ define([
       if (!isPageReload) {
         // only perform this section when not attempting to reload the page
         // wait for reset to trigger
-        this.once('reset', function() {
+        this.once('reset', () => {
           this._isResetInProgress = false;
           if (typeof callback === 'function') {
             // eslint-disable-next-line standard/no-callback-literal

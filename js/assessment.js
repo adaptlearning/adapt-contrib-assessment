@@ -82,7 +82,7 @@ define([
         }
       }
 
-      _.defer(function() {
+      _.defer(() => {
         // Defer this call so that the router's _canNavigate flag is true.
         Backbone.history.navigate('#/id/' + id, { trigger: true, replace: true });
       });
@@ -109,9 +109,9 @@ define([
         let numberOfResetAssessments = 0;
         const forceAssessmentReset = false;
 
-        pageAssessmentModels.forEach(function(model) {
+        pageAssessmentModels.forEach(model => {
           
-          model.reset(forceAssessmentReset, function() {
+          model.reset(forceAssessmentReset, () => {
             numberOfResetAssessments++;
             var haveAllModelsReset = (numberOfResetAssessments === numberOfAssessments);
             if (!haveAllModelsReset) {
@@ -158,9 +158,9 @@ define([
         this._setupSingleAssessmentConfiguration(assessmentStates[0]);
       }
 
-      _.defer(function() {
+      _.defer(() => {
         Adapt.trigger('assessment:complete', this.getState());
-      }.bind(this));
+      });
 
       return true;
     },
