@@ -1,28 +1,26 @@
 define([], function() {
 
-  var QuestionBank = function(quizBankid, articleId, numQuestionBlocks, uniqueQuestions) {
+  class QuestionBank {
+    
+    constructor(quizBankid, articleId, numQuestionBlocks, uniqueQuestions) {
+      this._id = quizBankid;
+      this._articleId = articleId;
+      this._numQuestionBlocks = numQuestionBlocks;
+      this._uniqueQuestions = uniqueQuestions;
+      this.questionBlocks = [];
+      this.unUsedQuestionBlocks = undefined;
+      this.usedQuestionBlocks = [];
+    }
 
-    this._id = quizBankid;
-    this._articleId = articleId;
-    this._numQuestionBlocks = numQuestionBlocks;
-    this._uniqueQuestions = uniqueQuestions;
-    this.questionBlocks = [];
-    this.unUsedQuestionBlocks = undefined;
-    this.usedQuestionBlocks = [];
-
-  };
-
-  QuestionBank.prototype = {
-
-    getID: function() {
+    getID() {
       return this._id;
-    },
+    }
 
-    addBlock: function(block) {
+    addBlock(block) {
       this.questionBlocks.push(block);
-    },
+    }
 
-    getRandomQuestionBlocks: function() {
+    getRandomQuestionBlocks() {
       this.checkResetUnunsedBlocks();
 
       const questionBlocks = [];
@@ -41,15 +39,15 @@ define([], function() {
       }
 
       return questionBlocks;
-    },
+    }
 
-    checkResetUnunsedBlocks: function() {
+    checkResetUnunsedBlocks() {
       if (this.unUsedQuestionBlocks !== undefined && this._uniqueQuestions) return;
 
       this.unUsedQuestionBlocks = this.questionBlocks.slice(0);
-    },
+    }
 
-    getRandomQuestion: function() {
+    getRandomQuestion() {
       if (this.unUsedQuestionBlocks !== undefined && this.unUsedQuestionBlocks.length < 1) {
         console.warn('assessment:' + this._articleId + ' No more unique questions for _assessment._quizBankID ' + this._id);
         return undefined;
@@ -63,9 +61,7 @@ define([], function() {
 
       return questionBlock;
     }
-
-  };
-
+  }
+  
   return QuestionBank;
-
 });

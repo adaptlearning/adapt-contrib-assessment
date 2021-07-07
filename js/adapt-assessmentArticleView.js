@@ -3,9 +3,9 @@ define([
   'core/js/views/articleView'
 ], function(Adapt, AdaptArticleView) {
 
-  var AssessmentView = {
+  const AssessmentView = {
 
-    postRender: function() {
+    postRender() {
       AdaptArticleView.prototype.postRender.call(this);
       if (this.model.isAssessmentEnabled()) {
         this._setupEventListeners();
@@ -18,7 +18,7 @@ define([
       this.$el.addClass('is-assessment');
     },
 
-    _setupEventListeners: function() {
+    _setupEventListeners() {
       this.listenTo(Adapt, {
         'assessments:complete': this._onAssessmentComplete,
         'assessments:reset': this._onAssessmentReset,
@@ -26,32 +26,30 @@ define([
       });
     },
 
-    _removeEventListeners: function() {
+    _removeEventListeners() {
       this.stopListening(Adapt, {
         'assessments:complete': this._onAssessmentComplete,
         'assessments:reset': this._onAssessmentReset
       });
     },
 
-    _onAssessmentComplete: function(state, model) {
+    _onAssessmentComplete(state, model) {
       if (state.id !== this.model.get('_assessment')._id) return;
 
       console.log('assessment complete', state, model);
     },
 
-    _onAssessmentReset: function(state, model) {
+    _onAssessmentReset(state, model) {
       if (state.id !== this.model.get('_assessment')._id) return;
 
       console.log('assessment reset', state, model);
 
     },
 
-    _onRemove: function() {
+    _onRemove() {
       this._removeEventListeners();
     }
-
-  };
-
+  }
+  
   return AssessmentView;
-
 });

@@ -11,24 +11,30 @@ define([
     _isDefaultsLoaded: true
   };
 
-  Adapt.assessment = _.extend({
+
+  class Assessment {
+    constructor() {
+      _.extend(this, Backbone.Events);
+    }
 
     // Private functions
-    _assessments: _.extend([], {
-      _byPageId: {},
-      _byAssessmentId: {}
-    }),
+    _assessments() {
+      _.extend([], {
+        _byPageId: {},
+        _byAssessmentId: {}
+      })
+    }
 
-    initialize: function() {
+    initialize() {
       this.listenTo(Adapt, {
         'assessments:complete': this._onAssessmentsComplete,
         'router:location': this._checkResetAssessmentsOnRevisit,
         'router:plugin': this._handleRoute,
         'app:dataReady': this._onDataReady
       });
-    },
+    }
 
-    _onAssessmentsComplete: function(state) {
+    _onAssessmentsComplete(state) {
       const assessmentId = state.id;
 
       state.isComplete = true;
@@ -45,9 +51,9 @@ define([
 
       this._checkAssessmentsComplete();
 
-    },
+    }
 
-    _restoreModelState: function(assessmentModel) {
+    _restoreModelState(assessmentModel) {
 
       if (!this._saveStateModel) {
         this._saveStateModel = Adapt.offlineStorage.get('a');
@@ -59,12 +65,12 @@ define([
         }
       }
 
-    },
+    }
 
     /*
      * Allow navigating to an assessment via the URL.
      */
-    _handleRoute: function(plugin, id) {
+    _handleRoute(plugin, id) {
       if (plugin !== 'assessment' && plugin !== 'article-assessment' || id === undefined) {
         return;
       }
@@ -86,9 +92,9 @@ define([
         // Defer this call so that the router's _canNavigate flag is true.
         Backbone.history.navigate('#/id/' + id, { trigger: true, replace: true });
       });
-    },
+    }
 
-    _checkResetAssessmentsOnRevisit: function(toObject) {
+    _checkResetAssessmentsOnRevisit(toObject) {
       /*
        * Here we hijack router:location to reorganise the assessment blocks
        * this must happen before trickle listens to block completion
@@ -123,18 +129,18 @@ define([
       });
 
       this._setPageProgress();
-    },
+    }
 
-    _onDataReady: function() {
+    _onDataReady() {
       this._assessments = _.extend([], {
         _byPageId: {},
         _byAssessmentId: {}
       });
 
       this._restoredCount = 0;
-    },
+    }
 
-    _checkAssessmentsComplete: function() {
+    _checkAssessmentsComplete() {
       let allAssessmentsComplete = true;
       let assessmentToPostBack = 0;
       const states = this._getStatesByAssessmentId();
@@ -163,30 +169,30 @@ define([
       });
 
       return true;
-    },
+    }
 
-    _setupSingleAssessmentConfiguration: function(assessmentState) {
+    _setupSingleAssessmentConfiguration(assessmentState) {
       const assessmentsConfig = Adapt.course.get('_assessment');
       $.extend(true, assessmentsConfig, {
         _isPercentageBased: assessmentState.isPercentageBased,
         _scoreToPass: assessmentState.scoreToPass
       });
       Adapt.course.set('_assessment', assessmentsConfig);
-    },
+    }
 
-    _getAssessmentByPageId: function(pageId) {
+    _getAssessmentByPageId(pageId) {
       return this._assessments._byPageId[pageId];
-    },
+    }
 
-    _getStateByAssessmentId: function(assessmentId) {
+    _getStateByAssessmentId(assessmentId) {
       if (assessmentId === undefined) {
         return null;
       }
 
       return this._assessments._byAssessmentId[assessmentId].getState();
-    },
+    }
 
-    _getStatesByAssessmentId: function() {
+    _getStatesByAssessmentId() {
       const states = {};
       for (var i = 0, l = this._assessments.length; i < l; i++) {
         const assessmentModel = this._assessments[i];
@@ -195,9 +201,9 @@ define([
         states[state.id] = state;
       }
       return states;
-    },
+    }
 
-    _setPageProgress: function() {
+    _setPageProgress() {
       // set _subProgressTotal and _subProgressComplete on pages that have assessment progress indicator requirements
 
       for (const k in this._assessments._byPageId) {
@@ -228,9 +234,9 @@ define([
         }
 
       }
-    },
+    }
 
-    _addToAssessmentIdMap: function(id, model) {
+    _addToAssessmentIdMap(id, model) {
       if (id === undefined) {
         Adapt.log.warn('An assessment has been registered with an undefined value for "_id"');
         return;
@@ -245,10 +251,10 @@ define([
       } else {
         Adapt.log.warn('An assessment with an _id of "' + id + '" already exists!');
       }
-    },
+    }
 
-    _setupQuestionNumbering: function() {
-      const getRelatedQuestions = function(data) {
+    _setupQuestionNumbering() {
+      const getRelatedQuestions = data => {
         const currentAssessmentId = data._assessmentId;
         const currentAssessment = Adapt.assessment.get(currentAssessmentId);
         return currentAssessment.getState().questions;
@@ -268,10 +274,10 @@ define([
         if (!data._isPartOfAssessment) return;
         return getRelatedQuestions(data).length;
       });
-    },
+    }
 
     // Public functions
-    register: function(assessmentModel) {
+    register(assessmentModel) {
       const state = assessmentModel.getState();
       const assessmentId = state.id;
       const pageId = state.pageId;
@@ -300,17 +306,17 @@ define([
         // event which has the collated state.
         Adapt.trigger('assessment:restored', this.getState());
       }
-    },
+    }
 
-    get: function(id) {
+    get(id) {
       if (id === undefined) {
         return this._assessments.slice(0);
       } else {
         return this._assessments._byAssessmentId[id];
       }
-    },
+    }
 
-    saveState: function() {
+    saveState() {
 
       this._saveStateModel = {};
       for (let i = 0; i < this._assessments.length; i++) {
@@ -320,9 +326,9 @@ define([
       }
 
       Adapt.offlineStorage.set('a', this._saveStateModel);
-    },
+    }
 
-    getConfig: function () {
+    getConfig() {
       let assessmentsConfig = Adapt.course.get('_assessment');
 
       if (assessmentsConfig && assessmentsConfig._isDefaultsLoaded) {
@@ -338,9 +344,9 @@ define([
       Adapt.course.set('_assessment', assessmentsConfig);
 
       return assessmentsConfig;
-    },
+    }
 
-    getState: function() {
+    getState() {
       const assessmentsConfig = this.getConfig();
 
       let score = 0;
@@ -396,8 +402,9 @@ define([
       };
     }
 
-  }, Backbone.Events);
+  }
 
+  Adapt.assessment = new Assessment(); 
   Adapt.assessment.initialize();
 
 });
