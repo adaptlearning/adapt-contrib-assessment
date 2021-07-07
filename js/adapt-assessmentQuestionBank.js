@@ -25,16 +25,16 @@ define([], function() {
     getRandomQuestionBlocks: function() {
       this.checkResetUnunsedBlocks();
 
-      var questionBlocks = [];
-      var usedQuestionBlocks = this.usedQuestionBlocks.slice(0);
+      const questionBlocks = [];
+      const usedQuestionBlocks = this.usedQuestionBlocks.slice(0);
 
-      for (var i = 0; i < this._numQuestionBlocks; i++) {
-        var question = this.getRandomQuestion();
+      for (const i = 0; i < this._numQuestionBlocks; i++) {
+        let question = this.getRandomQuestion();
         if (question !== undefined) {
           questionBlocks.push(question);
         } else {
           if (usedQuestionBlocks.length === 0) break;
-          var index = Math.floor(Math.random() * (usedQuestionBlocks.length - 1));
+          const index = Math.floor(Math.random() * (usedQuestionBlocks.length - 1));
           question = usedQuestionBlocks.splice(index, 1)[0];
           questionBlocks.push(question);
         }
@@ -55,8 +55,8 @@ define([], function() {
         return undefined;
       }
 
-      var index = Math.round(Math.random() * (this.unUsedQuestionBlocks.length - 1));
-      var questionBlock = this.unUsedQuestionBlocks[index];
+      const index = Math.round(Math.random() * (this.unUsedQuestionBlocks.length - 1));
+      const questionBlock = this.unUsedQuestionBlocks[index];
       this.usedQuestionBlocks.push(questionBlock);
 
       this.unUsedQuestionBlocks.splice(index, 1);

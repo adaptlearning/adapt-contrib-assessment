@@ -5,7 +5,7 @@ define([
   /*
    * Here we setup a registry for all assessments
    */
-  var assessmentsConfigDefaults = {
+  const assessmentsConfigDefaults = {
     _isPercentageBased: true,
     _scoreToPass: 100,
     _isDefaultsLoaded: true
@@ -29,7 +29,7 @@ define([
     },
 
     _onAssessmentsComplete: function(state) {
-      var assessmentId = state.id;
+      const assessmentId = state.id;
 
       state.isComplete = true;
 
@@ -72,7 +72,7 @@ define([
       // Check the 'id' passed is that of an article.
       if (!Adapt.findById(id)) {
         // The 'id' passed may have been the assessment _id/name, not the article _id.
-        var assessment = Adapt.assessment._assessments._byAssessmentId[id];
+        const assessment = Adapt.assessment._assessments._byAssessmentId[id];
         if (assessment) {
           // Set 'id' to the article _id.
           id = assessment.get('_id');
@@ -96,7 +96,7 @@ define([
       if (toObject._contentType !== 'page') return;
 
       // initialize assessment on page visit before pageView:preRender (and trickle)
-      var pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
+      const pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
       if (pageAssessmentModels === undefined) return;
 
       /*
@@ -105,26 +105,21 @@ define([
        */
       Adapt.wait.for(function resetAllAssessments(allAssessmentHaveReset) {
 
-        var numberOfAssessments = pageAssessmentModels.length;
-        var numberOfResetAssessments = 0;
-        var forceAssessmentReset = false;
+        const numberOfAssessments = pageAssessmentModels.length;
+        let numberOfResetAssessments = 0;
+        const forceAssessmentReset = false;
 
         pageAssessmentModels.forEach(function(model) {
-
+          
           model.reset(forceAssessmentReset, function() {
-
             numberOfResetAssessments++;
             var haveAllModelsReset = (numberOfResetAssessments === numberOfAssessments);
             if (!haveAllModelsReset) {
               return;
             }
-
             allAssessmentHaveReset();
-
           });
-
         });
-
       });
 
       this._setPageProgress();
@@ -140,14 +135,14 @@ define([
     },
 
     _checkAssessmentsComplete: function() {
-      var allAssessmentsComplete = true;
-      var assessmentToPostBack = 0;
-      var states = this._getStatesByAssessmentId();
+      let allAssessmentsComplete = true;
+      let assessmentToPostBack = 0;
+      const states = this._getStatesByAssessmentId();
 
-      var assessmentStates = [];
+      const assessmentStates = [];
 
-      for (var id in states) {
-        var state = states[id];
+      for (const id in states) {
+        const state = states[id];
         if (!state.includeInTotalScore) continue;
         if (!state.isComplete) {
           allAssessmentsComplete = false;
@@ -171,7 +166,7 @@ define([
     },
 
     _setupSingleAssessmentConfiguration: function(assessmentState) {
-      var assessmentsConfig = Adapt.course.get('_assessment');
+      const assessmentsConfig = Adapt.course.get('_assessment');
       $.extend(true, assessmentsConfig, {
         _isPercentageBased: assessmentState.isPercentageBased,
         _scoreToPass: assessmentState.scoreToPass
@@ -192,11 +187,11 @@ define([
     },
 
     _getStatesByAssessmentId: function() {
-      var states = {};
+      const states = {};
       for (var i = 0, l = this._assessments.length; i < l; i++) {
-        var assessmentModel = this._assessments[i];
+        const assessmentModel = this._assessments[i];
         if (!assessmentModel.get('_isAvailable')) continue;
-        var state = assessmentModel.getState();
+        const state = assessmentModel.getState();
         states[state.id] = state;
       }
       return states;
@@ -205,15 +200,15 @@ define([
     _setPageProgress: function() {
       // set _subProgressTotal and _subProgressComplete on pages that have assessment progress indicator requirements
 
-      for (var k in this._assessments._byPageId) {
+      for (const k in this._assessments._byPageId) {
 
-        var assessments = this._assessments._byPageId[k];
+        const assessments = this._assessments._byPageId[k];
 
-        var assessmentsTotal = assessments.length;
-        var assessmentsPassed = 0;
+        const assessmentsTotal = assessments.length;
+        let assessmentsPassed = 0;
 
         for (var i = 0, l = assessments.length; i < l; i++) {
-          var assessmentState = assessments[i].getState();
+          const assessmentState = assessments[i].getState();
 
           if (assessmentState.includeInTotalScore && !assessmentState.isPass) continue;
 
@@ -253,23 +248,23 @@ define([
     },
 
     _setupQuestionNumbering: function() {
-      var getRelatedQuestions = function(data) {
-        var currentAssessmentId = data._assessmentId;
-        var currentAssessment = Adapt.assessment.get(currentAssessmentId);
+      const getRelatedQuestions = function(data) {
+        const currentAssessmentId = data._assessmentId;
+        const currentAssessment = Adapt.assessment.get(currentAssessmentId);
         return currentAssessment.getState().questions;
       };
 
       Handlebars.registerHelper('questionNumber', function getQuestionNumber() {
-        var data = this.view ? this.view.model.toJSON() : this;
+        const data = this.view ? this.view.model.toJSON() : this;
         if (!data._isPartOfAssessment) return;
 
-        var related = _.pluck(getRelatedQuestions(data), '_id');
+        const related = _.pluck(getRelatedQuestions(data), '_id');
 
         return related.indexOf(data._id) + 1;
       });
 
       Handlebars.registerHelper('questionCount', function getTotalQuestions() {
-        var data = this.view ? this.view.model.toJSON() : this;
+        const data = this.view ? this.view.model.toJSON() : this;
         if (!data._isPartOfAssessment) return;
         return getRelatedQuestions(data).length;
       });
@@ -277,9 +272,9 @@ define([
 
     // Public functions
     register: function(assessmentModel) {
-      var state = assessmentModel.getState();
-      var assessmentId = state.id;
-      var pageId = state.pageId;
+      const state = assessmentModel.getState();
+      const assessmentId = state.id;
+      const pageId = state.pageId;
 
       if (this._assessments._byPageId[pageId] === undefined) {
         this._assessments._byPageId[pageId] = [];
@@ -318,8 +313,9 @@ define([
     saveState: function() {
 
       this._saveStateModel = {};
-      for (var i = 0, assessmentModel; assessmentModel = this._assessments[i++];) {
-        var state = assessmentModel.getState();
+      for (let i = 0; i < this._assessments.length; i++) {
+        const assessmentModel = this._assessments[i];
+        const state = assessmentModel.getState();
         this._saveStateModel[state.id] = Adapt.offlineStorage.serialize(assessmentModel.getSaveState());
       }
 
@@ -327,7 +323,7 @@ define([
     },
 
     getConfig: function () {
-      var assessmentsConfig = Adapt.course.get('_assessment');
+      let assessmentsConfig = Adapt.course.get('_assessment');
 
       if (assessmentsConfig && assessmentsConfig._isDefaultsLoaded) {
         return assessmentsConfig;
@@ -345,24 +341,22 @@ define([
     },
 
     getState: function() {
-      var assessmentsConfig = this.getConfig();
+      const assessmentsConfig = this.getConfig();
 
-      var score = 0;
-      var maxScore = 0;
+      let score = 0;
+      let maxScore = 0;
       let minScore = 0;
       let correctCount = 0;
       let questionCount = 0;
-      var totalAssessments = 0;
-
-      var states = this._getStatesByAssessmentId();
-
-      var assessmentsComplete = 0;
+      let assessments = 0;
+      const states = this._getStatesByAssessmentId();
+      let assessmentsComplete = 0;
 
       for (var id in states) {
         var state = states[id];
         if (!state.includeInTotalScore) continue;
         if (state.isComplete) assessmentsComplete++;
-        totalAssessments++;
+        assessments++;
         maxScore += state.maxScore / state.assessmentWeight;
         minScore += state.minScore / state.assessmentWeight;
         score += state.score / state.assessmentWeight;
@@ -370,7 +364,7 @@ define([
         questionCount += state.questionCount / state.assessmentWeight;
       }
 
-      var isComplete = assessmentsComplete === totalAssessments;
+      const isComplete = assessmentsComplete === assessments;
 
       const scoreRange = (maxScore - minScore);
       const scoreAsPercent = (scoreRange === 0) ? 0 : Math.round(((score - minScore) / scoreRange) * 100);
@@ -385,20 +379,20 @@ define([
         : score >= scoreToPass && correctCount >= correctToPass);
 
       return {
-        isComplete: isComplete,
-        isPercentageBased: isPercentageBased,
-        isPass: isPass,
-        maxScore: maxScore,
-        minScore: minScore,
-        score: score,
-        scoreToPass: scoreToPass,
-        scoreAsPercent: scoreAsPercent,
-        correctCount: correctCount,
-        correctAsPercent: correctAsPercent,
-        correctToPass: correctToPass,
-        questionCount: questionCount,
-        assessmentsComplete: assessmentsComplete,
-        assessments: totalAssessments
+        isComplete,
+        isPercentageBased,
+        isPass,
+        maxScore,
+        minScore,
+        score,
+        scoreToPass,
+        scoreAsPercent,
+        correctCount,
+        correctAsPercent,
+        correctToPass,
+        questionCount,
+        assessmentsComplete,
+        assessments
       };
     }
 

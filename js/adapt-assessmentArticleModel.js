@@ -3,8 +3,8 @@ define([
   './adapt-assessmentQuestionBank'
 ], function(Adapt, QuestionBank) {
 
-  var givenIdCount = 0;
-  var assessmentConfigDefaults = {
+  let givenIdCount = 0;
+  const assessmentConfigDefaults = {
     _isEnabled: true,
     _questions: {
       _resetType: 'soft',
@@ -40,7 +40,7 @@ define([
     _postInitialize: function() {
       if (!this.isAssessmentEnabled()) return;
 
-      var assessmentConfig = this.getConfig();
+      const assessmentConfig = this.getConfig();
 
       _.extend(this, {
         _originalChildModels: null,
@@ -48,7 +48,7 @@ define([
         _forceResetOnRevisit: false
       });
 
-      var attemptsLeft;
+      let attemptsLeft;
       switch (assessmentConfig._attempts) {
         case 'infinite': case 0: case undefined: case -1: case null:
           attemptsLeft = 'infinite';
@@ -99,13 +99,13 @@ define([
 
     _setAssessmentOwnershipOnChildrenModels: function() {
       // mark all children components as belonging to an assessment
-      var assessmentConfig = this.get('_assessment');
-      var childConfig = {
+      const assessmentConfig = this.get('_assessment');
+      const childConfig = {
         _isPartOfAssessment: true,
         _assessmentId: assessmentConfig._id
       };
-      for (var i = 0, l = this._originalChildModels.length; i < l; i++) {
-        var blockModel = this._originalChildModels[i];
+      for (let i = 0, l = this._originalChildModels.length; i < l; i++) {
+        const blockModel = this._originalChildModels[i];
         blockModel.set(childConfig);
         // make sure components are set to _isPartOfAssessment for plp checking
         blockModel.setOnChildren(childConfig);
@@ -118,16 +118,16 @@ define([
     },
 
     _setupAssessmentData: function(force, callback) {
-      var assessmentConfig = this.getConfig();
-      var state = this.getState();
-      var shouldResetAssessment = (!this.get('_attemptInProgress') && !state.isPass) || force === true;
-      var shouldResetQuestions = (assessmentConfig._isResetOnRevisit && (state.allowResetIfPassed || !state.isPass)) || force === true;
+      const assessmentConfig = this.getConfig();
+      const state = this.getState();
+      const shouldResetAssessment = (!this.get('_attemptInProgress') && !state.isPass) || force === true;
+      const shouldResetQuestions = (assessmentConfig._isResetOnRevisit && (state.allowResetIfPassed || !state.isPass)) || force === true;
 
       if (shouldResetAssessment || shouldResetQuestions) {
         Adapt.trigger('assessments:preReset', this.getState(), this);
       }
 
-      var quizModels;
+      let quizModels;
       if (shouldResetAssessment) {
         this.set({
           _numberOfQuestionsAnswered: 0,
@@ -191,16 +191,16 @@ define([
     },
 
     _setupBankedAssessment: function() {
-      var assessmentConfig = this.getConfig();
+      const assessmentConfig = this.getConfig();
 
       this._setupBanks();
 
       // get random questions from banks
-      var questionModels = [];
-      for (var bankId in this._questionBanks) {
+      let questionModels = [];
+      for (const bankId in this._questionBanks) {
         if (this._questionBanks.hasOwnProperty(bankId)) { // skip over properties that were added to Array.prototype by the ES5-shim for IE8
-          var questionBank = this._questionBanks[bankId];
-          var questions = questionBank.getRandomQuestionBlocks();
+          const questionBank = this._questionBanks[bankId];
+          const questions = questionBank.getRandomQuestionBlocks();
           questionModels = questionModels.concat(questions);
         }
       }
@@ -214,26 +214,26 @@ define([
     },
 
     _setupBanks: function() {
-      var assessmentConfig = this.getConfig();
-      var banks = assessmentConfig._banks._split.split(',');
-      var bankId;
+      const assessmentConfig = this.getConfig();
+      const banks = assessmentConfig._banks._split.split(',');
+      let bankId;
 
       this._questionBanks = [];
 
       // build fresh banks
-      for (var i = 0, l = banks.length; i < l; i++) {
-        var bank = banks[i];
+      for (const i = 0, l = banks.length; i < l; i++) {
+        const bank = banks[i];
         bankId = (i + 1);
-        var questionBank = new QuestionBank(bankId, this.get('_id'), bank, true);
+        const questionBank = new QuestionBank(bankId, this.get('_id'), bank, true);
 
         this._questionBanks[bankId] = questionBank;
       }
 
       // add blocks to banks
-      var children = this.getChildren().models;
-      for (var j = 0, count = children.length; j < count; j++) {
-        var blockModel = children[j];
-        var blockAssessmentConfig = blockModel.get('_assessment');
+      const children = this.getChildren().models;
+      for (const j = 0, count = children.length; j < count; j++) {
+        const blockModel = children[j];
+        const blockAssessmentConfig = blockModel.get('_assessment');
         if (!blockAssessmentConfig) continue;
         bankId = blockAssessmentConfig._quizBankID;
         this._questionBanks[bankId].addBlock(blockModel);
@@ -242,12 +242,12 @@ define([
     },
 
     _setupRandomisedAssessment: function() {
-      var assessmentConfig = this.getConfig();
+      const assessmentConfig = this.getConfig();
 
-      var randomisationModel = assessmentConfig._randomisation;
-      var blockModels = this.getChildren().models;
+      const randomisationModel = assessmentConfig._randomisation;
+      const blockModels = this.getChildren().models;
 
-      var questionModels = _.shuffle(blockModels);
+      let questionModels = _.shuffle(blockModels);
 
       if (randomisationModel._blockCount > 0) {
         questionModels = questionModels.slice(0, randomisationModel._blockCount);
@@ -257,10 +257,10 @@ define([
     },
 
     _overrideQuestionComponentSettings: function() {
-      var newSettings = this._getMarkingSettings();
+      const newSettings = this._getMarkingSettings();
 
       // Add any additional setting overrides here
-      var questionConfig = this.getConfig()._questions;
+      const questionConfig = this.getConfig()._questions;
       if (questionConfig.hasOwnProperty('_canShowFeedback')) {
         newSettings._canShowFeedback = questionConfig._canShowFeedback;
       }
@@ -288,7 +288,7 @@ define([
 
     _onBlockCompleted: function(blockModel, value) {
       if (value === false) return;
-      var questionModels = blockModel.findDescendantModels('question');
+      const questionModels = blockModel.findDescendantModels('question');
       questionModels.forEach(questionModel => {
         this._onQuestionCompleted(questionModel, value);
       });
@@ -298,7 +298,7 @@ define([
       if (value === false) return;
       if (!questionModel.get('_isInteractionComplete')) return;
 
-      var numberOfQuestionsAnswered = this.get('_numberOfQuestionsAnswered');
+      let numberOfQuestionsAnswered = this.get('_numberOfQuestionsAnswered');
       numberOfQuestionsAnswered++;
       this.set('_numberOfQuestionsAnswered', numberOfQuestionsAnswered);
 
@@ -319,23 +319,23 @@ define([
       this.set('_attemptInProgress', false);
       this._spendAttempt();
 
-      var scoreAsPercent = this._getScoreAsPercent();
-      var score = this._getScore();
-      var maxScore = this._getMaxScore();
-      const minScore = this._getMinScore();
-      const correctCount = this._getCorrectCount();
-      const correctAsPercent = this._getCorrectAsPercent();
-      const questionCount = this._getQuestionCount();
+      const _scoreAsPercent = this._getScoreAsPercent();
+      const _score = this._getScore();
+      const _maxScore = this._getMaxScore();
+      const _minScore = this._getMinScore();
+      const _correctCount = this._getCorrectCount();
+      const _correctAsPercent = this._getCorrectAsPercent();
+      const _questionCount = this._getQuestionCount();
 
       this.set({
-        _scoreAsPercent: scoreAsPercent,
-        _score: score,
-        _maxScore: maxScore,
-        _minScore: minScore,
-        _correctAsPercent: correctAsPercent,
-        _correctCount: correctCount,
-        _questionCount: questionCount,
-        _lastAttemptScoreAsPercent: scoreAsPercent,
+        _scoreAsPercent,
+        _score,
+        _maxScore,
+        _minScore,
+        _correctAsPercent,
+        _correctCount,
+        _questionCount,
+        _lastAttemptScoreAsPercent: _scoreAsPercent,
         _assessmentCompleteInSession: true,
         _isAssessmentComplete: true
       });
@@ -368,14 +368,14 @@ define([
     },
 
     _checkIsPass: function() {
-      var assessmentConfig = this.getConfig();
+      const assessmentConfig = this.getConfig();
 
-      var isPercentageBased = assessmentConfig._isPercentageBased;
-      var scoreToPass = assessmentConfig._scoreToPass;
+      const isPercentageBased = assessmentConfig._isPercentageBased;
+      const scoreToPass = assessmentConfig._scoreToPass;
       const correctToPass = assessmentConfig._correctToPass || 0;
 
-      var scoreAsPercent = this.get('_scoreAsPercent');
-      var score = this.get('_score');
+      const scoreAsPercent = this.get('_scoreAsPercent');
+      const score = this.get('_score');
       const correctAsPercent = this.get('_correctAsPercent');
       const correctCount = this.get('_correctCount');
 
@@ -387,7 +387,7 @@ define([
     },
 
     _getMarkingSettings: function() {
-      var markingSettings = {};
+      let markingSettings = {};
 
       if (this._shouldSuppressMarking()) {
         markingSettings = {
@@ -395,7 +395,7 @@ define([
           _canShowModelAnswer: false
         };
       } else {
-        var questionConfig = this.getConfig()._questions;
+        const questionConfig = this.getConfig()._questions;
 
         if (questionConfig.hasOwnProperty('_canShowModelAnswer')) {
           markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
@@ -410,7 +410,7 @@ define([
     },
 
     _overrideMarkingSettings: function() {
-      var newMarkingSettings = this._getMarkingSettings();
+      const newMarkingSettings = this._getMarkingSettings();
       const questionComponents = this._getAllQuestionComponents();
       questionComponents.forEach(model => model.set(newMarkingSettings, { pluginName: '_assessment' }));
     },
@@ -425,7 +425,7 @@ define([
     },
 
     _isMarkingSuppressionEnabled: function() {
-      var assessmentConfig = this.getConfig();
+      const assessmentConfig = this.getConfig();
       return assessmentConfig._suppressMarking;
     },
 
@@ -440,12 +440,12 @@ define([
     _spendAttempt: function() {
       if (!this._isAttemptsLeft()) return false;
 
-      var attemptsSpent = this.get('_attemptsSpent');
+      let attemptsSpent = this.get('_attemptsSpent');
       this.set('_attemptsSpent', ++attemptsSpent);
 
       if (this.get('_attempts') === 'infinite') return true;
 
-      var attemptsLeft = this.get('_attemptsLeft');
+      let attemptsLeft = this.get('_attemptsLeft');
       this.set('_attemptsLeft', --attemptsLeft);
 
       return true;
@@ -497,8 +497,8 @@ define([
     _checkReloadPage: function() {
       if (!this.canResetInPage()) return false;
 
-      var parentId = this.getParent().get('_id');
-      var currentLocation = Adapt.location._currentId;
+      const parentId = this.getParent().get('_id');
+      const currentLocation = Adapt.location._currentId;
 
       // check if on assessment page and should rerender page
       if (currentLocation !== parentId) return false;
@@ -508,7 +508,7 @@ define([
     },
 
     _reloadPage: function(callback) {
-      var assessmentConfig = this.getConfig();
+      const assessmentConfig = this.getConfig();
       this._forceResetOnRevisit = true;
       this.listenToOnce(Adapt, 'pageView:ready', async () => {
         if (assessmentConfig._scrollToOnReset) {
@@ -522,15 +522,15 @@ define([
     },
 
     _resetQuestions: function(callback) {
-      var assessmentConfig = this.getConfig();
-      var syncIterations = 1; // number of synchronous iterations to perform
-      var i = 0;
-      var qs = this._getCurrentQuestionComponents();
-      var len = qs.length;
+      const assessmentConfig = this.getConfig();
+      const syncIterations = 1; // number of synchronous iterations to perform
+      let i = 0;
+      const qs = this._getCurrentQuestionComponents();
+      const len = qs.length;
 
       function step() {
-        for (var j = 0, count = Math.min(syncIterations, len - i); j < count; i++, j++) {
-          var question = qs[i];
+        for (let j = 0, count = Math.min(syncIterations, len - i); j < count; i++, j++) {
+          const question = qs[i];
           question.reset(assessmentConfig._questions._resetType, true);
         }
 
@@ -557,12 +557,12 @@ define([
 
       // fix for courses that do not remember the user selections
       // force assessment to reset if user revisits an assessment page in a new session which is completed
-      var wereQuestionsRestored = true;
+      let wereQuestionsRestored = true;
 
-      var questions = this.get('_questions');
-      for (var i = 0, l = questions.length; i < l; i++) {
-        var question = questions[i];
-        var questionModel = Adapt.findById(question._id);
+      const questions = this.get('_questions');
+      for (const i = 0, l = questions.length; i < l; i++) {
+        const question = questions[i];
+        const questionModel = Adapt.findById(question._id);
         if (!questionModel.get('_isSubmitted')) {
           wereQuestionsRestored = false;
           break;
@@ -585,7 +585,7 @@ define([
     },
 
     canResetInPage: function() {
-      var assessmentConfig = this.getConfig();
+      const assessmentConfig = this.getConfig();
       if (assessmentConfig._reloadPageOnReset === false) return false;
       return true;
     },
@@ -605,13 +605,13 @@ define([
         return;
       }
 
-      var assessmentConfig = this.getConfig();
+      const assessmentConfig = this.getConfig();
 
       // check if forcing reset via page revisit or force parameter
       force = this._forceResetOnRevisit || force === true;
       this._forceResetOnRevisit = false;
 
-      var isPageReload = this._checkReloadPage();
+      const isPageReload = this._checkReloadPage();
 
       // stop resetting if not complete or not allowed
       if (this.get('_assessmentCompleteInSession') &&
@@ -626,7 +626,7 @@ define([
       }
 
       // check if new session and questions not restored
-      var wereQuestionsRestored = this._checkIfQuestionsWereRestored();
+      const wereQuestionsRestored = this._checkIfQuestionsWereRestored();
       force = force || wereQuestionsRestored;
       // the assessment is going to be reset so we must reset attempts
       // otherwise assessment may not be set up properly in next session
@@ -637,7 +637,7 @@ define([
         });
       }
 
-      var allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
+      const allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
       // stop resetting if no attempts left and allowResetIfPassed is false
       if (!this._isAttemptsLeft() && !force && !allowResetIfPassed) {
         // eslint-disable-next-line standard/no-callback-literal
@@ -673,11 +673,11 @@ define([
     },
 
     getSaveState: function() {
-      var state = this.getState();
+      const state = this.getState();
       let blocks;
-      var cfg = this.getConfig();
-      var banksActive = cfg._banks && cfg._banks._isEnabled && cfg._banks._split.length > 1;
-      var randomisationActive = cfg._randomisation && cfg._randomisation._isEnabled;
+      const cfg = this.getConfig();
+      const banksActive = cfg._banks && cfg._banks._isEnabled && cfg._banks._split.length > 1;
+      const randomisationActive = cfg._randomisation && cfg._randomisation._isEnabled;
 
       if (!banksActive && !randomisationActive) {
         // include presentation blocks in save state so that blocks without questions aren't removed
@@ -716,13 +716,13 @@ define([
     setRestoreState: function(dataPackage) {
       const restoreState = dataPackage[0];
       const blockData = dataPackage[1];
-      var isComplete = restoreState[0] === 1;
-      var attempts = this.get('_attempts');
-      var attemptsSpent = restoreState[1];
-      var maxScore = restoreState[2];
-      var score = restoreState[3];
-      var scoreAsPercent = score ? Math.round(score / maxScore * 100) : 0;
-      var attemptInProgress = restoreState[4] === 1;
+      const _isAssessmentComplete = restoreState[0] === 1;
+      const attempts = this.get('_attempts');
+      const _attemptsSpent = restoreState[1];
+      const maxScore = restoreState[2];
+      const score = restoreState[3];
+      const _scoreAsPercent = score ? Math.round(score / maxScore * 100) : 0;
+      const _attemptInProgress = restoreState[4] === 1;
       const minScore = restoreState[5];
       const correctAsPercent = restoreState[6];
       const correctCount = restoreState[7];
@@ -734,11 +734,11 @@ define([
         this.getChildren().models = blocks;
       }
 
-      var questions = [];
+      const _questions = [];
       blocks.forEach((block, blockIndex) => {
         const blockQuestions = block.findDescendantModels('question');
         blockQuestions.forEach((question, questionIndex) => {
-          questions.push({
+          _questions.push({
             _id: question.get('_id'),
             _isCorrect: blockData[1][blockIndex][questionIndex]
           });
@@ -746,23 +746,23 @@ define([
       });
 
       this.set({
-        _isAssessmentComplete: isComplete,
+        _isAssessmentComplete,
         _assessmentCompleteInSession: false,
-        _attemptsSpent: attemptsSpent,
-        _attemptInProgress: attemptInProgress,
-        _attemptsLeft: (attempts === 'infinite' ? attempts : attempts - attemptsSpent),
+        _attemptsSpent,
+        _attemptInProgress,
+        _attemptsLeft: (attempts === 'infinite' ? attempts : attempts - _attemptsSpent),
         _maxScore: maxScore || this._getMaxScore(),
         _minScore: minScore || this._getMinScore(),
         _score: score || 0,
-        _scoreAsPercent: scoreAsPercent,
+        _scoreAsPercent,
         _correctAsPercent: correctAsPercent || 0,
         _correctCount: correctCount || 0,
-        _questions: questions,
+        _questions,
         _questionCount: questionCount || 0,
-        _lastAttemptScoreAsPercent: scoreAsPercent
+        _lastAttemptScoreAsPercent: _scoreAsPercent
       });
 
-      if (isComplete) this._checkIsPass();
+      if (_isAssessmentComplete) this._checkIsPass();
 
       Adapt.trigger('assessments:restored', this.getState(), this);
 
@@ -771,9 +771,9 @@ define([
     getState: function() {
       // return the current state of the assessment
       // create snapshot of values so as not to create memory leaks
-      var assessmentConfig = this.getConfig();
+      const assessmentConfig = this.getConfig();
 
-      var state = {
+      const state = {
         id: assessmentConfig._id,
         type: 'article-assessment',
         pageId: this.getParent().get('_id'),
@@ -808,7 +808,7 @@ define([
     },
 
     getConfig: function() {
-      var assessmentConfig = this.get('_assessment');
+      let assessmentConfig = this.get('_assessment');
 
       if (!assessmentConfig) {
         assessmentConfig = $.extend(true, {}, assessmentConfigDefaults);
