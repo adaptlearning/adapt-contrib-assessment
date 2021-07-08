@@ -24,7 +24,7 @@ class QuestionBank {
     const questionBlocks = [];
     const usedQuestionBlocks = this.usedQuestionBlocks.slice(0);
 
-    for (const i = 0; i < this._numQuestionBlocks; i++) {
+    for (let i = 0; i < this._numQuestionBlocks; i++) {
       let question = this.getRandomQuestion();
       if (question !== undefined) {
         questionBlocks.push(question);

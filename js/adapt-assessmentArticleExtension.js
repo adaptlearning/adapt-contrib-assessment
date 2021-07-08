@@ -13,7 +13,7 @@ import Assessment from './assessment';
 // Extends core/js/views/articleView.js
 const ArticleViewInitialize = ArticleView.prototype.initialize;
 ArticleView.prototype.initialize = function(options) {
-  if (this.model.get('_assessment') && this.model.get('_assessment')._isEnabled === true) {
+  if (this.model.get('_assessment')?._isEnabled === true) {
     // extend the articleView with new functionality
     _.extend(this, AdaptAssessmentArticleView);
   }
@@ -24,7 +24,7 @@ ArticleView.prototype.initialize = function(options) {
 // Extends core/js/models/articleModel.js
 const ArticleModelInitialize = ArticleModel.prototype.initialize;
 ArticleModel.prototype.initialize = function(options) {
-  if (this.get('_assessment') && this.get('_assessment')._isEnabled === true) {
+  if (this.get('_assessment')?._isEnabled === true) {
     // extend the articleModel with new functionality
     _.extend(this, AdaptAssessmentArticleModel);
 
