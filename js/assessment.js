@@ -52,7 +52,7 @@ export default Adapt.assessment = _.extend({
       this._saveStateModel = Adapt.offlineStorage.get('a');
     }
     if (this._saveStateModel) {
-      var state = assessmentModel.getState();
+      const state = assessmentModel.getState();
       if (this._saveStateModel[state.id]) {
         assessmentModel.setRestoreState(Adapt.offlineStorage.deserialize(this._saveStateModel[state.id]));
       }
