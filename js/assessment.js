@@ -112,7 +112,7 @@ export default Adapt.assessment = _.extend({
         
         model.reset(forceAssessmentReset, () => {
           numberOfResetAssessments++;
-          var haveAllModelsReset = (numberOfResetAssessments === numberOfAssessments);
+          const haveAllModelsReset = (numberOfResetAssessments === numberOfAssessments);
           if (!haveAllModelsReset) {
             return;
           }
@@ -216,7 +216,7 @@ export default Adapt.assessment = _.extend({
       }
 
       try {
-        var pageModel = Adapt.findById(k);
+        const pageModel = Adapt.findById(k);
         pageModel.set({
           _subProgressTotal: assessmentsTotal,
           _subProgressComplete: assessmentsPassed
