@@ -13,11 +13,5 @@
     "adapt-extension"
   ],
   "license": "GPL-3.0",
-  "targetAttribute": "_assessment",
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.28.2",
-    "@typescript-eslint/parser": "^4.28.2",
-    "eslint": "^7.30.0",
-    "eslint-plugin-react": "^7.24.0"
-  }
+  "targetAttribute": "_assessment"
 }
