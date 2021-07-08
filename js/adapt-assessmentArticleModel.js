@@ -102,8 +102,8 @@ const AssessmentModel = {
       _isPartOfAssessment: true,
       _assessmentId: assessmentConfig._id
     };
-    for (let i = 0, l = this._originalChildModels.length; i < l; i++) {
-      const blockModel = this._originalChildModels[i];
+
+    for (const blockModel of this._originalChildModels) {
       blockModel.set(childConfig);
       // make sure components are set to _isPartOfAssessment for plp checking
       blockModel.setOnChildren(childConfig);
@@ -219,7 +219,7 @@ const AssessmentModel = {
     this._questionBanks = [];
 
     // build fresh banks
-    for (const i = 0, l = banks.length; i < l; i++) {
+    for (let i = 0, l = banks.length; i < l; i++) {
       const bank = banks[i];
       bankId = (i + 1);
       const questionBank = new QuestionBank(bankId, this.get('_id'), bank, true);
@@ -229,8 +229,7 @@ const AssessmentModel = {
 
     // add blocks to banks
     const children = this.getChildren().models;
-    for (const j = 0, count = children.length; j < count; j++) {
-      const blockModel = children[j];
+    for (const blockModel of children) {
       const blockAssessmentConfig = blockModel.get('_assessment');
       if (!blockAssessmentConfig) continue;
       bankId = blockAssessmentConfig._quizBankID;
@@ -556,8 +555,7 @@ const AssessmentModel = {
     let wereQuestionsRestored = true;
 
     const questions = this.get('_questions');
-    for (const i = 0, l = questions.length; i < l; i++) {
-      const question = questions[i];
+    for (const question of questions) {
       const questionModel = Adapt.findById(question._id);
       if (!questionModel.get('_isSubmitted')) {
         wereQuestionsRestored = false;

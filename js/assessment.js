@@ -187,8 +187,7 @@ export default Adapt.assessment = _.extend({
 
   _getStatesByAssessmentId() {
     const states = {};
-    for (var i = 0, l = this._assessments.length; i < l; i++) {
-      const assessmentModel = this._assessments[i];
+    for (const assessmentModel of this._assessments) {
       if (!assessmentModel.get('_isAvailable')) continue;
       const state = assessmentModel.getState();
       states[state.id] = state;
@@ -206,8 +205,8 @@ export default Adapt.assessment = _.extend({
       const assessmentsTotal = assessments.length;
       let assessmentsPassed = 0;
 
-      for (var i = 0, l = assessments.length; i < l; i++) {
-        const assessmentState = assessments[i].getState();
+      for (const assessment of assessments) {
+        const assessmentState = assessment.getState();
 
         if (assessmentState.includeInTotalScore && !assessmentState.isPass) continue;
 
@@ -312,8 +311,7 @@ export default Adapt.assessment = _.extend({
   saveState() {
 
     this._saveStateModel = {};
-    for (let i = 0; i < this._assessments.length; i++) {
-      const assessmentModel = this._assessments[i];
+    for (const assessmentModel of this._assessments) {
       const state = assessmentModel.getState();
       this._saveStateModel[state.id] = Adapt.offlineStorage.serialize(assessmentModel.getSaveState());
     }
@@ -351,8 +349,8 @@ export default Adapt.assessment = _.extend({
     const states = this._getStatesByAssessmentId();
     let assessmentsComplete = 0;
 
-    for (var id in states) {
-      var state = states[id];
+    for (const id in states) {
+      const state = states[id];
       if (!state.includeInTotalScore) continue;
       if (state.isComplete) assessmentsComplete++;
       assessments++;
