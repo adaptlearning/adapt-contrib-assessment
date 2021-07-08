@@ -178,7 +178,7 @@ const AssessmentModel = {
       this._checkNumberOfQuestionsAnswered();
       this._updateQuestionsState();
 
-      Assessment.saveState();
+      Adapt.assessment.saveState();
 
       if (typeof callback === 'function') callback.apply(this);
 
@@ -300,7 +300,7 @@ const AssessmentModel = {
     this.set('_numberOfQuestionsAnswered', numberOfQuestionsAnswered);
 
     this._updateQuestionsState();
-    Assessment.saveState();
+    Adapt.assessment.saveState();
 
     this._checkAssessmentComplete();
   },
