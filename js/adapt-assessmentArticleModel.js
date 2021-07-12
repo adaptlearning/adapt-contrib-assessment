@@ -292,9 +292,8 @@ define([
       questionModels.forEach(questionModel => {
         this._onQuestionCompleted(questionModel, value);
       });
-      if (blockModel.get('_isInteractionComplete')) {
-        this._checkAssessmentComplete();
-      }
+      if (!blockModel.get('_isInteractionComplete')) return;
+      this._checkAssessmentComplete();
     },
 
     _onQuestionCompleted: function(questionModel, value) {
