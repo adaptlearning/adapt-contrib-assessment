@@ -311,8 +311,8 @@ define([
     },
 
     _checkAssessmentComplete: function() {
-      const hasFinalQuestions = (this.get('_requireCompletionOf') !== Number.POSITIVE_INFINITY);
-      if (!hasFinalQuestions) return;
+      const allQuestionsAdded = (this.get('_requireCompletionOf') !== Number.POSITIVE_INFINITY);
+      if (!allQuestionsAdded) return;
       const numberOfQuestionsAnswered = this.get('_numberOfQuestionsAnswered');
       const allQuestionsAnswered = (numberOfQuestionsAnswered >= this._getCurrentQuestionComponents().length);
       if (!allQuestionsAnswered) return;
