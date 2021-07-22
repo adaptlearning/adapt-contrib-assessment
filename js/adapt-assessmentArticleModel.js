@@ -288,6 +288,8 @@ const AssessmentModel = {
     questionModels.forEach(questionModel => {
       this._onQuestionCompleted(questionModel, value);
     });
+    if (!blockModel.get('_isInteractionComplete')) return;
+    this._checkAssessmentComplete();
   },
 
   _onQuestionCompleted(questionModel, value) {
@@ -305,6 +307,8 @@ const AssessmentModel = {
   },
 
   _checkAssessmentComplete() {
+    const allQuestionsAdded = (this.get('_requireCompletionOf') !== Number.POSITIVE_INFINITY);
+    if (!allQuestionsAdded) return;
     const numberOfQuestionsAnswered = this.get('_numberOfQuestionsAnswered');
     const allQuestionsAnswered = (numberOfQuestionsAnswered >= this._getCurrentQuestionComponents().length);
     if (!allQuestionsAnswered) return;
