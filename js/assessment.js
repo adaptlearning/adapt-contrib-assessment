@@ -9,7 +9,6 @@ const assessmentsConfigDefaults = {
   _isDefaultsLoaded: true
 };
 
-
 export default Adapt.assessment = _.extend({
 
   // Private functions
@@ -64,7 +63,7 @@ export default Adapt.assessment = _.extend({
     * Allow navigating to an assessment via the URL.
     */
   _handleRoute(plugin, id) {
-    if (plugin !== 'assessment' && plugin !== 'article-assessment' || id === undefined) {
+    if ((plugin !== 'assessment' && plugin !== 'article-assessment') || id === undefined) {
       return;
     }
 
@@ -109,7 +108,7 @@ export default Adapt.assessment = _.extend({
       const forceAssessmentReset = false;
 
       pageAssessmentModels.forEach(model => {
-        
+
         model.reset(forceAssessmentReset, () => {
           numberOfResetAssessments++;
           const haveAllModelsReset = (numberOfResetAssessments === numberOfAssessments);
@@ -336,7 +335,7 @@ export default Adapt.assessment = _.extend({
 
     return assessmentsConfig;
   },
-  
+
   getState() {
     const assessmentsConfig = this.getConfig();
 
