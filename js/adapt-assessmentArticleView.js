@@ -47,6 +47,7 @@ const AssessmentView = {
   _onRemove() {
     this._removeEventListeners();
   }
-}
+
+};
 
 export default AssessmentView;

@@ -1,5 +1,5 @@
 class QuestionBank {
-  
+
   constructor(quizBankid, articleId, numQuestionBlocks, uniqueQuestions) {
     this._id = quizBankid;
     this._articleId = articleId;

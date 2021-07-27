@@ -1,26 +1,26 @@
 import Adapt from 'core/js/adapt';
 import QuestionBank from './adapt-assessmentQuestionBank';
 
-  let givenIdCount = 0;
-  const assessmentConfigDefaults = {
-    _isEnabled: true,
-    _questions: {
-      _resetType: 'soft',
-      _canShowFeedback: false,
-      _canShowMarking: false,
-      _canShowModelAnswer: false
-    },
-    _suppressMarking: false,
-    _isPercentageBased: true,
-    _scoreToPass: 100,
-    _correctToPass: 100,
-    _includeInTotalScore: true,
-    _assessmentWeight: 1,
-    _isResetOnRevisit: true,
-    _reloadPageOnReset: true,
-    _attempts: 'infinite',
-    _allowResetIfPassed: false
-  };
+let givenIdCount = 0;
+const assessmentConfigDefaults = {
+  _isEnabled: true,
+  _questions: {
+    _resetType: 'soft',
+    _canShowFeedback: false,
+    _canShowMarking: false,
+    _canShowModelAnswer: false
+  },
+  _suppressMarking: false,
+  _isPercentageBased: true,
+  _scoreToPass: 100,
+  _correctToPass: 100,
+  _includeInTotalScore: true,
+  _assessmentWeight: 1,
+  _isResetOnRevisit: true,
+  _reloadPageOnReset: true,
+  _attempts: 'infinite',
+  _allowResetIfPassed: false
+};
 
 const AssessmentModel = {
 
@@ -196,11 +196,10 @@ const AssessmentModel = {
     // get random questions from banks
     let questionModels = [];
     for (const bankId in this._questionBanks) {
-      if (this._questionBanks.hasOwnProperty(bankId)) { // skip over properties that were added to Array.prototype by the ES5-shim for IE8
-        const questionBank = this._questionBanks[bankId];
-        const questions = questionBank.getRandomQuestionBlocks();
-        questionModels = questionModels.concat(questions);
-      }
+      if (!this._questionBanks[bankId]) continue; // skip over properties that were added to Array.prototype by the ES5-shim for IE8
+      const questionBank = this._questionBanks[bankId];
+      const questions = questionBank.getRandomQuestionBlocks();
+      questionModels = questionModels.concat(questions);
     }
 
     // if overall question order should be randomized
@@ -256,8 +255,8 @@ const AssessmentModel = {
     const newSettings = this._getMarkingSettings();
 
     // Add any additional setting overrides here
-    const questionConfig = this.getConfig()._questions;
-    if (questionConfig.hasOwnProperty('_canShowFeedback')) {
+    const questionConfig = this.getConf9ig()._questions;
+    if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowFeedback')) {
       newSettings._canShowFeedback = questionConfig._canShowFeedback;
     }
 
@@ -397,11 +396,11 @@ const AssessmentModel = {
     } else {
       const questionConfig = this.getConfig()._questions;
 
-      if (questionConfig.hasOwnProperty('_canShowModelAnswer')) {
+      if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowModelAnswer')) {
         markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
       }
 
-      if (questionConfig.hasOwnProperty('_canShowMarking')) {
+      if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowMarking')) {
         markingSettings._canShowMarking = questionConfig._canShowMarking;
       }
     }
@@ -430,8 +429,8 @@ const AssessmentModel = {
   },
 
   _isAttemptsLeft() {
-    if (this.get('_isAssessmentComplete') && this.get('_isPass')
-      || (this.get('_attemptsLeft') === 0)) return false;
+    if ((this.get('_isAssessmentComplete') && this.get('_isPass')) ||
+      (this.get('_attemptsLeft') === 0)) return false;
 
     return true;
   },
@@ -596,7 +595,7 @@ const AssessmentModel = {
       this.once('reset', () => {
         this._isResetInProgress = false;
         if (typeof callback === 'function') {
-          // eslint-disable-next-line standard/no-callback-literal
+          // eslint-disable-next-line node/no-callback-literal
           callback(true);
         }
       });
@@ -617,7 +616,7 @@ const AssessmentModel = {
       !isPageReload &&
       !force) {
       if (typeof callback === 'function') {
-        // eslint-disable-next-line standard/no-callback-literal
+        // eslint-disable-next-line node/no-callback-literal
         callback(false);
       }
       return false;
@@ -638,7 +637,7 @@ const AssessmentModel = {
     const allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
     // stop resetting if no attempts left and allowResetIfPassed is false
     if (!this._isAttemptsLeft() && !force && !allowResetIfPassed) {
-      // eslint-disable-next-line standard/no-callback-literal
+      // eslint-disable-next-line node/no-callback-literal
       if (typeof callback === 'function') callback(false);
       return false;
     }
@@ -649,7 +648,7 @@ const AssessmentModel = {
       this.once('reset', () => {
         this._isResetInProgress = false;
         if (typeof callback === 'function') {
-          // eslint-disable-next-line standard/no-callback-literal
+          // eslint-disable-next-line node/no-callback-literal
           callback(true);
         }
       });
@@ -661,7 +660,7 @@ const AssessmentModel = {
     } else {
       this._reloadPage(function() {
         if (typeof callback === 'function') {
-          // eslint-disable-next-line standard/no-callback-literal
+          // eslint-disable-next-line node/no-callback-literal
           callback(true);
         }
       });
@@ -689,7 +688,7 @@ const AssessmentModel = {
     });
     const blockTrackingIds = blocks.map(block => block.get('_trackingId'));
     const blockCompletion = blocks.map(block => {
-      let questions = block.findDescendantModels('question');
+      const questions = block.findDescendantModels('question');
       return questions.map(question => question.get('_isCorrect') || false);
     });
     const blockData = [blockTrackingIds, blockCompletion];
@@ -726,7 +725,7 @@ const AssessmentModel = {
     const correctCount = restoreState[7];
     const questionCount = restoreState[8];
 
-    let blocks = blockData[0].map(trackingId => Adapt.data.findWhere({ _trackingId: trackingId }));
+    const blocks = blockData[0].map(trackingId => Adapt.data.findWhere({ _trackingId: trackingId }));
 
     if (blocks.length) {
       this.getChildren().models = blocks;
@@ -822,6 +821,6 @@ const AssessmentModel = {
 
     return assessmentConfig;
   }
-}
+};
 
 export default AssessmentModel;
