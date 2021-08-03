@@ -255,7 +255,7 @@ const AssessmentModel = {
     const newSettings = this._getMarkingSettings();
 
     // Add any additional setting overrides here
-    const questionConfig = this.getConf9ig()._questions;
+    const questionConfig = this.getConfig()._questions;
     if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowFeedback')) {
       newSettings._canShowFeedback = questionConfig._canShowFeedback;
     }
