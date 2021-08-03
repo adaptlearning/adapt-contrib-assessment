@@ -40,7 +40,7 @@ const AssessmentModel = {
 
     const assessmentConfig = this.getConfig();
 
-    _.extend(this, {
+    Object.assign(this, {
       _originalChildModels: null,
       _questionBanks: null,
       _forceResetOnRevisit: false
