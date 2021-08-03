@@ -15,7 +15,7 @@ const ArticleViewInitialize = ArticleView.prototype.initialize;
 ArticleView.prototype.initialize = function(options) {
   if (this.model.get('_assessment')?._isEnabled === true) {
     // extend the articleView with new functionality
-    _.extend(this, AdaptAssessmentArticleView);
+    Object.assign(this, AdaptAssessmentArticleView);
   }
   // initialize the article in the normal manner
   return ArticleViewInitialize.apply(this, arguments);
