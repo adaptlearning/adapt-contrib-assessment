@@ -252,7 +252,7 @@ export default Adapt.assessment = _.extend({
     };
 
     Handlebars.registerHelper('questionNumber', function getQuestionNumber() {
-      const data = this.view ? this.view.model.toJSON() : this;
+      const data = this.view?.model.toJSON() || this;
       if (!data._isPartOfAssessment) return;
 
       const related = _.pluck(getRelatedQuestions(data), '_id');
