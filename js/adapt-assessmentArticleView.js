@@ -9,7 +9,7 @@ const AssessmentView = {
       this._setupEventListeners();
 
       const config = this.model.getConfig();
-      if (config && config._questions && config._questions._canShowMarking === false) {
+      if (config?._questions?._canShowMarking === false) {
         this.$el.addClass('has-no-marking');
       }
     }
