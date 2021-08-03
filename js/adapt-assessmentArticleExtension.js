@@ -26,7 +26,7 @@ const ArticleModelInitialize = ArticleModel.prototype.initialize;
 ArticleModel.prototype.initialize = function(options) {
   if (this.get('_assessment')?._isEnabled === true) {
     // extend the articleModel with new functionality
-    _.extend(this, AdaptAssessmentArticleModel);
+    Object.assign(this, AdaptAssessmentArticleModel);
 
     // initialize the article in the normal manner
     const returnValue = ArticleModelInitialize.apply(this, arguments);
