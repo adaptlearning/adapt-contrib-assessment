@@ -2,6 +2,7 @@ import ArticleView from 'core/js/views/articleView';
 import ArticleModel from 'core/js/models/articleModel';
 import AdaptAssessmentArticleView from './adapt-assessmentArticleView';
 import AdaptAssessmentArticleModel from './adapt-assessmentArticleModel';
+import './assessment';
 
 /*
   * Here we are extending the articleView and articleModel in Adapt.
