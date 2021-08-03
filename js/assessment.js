@@ -197,7 +197,7 @@ export default Adapt.assessment = _.extend({
   _setPageProgress() {
     // set _subProgressTotal and _subProgressComplete on pages that have assessment progress indicator requirements
 
-    for (const k in this._assessments._byPageId) {
+    for (const [ id, assessments ] of Object.entries(this._assessments._byPageId)) {
 
       const assessments = this._assessments._byPageId[k];
 
