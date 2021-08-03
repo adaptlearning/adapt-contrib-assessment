@@ -195,12 +195,9 @@ const AssessmentModel = {
 
     // get random questions from banks
     let questionModels = [];
-    for (const bankId in this._questionBanks) {
-      if (!this._questionBanks[bankId]) continue; // skip over properties that were added to Array.prototype by the ES5-shim for IE8
-      const questionBank = this._questionBanks[bankId];
-      const questions = questionBank.getRandomQuestionBlocks();
-      questionModels = questionModels.concat(questions);
-    }
+    this._questionBanks.forEach(questionBank => {
+      questionModels.push(...questionBank.getRandomQuestionBlocks());
+    });
 
     // if overall question order should be randomized
     if (assessmentConfig._banks._randomisation) {
