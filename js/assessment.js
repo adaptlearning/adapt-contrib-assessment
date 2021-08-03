@@ -321,7 +321,7 @@ export default Adapt.assessment = _.extend({
   getConfig() {
     let assessmentsConfig = Adapt.course.get('_assessment');
 
-    if (assessmentsConfig && assessmentsConfig._isDefaultsLoaded) {
+    if (assessmentsConfig?._isDefaultsLoaded) {
       return assessmentsConfig;
     }
 
