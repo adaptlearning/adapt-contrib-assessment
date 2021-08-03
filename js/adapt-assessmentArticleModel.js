@@ -670,8 +670,8 @@ const AssessmentModel = {
     const state = this.getState();
     let blocks;
     const cfg = this.getConfig();
-    const banksActive = cfg._banks && cfg._banks._isEnabled && cfg._banks._split.length > 1;
-    const randomisationActive = cfg._randomisation && cfg._randomisation._isEnabled;
+    const banksActive = cfg._banks?._isEnabled && cfg._banks._split.length > 1;
+    const randomisationActive = cfg._randomisation?._isEnabled;
 
     if (!banksActive && !randomisationActive) {
       // include presentation blocks in save state so that blocks without questions aren't removed
