@@ -377,7 +377,7 @@ define([
       const correctAsPercent = (questionCount === 0) ? 0 : Math.round((correctCount / questionCount) * 100);
 
       if (assessmentsConfig._correctToPass === undefined) {
-        Adapt.log.warn('Assessment course config is missing _correctToPass');
+        Adapt.log.warnOnce('Assessment course config is missing _correctToPass');
       }
 
       const scoreToPass = assessmentsConfig._scoreToPass;
