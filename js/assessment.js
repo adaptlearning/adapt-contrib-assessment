@@ -376,8 +376,12 @@ define([
       const scoreAsPercent = (scoreRange === 0) ? 0 : Math.round(((score - minScore) / scoreRange) * 100);
       const correctAsPercent = (questionCount === 0) ? 0 : Math.round((correctCount / questionCount) * 100);
 
+      if (assessmentsConfig._correctToPass === undefined) {
+        Adapt.log.warn('Assessment course config is missing _correctToPass');
+      }
+
       const scoreToPass = assessmentsConfig._scoreToPass;
-      const correctToPass = assessmentsConfig._correctToPass;
+      const correctToPass = assessmentsConfig._correctToPass ?? scoreToPass;
       const isPercentageBased = assessmentsConfig._isPercentageBased;
 
       const isPass = isComplete && (isPercentageBased
