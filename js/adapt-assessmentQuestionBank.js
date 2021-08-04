@@ -28,12 +28,12 @@ class QuestionBank {
       let question = this.getRandomQuestion();
       if (question !== undefined) {
         questionBlocks.push(question);
-      } else {
-        if (usedQuestionBlocks.length === 0) break;
-        const index = Math.floor(Math.random() * (usedQuestionBlocks.length - 1));
-        question = usedQuestionBlocks.splice(index, 1)[0];
-        questionBlocks.push(question);
+        continue;
       }
+      if (usedQuestionBlocks.length === 0) break;
+      const index = Math.floor(Math.random() * (usedQuestionBlocks.length - 1));
+      question = usedQuestionBlocks.splice(index, 1)[0];
+      questionBlocks.push(question);
     }
 
     return questionBlocks;

@@ -1,3 +1,4 @@
+import Backbone from 'backbone';
 import Adapt from 'core/js/adapt';
 
 /*
@@ -9,22 +10,20 @@ const assessmentsConfigDefaults = {
   _isDefaultsLoaded: true
 };
 
-export default Adapt.assessment = _.extend({
-
-  // Private functions
-  _assessments: _.extend([], {
-    _byPageId: {},
-    _byAssessmentId: {}
-  }),
+class Assessment extends Backbone.Controller {
 
   initialize() {
+    this._assessments = _.extend([], {
+      _byPageId: {},
+      _byAssessmentId: {}
+    });
     this.listenTo(Adapt, {
       'assessments:complete': this._onAssessmentsComplete,
       'router:location': this._checkResetAssessmentsOnRevisit,
       'router:plugin': this._handleRoute,
       'app:dataReady': this._onDataReady
     });
-  },
+  }
 
   _onAssessmentsComplete(state) {
     const assessmentId = state.id;
@@ -43,7 +42,7 @@ export default Adapt.assessment = _.extend({
 
     this._checkAssessmentsComplete();
 
-  },
+  }
 
   _restoreModelState(assessmentModel) {
 
@@ -57,7 +56,7 @@ export default Adapt.assessment = _.extend({
       }
     }
 
-  },
+  }
 
   /*
     * Allow navigating to an assessment via the URL.
@@ -84,7 +83,7 @@ export default Adapt.assessment = _.extend({
       // Defer this call so that the router's _canNavigate flag is true.
       Backbone.history.navigate('#/id/' + id, { trigger: true, replace: true });
     });
-  },
+  }
 
   _checkResetAssessmentsOnRevisit(toObject) {
     /*
@@ -121,7 +120,7 @@ export default Adapt.assessment = _.extend({
     });
 
     this._setPageProgress();
-  },
+  }
 
   _onDataReady() {
     this._assessments = _.extend([], {
@@ -130,7 +129,7 @@ export default Adapt.assessment = _.extend({
     });
 
     this._restoredCount = 0;
-  },
+  }
 
   _checkAssessmentsComplete() {
     let allAssessmentsComplete = true;
@@ -161,7 +160,7 @@ export default Adapt.assessment = _.extend({
     });
 
     return true;
-  },
+  }
 
   _setupSingleAssessmentConfiguration(assessmentState) {
     const assessmentsConfig = Adapt.course.get('_assessment');
@@ -170,11 +169,11 @@ export default Adapt.assessment = _.extend({
       _scoreToPass: assessmentState.scoreToPass
     });
     Adapt.course.set('_assessment', assessmentsConfig);
-  },
+  }
 
   _getAssessmentByPageId(pageId) {
     return this._assessments._byPageId[pageId];
-  },
+  }
 
   _getStateByAssessmentId(assessmentId) {
     if (assessmentId === undefined) {
@@ -182,7 +181,7 @@ export default Adapt.assessment = _.extend({
     }
 
     return this._assessments._byAssessmentId[assessmentId].getState();
-  },
+  }
 
   _getStatesByAssessmentId() {
     const states = {};
@@ -192,14 +191,12 @@ export default Adapt.assessment = _.extend({
       states[state.id] = state;
     }
     return states;
-  },
+  }
 
   _setPageProgress() {
     // set _subProgressTotal and _subProgressComplete on pages that have assessment progress indicator requirements
 
     for (const [ id, assessments ] of Object.entries(this._assessments._byPageId)) {
-
-      const assessments = this._assessments._byPageId[k];
 
       const assessmentsTotal = assessments.length;
       let assessmentsPassed = 0;
@@ -214,18 +211,14 @@ export default Adapt.assessment = _.extend({
         }
       }
 
-      try {
-        const pageModel = Adapt.findById(k);
-        pageModel.set({
-          _subProgressTotal: assessmentsTotal,
-          _subProgressComplete: assessmentsPassed
-        });
-      } catch (e) {
-
-      }
+      const pageModel = Adapt.findById(id);
+      pageModel?.set({
+        _subProgressTotal: assessmentsTotal,
+        _subProgressComplete: assessmentsPassed
+      });
 
     }
-  },
+  }
 
   _addToAssessmentIdMap(id, model) {
     if (id === undefined) {
@@ -242,7 +235,7 @@ export default Adapt.assessment = _.extend({
     } else {
       Adapt.log.warn('An assessment with an _id of "' + id + '" already exists!');
     }
-  },
+  }
 
   _setupQuestionNumbering() {
     const getRelatedQuestions = data => {
@@ -265,7 +258,7 @@ export default Adapt.assessment = _.extend({
       if (!data._isPartOfAssessment) return;
       return getRelatedQuestions(data).length;
     });
-  },
+  }
 
   // Public functions
   register(assessmentModel) {
@@ -297,15 +290,13 @@ export default Adapt.assessment = _.extend({
       // event which has the collated state.
       Adapt.trigger('assessment:restored', this.getState());
     }
-  },
+  }
 
   get(id) {
-    if (id === undefined) {
-      return this._assessments.slice(0);
-    } else {
-      return this._assessments._byAssessmentId[id];
-    }
-  },
+    return (id === undefined)
+      ? this._assessments.slice(0)
+      : this._assessments._byAssessmentId[id];
+  }
 
   saveState() {
 
@@ -316,7 +307,7 @@ export default Adapt.assessment = _.extend({
     }
 
     Adapt.offlineStorage.set('a', this._saveStateModel);
-  },
+  }
 
   getConfig() {
     let assessmentsConfig = Adapt.course.get('_assessment');
@@ -334,7 +325,7 @@ export default Adapt.assessment = _.extend({
     Adapt.course.set('_assessment', assessmentsConfig);
 
     return assessmentsConfig;
-  },
+  }
 
   getState() {
     const assessmentsConfig = this.getConfig();
@@ -366,8 +357,12 @@ export default Adapt.assessment = _.extend({
     const scoreAsPercent = (scoreRange === 0) ? 0 : Math.round(((score - minScore) / scoreRange) * 100);
     const correctAsPercent = (questionCount === 0) ? 0 : Math.round((correctCount / questionCount) * 100);
 
+    if (assessmentsConfig._correctToPass === undefined) {
+      Adapt.log.warnOnce('Assessment course config is missing _correctToPass');
+    }
+
     const scoreToPass = assessmentsConfig._scoreToPass;
-    const correctToPass = assessmentsConfig._correctToPass;
+    const correctToPass = assessmentsConfig._correctToPass || scoreToPass;
     const isPercentageBased = assessmentsConfig._isPercentageBased;
 
     const isPass = isComplete && (isPercentageBased
@@ -391,4 +386,6 @@ export default Adapt.assessment = _.extend({
       assessments
     };
   }
-}, Backbone.Events);
+}
+
+export default (Adapt.assessment = new Assessment());

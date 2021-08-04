@@ -426,9 +426,8 @@ const AssessmentModel = {
   },
 
   _isAttemptsLeft() {
-    if ((this.get('_isAssessmentComplete') && this.get('_isPass')) ||
-      (this.get('_attemptsLeft') === 0)) return false;
-
+    if (this.get('_isAssessmentComplete') && this.get('_isPass')) return false;
+    if (this.get('_attemptsLeft') === 0) return false;
     return true;
   },
 
@@ -651,11 +650,11 @@ const AssessmentModel = {
       });
       this._isResetInProgress = true;
       // perform asynchronous reset
-      this._setupAssessmentData(force, function() {
+      this._setupAssessmentData(force, () => {
         this.trigger('reset');
       });
     } else {
-      this._reloadPage(function() {
+      this._reloadPage(() => {
         if (typeof callback === 'function') {
           // eslint-disable-next-line node/no-callback-literal
           callback(true);
