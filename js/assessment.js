@@ -155,9 +155,7 @@ class Assessment extends Backbone.Controller {
       this._setupSingleAssessmentConfiguration(assessmentStates[0]);
     }
 
-    _.defer(() => {
-      Adapt.trigger('assessment:complete', this.getState());
-    });
+    _.defer(() => Adapt.trigger('assessment:complete', this.getState()));
 
     return true;
   }

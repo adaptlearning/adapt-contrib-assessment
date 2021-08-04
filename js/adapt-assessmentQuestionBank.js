@@ -1,3 +1,5 @@
+import Adapt from 'core/js/adapt';
+
 class QuestionBank {
 
   constructor(quizBankid, articleId, numQuestionBlocks, uniqueQuestions) {
@@ -47,7 +49,7 @@ class QuestionBank {
 
   getRandomQuestion() {
     if (this.unUsedQuestionBlocks !== undefined && this.unUsedQuestionBlocks.length < 1) {
-      console.warn('assessment:' + this._articleId + ' No more unique questions for _assessment._quizBankID ' + this._id);
+      Adapt.log.warn('assessment:' + this._articleId + ' No more unique questions for _assessment._quizBankID ' + this._id);
       return undefined;
     }
 

@@ -34,13 +34,13 @@ const AssessmentView = {
   _onAssessmentComplete(state, model) {
     if (state.id !== this.model.get('_assessment')._id) return;
 
-    console.log('assessment complete', state, model);
+    Adapt.log.info('assessment complete', state, model);
   },
 
   _onAssessmentReset(state, model) {
     if (state.id !== this.model.get('_assessment')._id) return;
 
-    console.log('assessment reset', state, model);
+    Adapt.log.info('assessment reset', state, model);
 
   },
 

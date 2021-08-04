@@ -134,13 +134,11 @@ const AssessmentModel = {
         _score: 0
       });
       this.getChildren().models = this._originalChildModels;
-      if (assessmentConfig._banks &&
-        assessmentConfig._banks._isEnabled &&
-        assessmentConfig._banks._split.length > 1) {
+      if (assessmentConfig?._banks._isEnabled &&
+        assessmentConfig?._banks._split.length > 1) {
 
         quizModels = this._setupBankedAssessment();
-      } else if (assessmentConfig._randomisation &&
-        assessmentConfig._randomisation._isEnabled) {
+      } else if (assessmentConfig?._randomisation._isEnabled) {
 
         quizModels = this._setupRandomisedAssessment();
       }
@@ -151,19 +149,19 @@ const AssessmentModel = {
       quizModels = this.getChildren().models;
     } else if (quizModels.length === 0) {
       quizModels = this.getChildren().models;
-      console.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
+      Adapt.log.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
     }
 
     this.getChildren().models = quizModels;
 
     this.setupCurrentQuestionComponents();
     if (shouldResetAssessment || shouldResetQuestions) {
-      this._resetQuestions(function() {
+      this._resetQuestions(() => {
         this.set('_attemptInProgress', true);
         Adapt.trigger('assessments:reset', this.getState(), this);
 
         finalise.apply(this);
-      }.bind(this));
+      });
     } else {
       finalise.apply(this);
     }
@@ -356,9 +354,7 @@ const AssessmentModel = {
     const questionComponents = this._getCurrentQuestionComponents();
     const questions = questionComponents.map(model => ({
       _id: model.get('_id'),
-      _isCorrect: model.get('_isCorrect') === undefined ?
-        null :
-        model.get('_isCorrect')
+      _isCorrect: model.get('_isCorrect') ?? null
     }));
     this.set('_questions', questions);
   },
@@ -572,8 +568,7 @@ const AssessmentModel = {
 
   // Public Functions
   isAssessmentEnabled() {
-    if (this.get('_assessment') &&
-      this.get('_assessment')._isEnabled) return true;
+    if (this.get('_assessment')?._isEnabled) return true;
     return false;
   },
 
