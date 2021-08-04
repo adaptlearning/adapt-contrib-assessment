@@ -13,7 +13,7 @@ const assessmentsConfigDefaults = {
 class Assessment extends Backbone.Controller {
 
   initialize() {
-    this._assessments = _.extend([], {
+    this._assessments = Object.assign([], {
       _byPageId: {},
       _byAssessmentId: {}
     });
@@ -123,7 +123,7 @@ class Assessment extends Backbone.Controller {
   }
 
   _onDataReady() {
-    this._assessments = _.extend([], {
+    this._assessments = Object.assign([], {
       _byPageId: {},
       _byAssessmentId: {}
     });

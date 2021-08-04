@@ -645,9 +645,7 @@ const AssessmentModel = {
       });
       this._isResetInProgress = true;
       // perform asynchronous reset
-      this._setupAssessmentData(force, () => {
-        this.trigger('reset');
-      });
+      this._setupAssessmentData(force, () => this.trigger('reset'));
     } else {
       this._reloadPage(() => {
         if (typeof callback === 'function') {
