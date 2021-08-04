@@ -1,4 +1,3 @@
-import Backbone from 'backbone';
 import Adapt from 'core/js/adapt';
 
 /*
