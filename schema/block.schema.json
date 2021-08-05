@@ -1,0 +1,33 @@
+{
+  "$anchor": "assessment-block",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "$patch": {
+    "source": {
+      "$ref": "block"
+    },
+    "with": {
+      "properties": {
+        "_assessment": {
+          "type": "object",
+          "title": "Assessment",
+          "default": {},
+          "properties": {
+            "_quizBankID": {
+              "type": "number",
+              "title": "Bank ID",
+              "description": "Used to group blocks of question components into associated banks. This works in conjunction with the 'Question counts' property when question banks are in use",
+              "default": 1,
+              "_backboneForms": {
+                "editorAttrs": {
+                  "step": 1,
+                  "min": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

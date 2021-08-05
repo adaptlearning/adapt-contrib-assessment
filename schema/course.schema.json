@@ -1,0 +1,39 @@
+{
+  "$anchor": "assessment-course",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "$patch": {
+    "source": {
+      "$ref": "course"
+    },
+    "with": {
+      "properties": {
+        "_assessment": {
+          "type": "object",
+          "title": "Assessment",
+          "default": {},
+          "properties": {
+            "_isPercentageBased": {
+              "type": "boolean",
+              "title": "Set pass mark as percentage",
+              "description": "Determines whether the pass mark values should be treated as percentages (default) or as the raw score and correctness",
+              "default": true
+            },
+            "_scoreToPass": {
+              "type": "number",
+              "title": "Pass mark",
+              "description": "The minimum score required by the learner to pass the assessment or the minimum percentage score if percentage-based",
+              "default": 60
+            },
+            "_correctToPass": {
+              "type": "number",
+              "title": "Correct pass mark",
+              "description": "The minimum number of correct questions required by the learner to pass the assessment or the minimum percentage correct if percentage-based",
+              "default": 60
+            }
+          }
+        }
+      }
+    }
+  }
+}
