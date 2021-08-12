@@ -310,6 +310,9 @@ const AssessmentModel = {
   },
 
   _onAssessmentComplete() {
+    const wasAttemptInProgess = this.get('_attemptInProgress');
+    if (!wasAttemptInProgess) return;
+
     this.set('_attemptInProgress', false);
     this._spendAttempt();
 
