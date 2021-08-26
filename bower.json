@@ -3,7 +3,7 @@
   "version": "4.5.1",
   "framework": ">=5.8",
   "homepage": "https://github.com/adaptlearning/adapt-contrib-assessment",
-  "issues": "https://github.com/adaptlearning/adapt_framework/issues/new",
+  "bugs": "https://github.com/adaptlearning/adapt-contrib-assessment/issues",
   "extension": "assessment",
   "displayName": "Assessment",
   "description": "An extension which attaches to an article object to group various question components and provide a score with feedback",
