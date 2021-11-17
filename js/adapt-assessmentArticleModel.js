@@ -720,7 +720,8 @@ const AssessmentModel = {
     const blocks = blockData[0].map(trackingId => Adapt.data.findWhere({ _trackingId: trackingId }));
 
     if (blocks.length) {
-      this.getChildren().models = blocks;
+      const nonBlockChildren = this.getChildren().models.filter(model => !model.isTypeGroup('block'));
+      this.getChildren().models = blocks.concat(nonBlockChildren);
     }
 
     const _questions = [];
