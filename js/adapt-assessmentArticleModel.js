@@ -674,10 +674,11 @@ const AssessmentModel = {
     } else {
       blocks = state.questions.map(question => Adapt.findById(question._id).getParent());
     }
-    blocks = blocks.filter(block => {
-      const trackingId = block.get('_trackingId');
-      return Number.isInteger(trackingId) && trackingId >= 0;
-    });
+    blocks = [...new Set(blocks)]
+      .filter(block => {
+        const trackingId = block.get('_trackingId');
+        return Number.isInteger(trackingId) && trackingId >= 0;
+      });
     const blockTrackingIds = blocks.map(block => block.get('_trackingId'));
     const blockCompletion = blocks.map(block => {
       const questions = block.findDescendantModels('question');
