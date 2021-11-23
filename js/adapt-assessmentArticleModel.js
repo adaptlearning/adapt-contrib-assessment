@@ -27,9 +27,7 @@ const AssessmentModel = {
   _getCurrentQuestionComponents() {
     return this.findDescendantModels('block')
       .filter(block => block.get('_isAvailable'))
-      .reduce((questions, block) => questions.concat(block.findDescendantModels('question')
-        .filter(value => !questions.includes(value))),
-      []);
+      .reduce((questions, block) => questions.concat(block.findDescendantModels('question')), []);
   },
 
   _getAllQuestionComponents() {
@@ -731,7 +729,6 @@ const AssessmentModel = {
     blocks.forEach((block, blockIndex) => {
       const blockQuestions = block.findDescendantModels('question');
       blockQuestions.forEach((question, questionIndex) => {
-        if (_questions.some(_question => _question._id === question.get('_id'))) return;
         _questions.push({
           _id: question.get('_id'),
           _isCorrect: blockData[1][blockIndex][questionIndex]
