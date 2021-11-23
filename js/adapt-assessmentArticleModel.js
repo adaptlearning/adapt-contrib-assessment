@@ -27,7 +27,9 @@ const AssessmentModel = {
   _getCurrentQuestionComponents() {
     return this.findDescendantModels('block')
       .filter(block => block.get('_isAvailable'))
-      .reduce((questions, block) => questions.concat(block.findDescendantModels('question')), []);
+      .reduce((questions, block) => questions.concat(block.findDescendantModels('question')
+        .filter(value => !questions.includes(value))),
+      []);
   },
 
   _getAllQuestionComponents() {
@@ -674,10 +676,11 @@ const AssessmentModel = {
     } else {
       blocks = state.questions.map(question => Adapt.findById(question._id).getParent());
     }
-    blocks = blocks.filter(block => {
-      const trackingId = block.get('_trackingId');
-      return Number.isInteger(trackingId) && trackingId >= 0;
-    });
+    blocks = [...new Set(blocks)]
+      .filter(block => {
+        const trackingId = block.get('_trackingId');
+        return Number.isInteger(trackingId) && trackingId >= 0;
+      });
     const blockTrackingIds = blocks.map(block => block.get('_trackingId'));
     const blockCompletion = blocks.map(block => {
       const questions = block.findDescendantModels('question');
@@ -728,6 +731,7 @@ const AssessmentModel = {
     blocks.forEach((block, blockIndex) => {
       const blockQuestions = block.findDescendantModels('question');
       blockQuestions.forEach((question, questionIndex) => {
+        if (_questions.some(_question => _question._id === question.get('_id'))) return;
         _questions.push({
           _id: question.get('_id'),
           _isCorrect: blockData[1][blockIndex][questionIndex]
