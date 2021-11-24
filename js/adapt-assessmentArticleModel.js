@@ -555,7 +555,7 @@ const AssessmentModel = {
     const questions = this.get('_questions');
     for (const question of questions) {
       const questionModel = Adapt.findById(question._id);
-      if (!questionModel.get('_isSubmitted')) {
+      if (questionModel.get('_isAvailable') && !questionModel.get('_isSubmitted')) {
         wereQuestionsRestored = false;
         break;
       }
