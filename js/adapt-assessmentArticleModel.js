@@ -156,33 +156,26 @@ const AssessmentModel = {
 
     this.setupCurrentQuestionComponents();
     if (shouldResetAssessment || shouldResetQuestions) {
-      this._resetQuestions(() => {
-        this.set('_attemptInProgress', true);
-        Adapt.trigger('assessments:reset', this.getState(), this);
-
-        finalise.apply(this);
-      });
-    } else {
-      finalise.apply(this);
+      this._resetQuestions();
+      this.set('_attemptInProgress', true);
+      Adapt.trigger('assessments:reset', this.getState(), this);
     }
 
-    function finalise() {
-      if (!state.isComplete) {
-        this.set('_attemptInProgress', true);
-      }
+    if (!state.isComplete) {
+      this.set('_attemptInProgress', true);
+    }
 
-      this._overrideQuestionComponentSettings();
-      this._setupQuestionListeners();
-      this._checkNumberOfQuestionsAnswered();
-      this._updateQuestionsState();
+    this._overrideQuestionComponentSettings();
+    this._setupQuestionListeners();
+    this._checkNumberOfQuestionsAnswered();
+    this._updateQuestionsState();
 
-      Adapt.assessment.saveState();
+    Adapt.assessment.saveState();
 
-      if (typeof callback === 'function') callback.apply(this);
+    this.trigger('reset');
 
-      if (shouldResetAssessment || shouldResetQuestions) {
-        Adapt.trigger('assessments:postReset', this.getState(), this);
-      }
+    if (shouldResetAssessment || shouldResetQuestions) {
+      Adapt.trigger('assessments:postReset', this.getState(), this);
     }
   },
 
@@ -514,23 +507,10 @@ const AssessmentModel = {
     }, 250);
   },
 
-  _resetQuestions(callback) {
+  _resetQuestions() {
     const assessmentConfig = this.getConfig();
-    const syncIterations = 1; // number of synchronous iterations to perform
-    let i = 0;
-    const qs = this._getCurrentQuestionComponents();
-    const len = qs.length;
-
-    function step() {
-      for (let j = 0, count = Math.min(syncIterations, len - i); j < count; i++, j++) {
-        const question = qs[i];
-        question.reset(assessmentConfig._questions._resetType, true);
-      }
-
-      i === len ? callback() : setTimeout(step);
-    }
-
-    step();
+    const questionModels = this._getCurrentQuestionComponents();
+    questionModels.forEach(model => model.reset(assessmentConfig._questions._resetType, true));
   },
 
   _onRemove() {
@@ -583,19 +563,6 @@ const AssessmentModel = {
 
   reset(force, callback) {
 
-    if (this._isResetInProgress) {
-      // prevent multiple resets from executing.
-      // keep callbacks in queue for when current reset is finished
-      this.once('reset', () => {
-        this._isResetInProgress = false;
-        if (typeof callback === 'function') {
-          // eslint-disable-next-line node/no-callback-literal
-          callback(true);
-        }
-      });
-      return;
-    }
-
     const assessmentConfig = this.getConfig();
 
     // check if forcing reset via page revisit or force parameter
@@ -609,10 +576,8 @@ const AssessmentModel = {
       !assessmentConfig._isResetOnRevisit &&
       !isPageReload &&
       !force) {
-      if (typeof callback === 'function') {
-        // eslint-disable-next-line node/no-callback-literal
-        callback(false);
-      }
+      // eslint-disable-next-line node/no-callback-literal
+      if (typeof callback === 'function') callback(false);
       return false;
     }
 
@@ -637,24 +602,13 @@ const AssessmentModel = {
     }
 
     if (!isPageReload) {
-      // only perform this section when not attempting to reload the page
-      // wait for reset to trigger
-      this.once('reset', () => {
-        this._isResetInProgress = false;
-        if (typeof callback === 'function') {
-          // eslint-disable-next-line node/no-callback-literal
-          callback(true);
-        }
-      });
-      this._isResetInProgress = true;
-      // perform asynchronous reset
-      this._setupAssessmentData(force, () => this.trigger('reset'));
+      this._setupAssessmentData(force);
+      // eslint-disable-next-line node/no-callback-literal
+      if (typeof callback === 'function') callback(true);
     } else {
       this._reloadPage(() => {
-        if (typeof callback === 'function') {
-          // eslint-disable-next-line node/no-callback-literal
-          callback(true);
-        }
+        // eslint-disable-next-line node/no-callback-literal
+        if (typeof callback === 'function') callback(true);
       });
     }
 
