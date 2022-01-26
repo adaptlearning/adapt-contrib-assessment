@@ -18,6 +18,7 @@ class Assessment extends Backbone.Controller {
     });
     this.listenTo(Adapt, {
       'assessments:complete': this._onAssessmentsComplete,
+      'router:location': this._checkResetAssessmentsOnRevisit,
       'router:plugin': this._handleRoute,
       'app:dataReady': this._onDataReady
     });
@@ -81,6 +82,43 @@ class Assessment extends Backbone.Controller {
       // Defer this call so that the router's _canNavigate flag is true.
       Backbone.history.navigate('#/id/' + id, { trigger: true, replace: true });
     });
+  }
+
+  _checkResetAssessmentsOnRevisit(toObject) {
+    /*
+      * Here we hijack router:location to reorganise the assessment blocks
+      * this must happen before trickle listens to block completion
+      */
+    if (toObject._contentType !== 'page') return;
+
+    // initialize assessment on page visit before pageView:preRender (and trickle)
+    const pageAssessmentModels = this._getAssessmentByPageId(toObject._currentId);
+    if (pageAssessmentModels === undefined) return;
+
+    /*
+      * Here we further hijack the router to ensure the asynchronous assessment
+      * reset completes before routing completes
+      */
+    Adapt.wait.for(function resetAllAssessments(allAssessmentHaveReset) {
+
+      const numberOfAssessments = pageAssessmentModels.length;
+      let numberOfResetAssessments = 0;
+      const forceAssessmentReset = false;
+
+      pageAssessmentModels.forEach(model => {
+
+        model.reset(forceAssessmentReset, () => {
+          numberOfResetAssessments++;
+          const haveAllModelsReset = (numberOfResetAssessments === numberOfAssessments);
+          if (!haveAllModelsReset) {
+            return;
+          }
+          allAssessmentHaveReset();
+        });
+      });
+    });
+
+    this._setPageProgress();
   }
 
   _onDataReady() {
