@@ -110,6 +110,9 @@ const AssessmentModel = {
     }
   },
 
+  // prevent default
+  checkIfResetOnRevisit() {},
+
   _onDataReady() {
     // register assessment
     Adapt.assessment.register(this);
