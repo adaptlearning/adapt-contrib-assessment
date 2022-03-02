@@ -632,11 +632,8 @@ const AssessmentModel = {
       blocks = state.questions.map(question => Adapt.findById(question._id).getParent());
     }
     blocks = [...new Set(blocks)]
-      .filter(block => {
-        const trackingId = block.get('_trackingId');
-        return Number.isInteger(trackingId) && trackingId >= 0;
-      });
-    const blockTrackingIds = blocks.map(block => block.get('_trackingId'));
+      .filter(block => block.get('_isTrackable') !== false);
+    const blockTrackingIds = blocks.map(block => block.trackingPosition);
     const blockCompletion = blocks.map(block => {
       const questions = block.findDescendantModels('question');
       return questions.map(question => question.get('_isCorrect') || false);
@@ -675,7 +672,13 @@ const AssessmentModel = {
     const correctCount = restoreState[7];
     const questionCount = restoreState[8];
 
-    const blocks = blockData[0].map(trackingId => Adapt.data.findWhere({ _trackingId: trackingId }));
+    const blocks = blockData[0].map(trackingPosition => {
+      if (typeof trackingPosition === 'number') {
+        // Backwards compability for courses which use _trackingId at block level
+        return Adapt.data.findWhere({ _trackingId: trackingPosition });
+      }
+      return Adapt.data.findByTrackingPosition(trackingPosition);
+    });
 
     if (blocks.length) {
       const nonBlockChildren = this.getChildren().models.filter(model => !model.isTypeGroup('block'));
