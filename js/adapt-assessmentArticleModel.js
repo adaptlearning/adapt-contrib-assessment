@@ -633,12 +633,12 @@ const AssessmentModel = {
     }
     blocks = [...new Set(blocks)]
       .filter(block => block.get('_isTrackable') !== false);
-    const blockTrackingIds = blocks.map(block => block.trackingPosition);
+    const blockTrackingPositions = blocks.map(block => block.trackingPosition);
     const blockCompletion = blocks.map(block => {
       const questions = block.findDescendantModels('question');
       return questions.map(question => question.get('_isCorrect') || false);
     });
-    const blockData = [blockTrackingIds, blockCompletion];
+    const blockData = [blockTrackingPositions, blockCompletion];
 
     const saveState = [
       state.isComplete ? 1 : 0,
