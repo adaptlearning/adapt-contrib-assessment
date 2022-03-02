@@ -632,7 +632,7 @@ const AssessmentModel = {
       blocks = state.questions.map(question => Adapt.findById(question._id).getParent());
     }
     blocks = [...new Set(blocks)]
-      .filter(block => block.get('_isTrackable') !== false);
+      .filter(block => block.trackingPosition);
     const blockTrackingPositions = blocks.map(block => block.trackingPosition);
     const blockCompletion = blocks.map(block => {
       const questions = block.findDescendantModels('question');
