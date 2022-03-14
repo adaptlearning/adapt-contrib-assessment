@@ -121,7 +121,8 @@ const AssessmentModel = {
   _setupAssessmentData(force, callback) {
     const assessmentConfig = this.getConfig();
     const state = this.getState();
-    const shouldResetAssessment = (!this.get('_attemptInProgress') && !state.isPass) || force === true;
+    const hasAttemptsLeft = (state.attemptsLeft > 0 || state.attemptsLeft === 'infinite');
+    const shouldResetAssessment = (!this.get('_attemptInProgress') && !state.isPass && hasAttemptsLeft) || force === true;
     const shouldResetQuestions = (assessmentConfig._isResetOnRevisit && (state.allowResetIfPassed || !state.isPass)) || force === true;
 
     if (shouldResetAssessment || shouldResetQuestions) {

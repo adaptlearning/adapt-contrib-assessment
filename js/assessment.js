@@ -366,6 +366,12 @@ class Assessment extends Backbone.Controller {
       ? scoreAsPercent >= scoreToPass && correctAsPercent >= correctToPass
       : score >= scoreToPass && correctCount >= correctToPass);
 
+    const canRetry = Object.values(states).some(state => {
+      const isFailed = !state.isPass;
+      const hasAttemptsLeft = (state.attemptsLeft > 0 || state.attemptsLeft === 'infinite');
+      return (isFailed && hasAttemptsLeft);
+    });
+
     return {
       isComplete,
       isPercentageBased,
@@ -380,7 +386,8 @@ class Assessment extends Backbone.Controller {
       correctToPass,
       questionCount,
       assessmentsComplete,
-      assessments
+      assessments,
+      canRetry
     };
   }
 }
