@@ -72,7 +72,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >**\_isResetOnRevisit** (boolean): Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page. Acceptable values are `true` or `false`.   
 
->**\_attempts** (number): Controls the number of attempts available to the user. Any of the following values may be used to indicate an infinite number of attempts: `-1`, `0`, `null`, `undefined`, `"infinite"`. Note: If set to `"infinite"` and used in conjunction with [`_completionCriteria._requireAssessmentCompleted = true`](https://github.com/adaptlearning/adapt-contrib-core/blob/master/schema/config.model.schema#L36-L43) the course will not be considered complete until the assessment is passed.
+>**\_attempts** (number): Controls the number of attempts available to the user. Any of the following values may be used to indicate an infinite number of attempts: `-1`, `0`, `null`, `undefined`, `"infinite"`. Note: If set to `"infinite"` and used in conjunction with [`_completionCriteria._requireAssessmentCompleted = true`](https://github.com/adaptlearning/adapt-contrib-core/blob/0b0a9a6ee95aef5c54b964a3955285c705d88a5d/schema/config.model.schema#L36-L43) the course will not be considered complete until the assessment is passed.
 
 >**\_allowResetIfPassed** (boolean): Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining). Acceptable values are `true` or `false`.  
 
