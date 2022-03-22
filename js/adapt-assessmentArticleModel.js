@@ -125,39 +125,42 @@ const AssessmentModel = {
     const shouldResetOnRevisit = assessmentConfig._isResetOnRevisit && !this.get('_attemptInProgress');
     const shouldResetAssessment = (shouldResetOnRevisit && !state.isPass && hasAttemptsLeft) || force === true;
     const shouldResetQuestions = (shouldResetOnRevisit && (state.allowResetIfPassed || !state.isPass)) || force === true;
+    const shouldResetCorrectQuestions = state.isResetCorrectQuestions;
 
     if (shouldResetAssessment || shouldResetQuestions) {
       Adapt.trigger('assessments:preReset', this.getState(), this);
     }
 
-    let quizModels;
-    if (shouldResetAssessment) {
-      this.set({
-        _numberOfQuestionsAnswered: 0,
-        _isAssessmentComplete: false,
-        _assessmentCompleteInSession: false,
-        _score: 0
-      });
-      this.getChildren().models = this._originalChildModels;
-      if (assessmentConfig?._banks._isEnabled &&
-        assessmentConfig?._banks._split.length > 1) {
+    if (!shouldResetCorrectQuestions) {
+      let quizModels;
+      if (shouldResetAssessment) {
+        this.set({
+          _numberOfQuestionsAnswered: 0,
+          _isAssessmentComplete: false,
+          _assessmentCompleteInSession: false,
+          _score: 0
+        });
+        this.getChildren().models = this._originalChildModels;
+        if (assessmentConfig?._banks._isEnabled &&
+          assessmentConfig?._banks._split.length > 1) {
 
-        quizModels = this._setupBankedAssessment();
-      } else if (assessmentConfig?._randomisation._isEnabled) {
+          quizModels = this._setupBankedAssessment();
+        } else if (assessmentConfig?._randomisation._isEnabled) {
 
-        quizModels = this._setupRandomisedAssessment();
+          quizModels = this._setupRandomisedAssessment();
+        }
       }
-    }
 
-    if (!quizModels) {
-      // leave the order as before, completed or not
-      quizModels = this.getChildren().models;
-    } else if (quizModels.length === 0) {
-      quizModels = this.getChildren().models;
-      Adapt.log.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
-    }
+      if (!quizModels) {
+        // leave the order as before, completed or not
+        quizModels = this.getChildren().models;
+      } else if (quizModels.length === 0) {
+        quizModels = this.getChildren().models;
+        Adapt.log.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
+      }
 
-    this.getChildren().models = quizModels;
+      this.getChildren().models = quizModels;
+    }
 
     this.setupCurrentQuestionComponents();
     if (shouldResetAssessment || shouldResetQuestions) {
@@ -754,7 +757,8 @@ const AssessmentModel = {
       questions: this.get('_questions'),
       resetType: assessmentConfig._questions._resetType,
       allowResetIfPassed: assessmentConfig._allowResetIfPassed,
-      questionModels: new Backbone.Collection(this._getCurrentQuestionComponents())
+      questionModels: new Backbone.Collection(this._getCurrentQuestionComponents()),
+      isResetCorrectQuestions: assessmentConfig._isResetCorrectQuestions
     };
 
     return state;

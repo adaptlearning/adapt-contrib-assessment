@@ -147,6 +147,15 @@
                   "help": "Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page.",
                   "validators": []
                 },
+                "_isResetCorrectQuestions": {
+                  "type": "boolean",
+                  "required": true,
+                  "default": false,
+                  "title": "Reset correct questions on revisit",
+                  "inputType": "Checkbox",
+                  "help": "Controls whether the questions in the assessment including those correctly answered should be reset automatically (up to the number of available attempts) when a user revisits the page.",
+                  "validators": []
+                },
                 "_allowResetIfPassed": {
                   "type": "boolean",
                   "required": true,
