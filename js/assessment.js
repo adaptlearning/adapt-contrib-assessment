@@ -1,4 +1,8 @@
 import Adapt from 'core/js/adapt';
+import offlineStorage from 'core/js/offlineStorage';
+import wait from 'core/js/wait';
+import data from 'core/js/data';
+import logging from 'core/js/logging';
 
 /*
   * Here we setup a registry for all assessments
@@ -32,7 +36,7 @@ class Assessment extends Backbone.Controller {
     if (assessmentId === undefined) return;
 
     if (!this._getStateByAssessmentId(assessmentId)) {
-      Adapt.log.warn('assessments: state was not registered when assessment was created');
+      logging.warn('assessments: state was not registered when assessment was created');
     }
 
     this.saveState();
@@ -46,12 +50,12 @@ class Assessment extends Backbone.Controller {
   _restoreModelState(assessmentModel) {
 
     if (!this._saveStateModel) {
-      this._saveStateModel = Adapt.offlineStorage.get('a');
+      this._saveStateModel = offlineStorage.get('a');
     }
     if (this._saveStateModel) {
       const state = assessmentModel.getState();
       if (this._saveStateModel[state.id]) {
-        assessmentModel.setRestoreState(Adapt.offlineStorage.deserialize(this._saveStateModel[state.id]));
+        assessmentModel.setRestoreState(offlineStorage.deserialize(this._saveStateModel[state.id]));
       }
     }
 
@@ -66,14 +70,14 @@ class Assessment extends Backbone.Controller {
     }
 
     // Check the 'id' passed is that of an article.
-    if (!Adapt.findById(id)) {
+    if (!data.findById(id)) {
       // The 'id' passed may have been the assessment _id/name, not the article _id.
       const assessment = Adapt.assessment._assessments._byAssessmentId[id];
       if (assessment) {
         // Set 'id' to the article _id.
         id = assessment.get('_id');
       } else {
-        Adapt.log.warn('Assessment not found with _id: ' + id);
+        logging.warn('Assessment not found with _id: ' + id);
         return;
       }
     }
@@ -99,7 +103,7 @@ class Assessment extends Backbone.Controller {
       * Here we further hijack the router to ensure the asynchronous assessment
       * reset completes before routing completes
       */
-    Adapt.wait.for(function resetAllAssessments(allAssessmentHaveReset) {
+    wait.for(function resetAllAssessments(allAssessmentHaveReset) {
 
       const numberOfAssessments = pageAssessmentModels.length;
       let numberOfResetAssessments = 0;
@@ -208,7 +212,7 @@ class Assessment extends Backbone.Controller {
         }
       }
 
-      const pageModel = Adapt.findById(id);
+      const pageModel = data.findById(id);
       pageModel?.set({
         _subProgressTotal: assessmentsTotal,
         _subProgressComplete: assessmentsPassed
@@ -219,18 +223,18 @@ class Assessment extends Backbone.Controller {
 
   _addToAssessmentIdMap(id, model) {
     if (id === undefined) {
-      Adapt.log.warn('An assessment has been registered with an undefined value for "_id"');
+      logging.warn('An assessment has been registered with an undefined value for "_id"');
       return;
     }
 
     if (id === '') {
-      Adapt.log.warn('An assessment has been registered with an empty value for "_id"');
+      logging.warn('An assessment has been registered with an empty value for "_id"');
     }
 
     if (!this._assessments._byAssessmentId[id]) {
       this._assessments._byAssessmentId[id] = model;
     } else {
-      Adapt.log.warn('An assessment with an _id of "' + id + '" already exists!');
+      logging.warn('An assessment with an _id of "' + id + '" already exists!');
     }
   }
 
@@ -300,10 +304,10 @@ class Assessment extends Backbone.Controller {
     this._saveStateModel = {};
     for (const assessmentModel of this._assessments) {
       const state = assessmentModel.getState();
-      this._saveStateModel[state.id] = Adapt.offlineStorage.serialize(assessmentModel.getSaveState());
+      this._saveStateModel[state.id] = offlineStorage.serialize(assessmentModel.getSaveState());
     }
 
-    Adapt.offlineStorage.set('a', this._saveStateModel);
+    offlineStorage.set('a', this._saveStateModel);
   }
 
   getConfig() {
@@ -355,7 +359,7 @@ class Assessment extends Backbone.Controller {
     const correctAsPercent = (questionCount === 0) ? 0 : Math.round((correctCount / questionCount) * 100);
 
     if (assessmentsConfig._correctToPass === undefined) {
-      Adapt.log.warnOnce('Assessment course config is missing _correctToPass');
+      logging.warnOnce('Assessment course config is missing _correctToPass');
     }
 
     const scoreToPass = assessmentsConfig._scoreToPass;

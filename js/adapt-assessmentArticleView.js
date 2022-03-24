@@ -1,4 +1,5 @@
 import Adapt from 'core/js/adapt';
+import logging from 'core/js/logging';
 import AdaptArticleView from 'core/js/views/articleView';
 
 const AssessmentView = {
@@ -34,13 +35,13 @@ const AssessmentView = {
   _onAssessmentComplete(state, model) {
     if (state.id !== this.model.get('_assessment')._id) return;
 
-    Adapt.log.info('assessment complete', state, model);
+    logging.info('assessment complete', state, model);
   },
 
   _onAssessmentReset(state, model) {
     if (state.id !== this.model.get('_assessment')._id) return;
 
-    Adapt.log.info('assessment reset', state, model);
+    logging.info('assessment reset', state, model);
 
   },
 
