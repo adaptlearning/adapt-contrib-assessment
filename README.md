@@ -1,14 +1,14 @@
-# adapt-contrib-assessment  
+# adapt-contrib-assessment
 
-**Assessment** is an *extension* bundled with the [Adapt framework](https://github.com/adaptlearning/adapt_framework).  
+**Assessment** is an *extension* bundled with the [Adapt framework](https://github.com/adaptlearning/adapt_framework).
 It is not a single [question component](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components). It is an extension that provides a score for all the [question components](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components) contained within a single [article](https://github.com/adaptlearning/adapt_framework/wiki/Framework-in-five-minutes#content-structure) and that communicates the score to the LMS if so configured. It does not display results. Results are presented with the [Assessment Results](https://github.com/adaptlearning/adapt-contrib-assessmentResults) component (for the results from a single assessment) or the [Assessment Results Total](https://github.com/adaptlearning/adapt-contrib-assessmentResultsTotal) component (for the results from multiple assessments).
 
->**Important:**  
->The **Assessment** extension applies to the entire article. Since `_randomisation` may reorder blocks within the article, it is highly recommended to include only question components within the assessment article. 
-> 
+>**Important:**
+>The **Assessment** extension applies to the entire article. Since `_randomisation` may reorder blocks within the article, it is highly recommended to include only question components within the assessment article.
+>
 > **The Results component must be placed in a separate article, *not* within the assessment article.**
-> 
->Blocks inside an assessment article must contain a question. Any blocks containing only presentation components will not be rendered when the article is restored. 
+>
+>Blocks inside an assessment article must contain a question. Any blocks containing only presentation components will not be rendered when the article is restored.
 
 [Visit the **Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for explanations of key properties and for more information about its functionality such as [restoring state upon revisit](https://github.com/adaptlearning/adapt-contrib-assessment/wiki/Restore-assessment-state).
 
@@ -17,42 +17,42 @@ It is not a single [question component](https://github.com/adaptlearning/adapt_f
 As one of Adapt's *[core extensions](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#extensions),* **Assessment** is included with the [installation of the Adapt framework](https://github.com/adaptlearning/adapt_framework/wiki/Manual-installation-of-the-Adapt-framework#installation) and the [installation of the Adapt authoring tool](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-Adapt-Origin).
 
 * If **Assessment** has been uninstalled from the Adapt framework, it may be reinstalled.
-With the [Adapt CLI](https://github.com/adaptlearning/adapt-cli) installed, run the following from the command line:  
+With the [Adapt CLI](https://github.com/adaptlearning/adapt-cli) installed, run the following from the command line:
 `adapt install adapt-contrib-assessment`
 
-    Alternatively, this component can also be installed by adding the following line of code to the *adapt.json* file:  
-    `"adapt-contrib-assessment": "*"`  
-    Then running the command:  
-    `adapt install`  
-    (This second method will reinstall all plug-ins listed in *adapt.json*.)  
+    Alternatively, this component can also be installed by adding the following line of code to the *adapt.json* file:
+    `"adapt-contrib-assessment": "*"`
+    Then running the command:
+    `adapt install`
+    (This second method will reinstall all plug-ins listed in *adapt.json*.)
 
-* If **Assessment** has been uninstalled from the Adapt authoring tool, it may be reinstalled using the [Plug-in Manager](https://github.com/adaptlearning/adapt_authoring/wiki/Plugin-Manager).  
+* If **Assessment** has been uninstalled from the Adapt authoring tool, it may be reinstalled using the [Plug-in Manager](https://github.com/adaptlearning/adapt_authoring/wiki/Plugin-Manager).
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
 ## Settings Overview
 
-**Assessment** is configured with the attributes that follow. It is configured on three levels of the [content structure](https://github.com/adaptlearning/adapt_framework/wiki/Framework-in-five-minutes#content-structure): course (*course.json*), article (*articles.json*), and block (*blocks.json*). The attributes are so grouped below and are properly formatted as JSON in [*example.json*](https://github.com/adaptlearning/adapt-contrib-assessment/blob/master/example.json). Visit the [**Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for more information about how they appear in the [authoring tool](https://github.com/adaptlearning/adapt_authoring/wiki).   
+**Assessment** is configured with the attributes that follow. It is configured on three levels of the [content structure](https://github.com/adaptlearning/adapt_framework/wiki/Framework-in-five-minutes#content-structure): course (*course.json*), article (*articles.json*), and block (*blocks.json*). The attributes are so grouped below and are properly formatted as JSON in [*example.json*](https://github.com/adaptlearning/adapt-contrib-assessment/blob/master/example.json). Visit the [**Assessment** wiki](https://github.com/adaptlearning/adapt-contrib-assessment/wiki) for more information about how they appear in the [authoring tool](https://github.com/adaptlearning/adapt_authoring/wiki).
 
-### Attributes  
+### Attributes
 
-#### *course.json*  
+#### *course.json*
 The following attributes, set within *course.json*, configure the defaults for all assessments in the course. These attributes can be overridden on a per assessment basis by setting attributes of the same names in *articles.json*.
 
-**\_assessment** (object): The Assessment object that contains values for **\_scoreToPass** and **\_isPercentageBased**.  
+**\_assessment** (object): The Assessment object that contains values for **\_scoreToPass** and **\_isPercentageBased**.
 
->**\_scoreToPass** (integer): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **\_isPercentageBased** is set to `true`.  
+>**\_scoreToPass** (integer): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **\_isPercentageBased** is set to `true`.
 
->**\_correctToPass** (integer): This is the achievement correctness required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw correctness needed to pass unless **\_isPercentageBased** is set to `true`.  
+>**\_correctToPass** (integer): This is the achievement correctness required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw correctness needed to pass unless **\_isPercentageBased** is set to `true`.
 
->**\_isPercentageBased** (boolean): Determines whether the values of **\_scoreToPass** and **\_correctToPass** should be treated as percentages or as the raw score and correctness. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.  
+>**\_isPercentageBased** (boolean): Determines whether the values of **\_scoreToPass** and **\_correctToPass** should be treated as percentages or as the raw score and correctness. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
-#### *articles.json*  
+#### *articles.json*
 The following attributes are appended to a particular article within *articles.json*. Multiple assessments may be used within a course, but they must be configured in separate articles.
 
-**\_assessment** (object): The Assessment object that contains values for **\_isEnabled**, **\_id**, **\_isPercentageBased**, **\_scoreToPass**, **\_banks**, **\_randomisation**, **\_questions**, **\_includeInTotalScore**, **\_assessmentWeight**, **\_isResetOnRevisit**, and **\_attempts**.  
+**\_assessment** (object): The Assessment object that contains values for **\_isEnabled**, **\_id**, **\_isPercentageBased**, **\_scoreToPass**, **\_banks**, **\_randomisation**, **\_questions**, **\_includeInTotalScore**, **\_assessmentWeight**, **\_isResetOnRevisit**, and **\_attempts**.
 
 >**_isEnabled** (boolean): Turns the assessment on or off. Acceptable values are `true` or `false`.
 
@@ -60,35 +60,35 @@ The following attributes are appended to a particular article within *articles.j
 
 >**\_suppressMarking** (boolean): Suppresses the assessment question marking until completion of the assessment or until all attempts have been exhausted. Acceptable values are `true` or `false`.
 
->**\_scoreToPass** (number): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **\_isPercentageBased** is set to `true`.    
+>**\_scoreToPass** (number): This is the achievement score required to pass the assessment. The learner's score must be greater than or equal to this score. It is the cumulative raw score needed to pass unless **\_isPercentageBased** is set to `true`.
 
->**\_correctToPass** (number): This is the achievement correctness required to pass the assessment. The learner's correctness must be greater than or equal to this value. It is the cumulative raw correctness needed to pass unless **\_isPercentageBased** is set to `true`.    
+>**\_correctToPass** (number): This is the achievement correctness required to pass the assessment. The learner's correctness must be greater than or equal to this value. It is the cumulative raw correctness needed to pass unless **\_isPercentageBased** is set to `true`.
 
->**\_isPercentageBased** (boolean): Determines whether the values of **\_scoreToPass** and **\_correctToPass** should be treated as percentages or as the raw score and correctness. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.   
+>**\_isPercentageBased** (boolean): Determines whether the values of **\_scoreToPass** and **\_correctToPass** should be treated as percentages or as the raw score and correctness. For example, if **\_isPercentageBased** is set to `true`, a **\_scoreToPass** value of `60` will be treated as `60%`.
 
->**\_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to **\_assessmentWeight.**   
+>**\_includeInTotalScore** (boolean): Determines if the score from this assessment should be sent to the LMS. The score sent is a percentage according to **\_assessmentWeight.**
 
->**\_assessmentWeight** (number): If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100%.    
+>**\_assessmentWeight** (number): If there are multiple assessments in the course, this value controls the proportion of the LMS score which is attributed to this assessment. 1 = 100%.
 
->**\_isResetOnRevisit** (boolean): Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page. Acceptable values are `true` or `false`.   
+>**\_isResetOnRevisit** (boolean): Controls whether the assessment should be reset automatically (up to the number of available attempts) when a user revisits the page. Acceptable values are `true` or `false`.
 
 >**\_attempts** (number): Controls the number of attempts available to the user. Any of the following values may be used to indicate an infinite number of attempts: `-1`, `0`, `null`, `undefined`, `"infinite"`. Note: If set to `"infinite"` and used in conjunction with [`_completionCriteria._requireAssessmentCompleted = true`](https://github.com/adaptlearning/adapt-contrib-core/blob/0b0a9a6ee95aef5c54b964a3955285c705d88a5d/schema/config.model.schema#L36-L43) the course will not be considered complete until the assessment is passed.
 
->**\_allowResetIfPassed** (boolean): Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining). Acceptable values are `true` or `false`.  
+>**\_allowResetIfPassed** (boolean): Controls whether the assessment may be reset after it has been passed (whilst there are attempts remaining). Acceptable values are `true` or `false`.
 
->**\_scrollToOnReset** (boolean): Controls whether to scroll to the assessment after reset or to stay at the top of the assessment page. Acceptable values are `true` or `false`.  
+>**\_scrollToOnReset** (boolean): Controls whether to scroll to the assessment after reset or to stay at the top of the assessment page. Acceptable values are `true` or `false`.
 
 >**\_banks** (object): If **\_banks** is enabled, its attributes determine which questions from a series of question banks/buckets will be presented to the learner. Contains values for **\_isEnabled**, **\_split**, and **\_randomisation**. (Use either **\_banks** or **\_randomisation**; the value of their **\_isEnabled** attributes must be opposite booleans. If **\_banks** is enabled, blocks must be organized into questions banks by adding the **\_quizBankID** attribute referenced below. You must also have at least two banks; if you only have one bank of questions then the **\_randomisation** functionality is likely to be more appropriate to your needs).
 
->>**\_isEnabled** (boolean): Turns on or off the ability to use question banks.  
+>>**\_isEnabled** (boolean): Turns on or off the ability to use question banks.
 
->>**\_split** (string): This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The *position* of the numeral in the list corresponds to the **\_quizBankID** assigned to a block. The *value* of the number determines how many questions to retrieve randomly from that particular quiz bank. For example, a **\_split** with a value of "2,1" would pick 2 questions from bank 1 (`"_quizBankID": "1"`) and 1 question from bank 2 (`"_quizBankID": "2"`).  
+>>**\_split** (string): This is a comma-separated list of numbers corresponding to the number of questions to be drawn from each identified block. The *position* of the numeral in the list corresponds to the **\_quizBankID** assigned to a block. The *value* of the number determines how many questions to retrieve randomly from that particular quiz bank. For example, a **\_split** with a value of "2,1" would pick 2 questions from bank 1 (`"_quizBankID": "1"`) and 1 question from bank 2 (`"_quizBankID": "2"`).
 
 >>**\_randomisation** (boolean): Determines whether the questions will be displayed in the same order as the blocks are ordered in *blocks.json* or will be shuffled before they are presented to the learner. Acceptable values are `true` or `false`.
 
 >**\_randomisation** (object): If **\_randomisation** is enabled, its attributes control how many random questions will be presented to the learner. Contains values for **\_isEnabled** and **\_blockCount**. Questions and the order in which they are presented are maintained throughout an attempt, should a learner leave the assessment incomplete and return later. (Use either **\_randomisation** or **\_banks**; the value of their **\_isEnabled** attributes must be opposite booleans.)
 
->>**\_isEnabled** (boolean): Turns on or off the ability to use **\_randomisation**.      
+>>**\_isEnabled** (boolean): Turns on or off the ability to use **\_randomisation**.
 
 >>**\_blockCount** (number): The number of blocks to present to the learner. (Questions are presented by blocks. If one component occupies a block, it will be presented alone. If multiple components occupy a block, they will always appear together.)
 
@@ -104,10 +104,10 @@ The following attributes are appended to a particular article within *articles.j
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
-#### *blocks.json*  
+#### *blocks.json*
 **\_assessment** (object): The Assessment object that contains a value for **\_quizBankID**.
 
->**\_quizBankID** (number): Add the **\_quizBankID** attribute to your assessment blocks in order to organize them into question banks/buckets. IDs are coordinated with positions in the **\_split** attribute. Quiz bank IDs are a 1-based index. The first position in the list corresponds to `"_quizBankID": 1`, the second position corresponds to `"_quizBankID": 2`, and so on. A value of '2,1' in **\_split** would pick 2 questions from `"_quizBankID": 1` and one question from `"_quizBankID": 2`.  
+>**\_quizBankID** (number): Add the **\_quizBankID** attribute to your assessment blocks in order to organize them into question banks/buckets. IDs are coordinated with positions in the **\_split** attribute. Quiz bank IDs are a 1-based index. The first position in the list corresponds to `"_quizBankID": 1`, the second position corresponds to `"_quizBankID": 2`, and so on. A value of '2,1' in **\_split** would pick 2 questions from `"_quizBankID": 1` and one question from `"_quizBankID": 2`.
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
@@ -119,20 +119,20 @@ If you need to display sequential question numbers within the component title wh
 
 ### Events
 
-**assessments:register**   
-Triggered when an assessment is registered. Occurs between `app:dataReady` and `adapt:initialize` events. Returns `stateObject`, `assessmentModel`  
+**assessments:register**
+Triggered when an assessment is registered. Occurs between `app:dataReady` and `adapt:initialize` events. Returns `stateObject`, `assessmentModel`
 
-**assessments:reset**  
-Triggered when an assessment is reset. Returns `stateObject`, `assessmentModel`  
+**assessments:reset**
+Triggered when an assessment is reset. Returns `stateObject`, `assessmentModel`
 
-**assessment:complete**  
-Triggered when the user submits the last question of the last assessment and the score is to be posted back to the LMS. Returns `stateObject`  
+**assessment:complete**
+Triggered when the user submits the last question of the last assessment and the score is to be posted back to the LMS. Returns `stateObject`
 
-**assessments:complete**   
-Triggered when the user submits the last question of one of the assessments. Returns `stateObject`, `assessmentModel`   
+**assessments:complete**
+Triggered when the user submits the last question of one of the assessments. Returns `stateObject`, `assessmentModel`
 
-**assessment:restored**  
-Triggered when all the assessments have been restored from 'offline storage' (typically SCORM or xAPI). Returns `stateObject`  
+**assessment:restored**
+Triggered when all the assessments have been restored from 'offline storage' (typically SCORM or xAPI). Returns `stateObject`
 <div float align=right><a href="#top">Back to Top</a></div>
 
 #### stateObject
@@ -170,7 +170,7 @@ A description of the stateObject returned by the assessments:events is as follow
 
 
 
-A description of the stateObject returned by the `assessment:complete` event is as follows:  
+A description of the stateObject returned by the `assessment:complete` event is as follows:
 
 | Attribute                 | Type         | Description|
 | :-------------------------|:-------------|:-----|
@@ -196,9 +196,9 @@ A description of the stateObject returned by the `assessment:complete` event is 
 If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://github.com/adaptlearning/adapt-contrib-spoor) extension must be enabled. If [question components](https://github.com/adaptlearning/adapt_framework/wiki/Core-Plug-ins-in-the-Adapt-Learning-Framework#question-components) are required to display feedback after attempts, the [Tutor](https://github.com/adaptlearning/adapt-contrib-tutor) extension must be enabled. And if it is appropriate to display performance results to the learner, a separate component such as [Assessment Results](https://github.com/adaptlearning/adapt-contrib-assessmentResults) is required.
 
 ----------------------------
-**Version number:**  4.6.0   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a>  
-**Framework versions:** 5.11+  
-**Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)  
-**Accessibility support:** WAI AA  
-**RTL support:** Yes  
-**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, IE11, Safari 13+14 for macOS/iOS/iPadOS, Opera  
+**Version number:**  4.6.1   <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a>
+**Framework versions:** 5.11+
+**Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)
+**Accessibility support:** WAI AA
+**RTL support:** Yes
+**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, IE11, Safari 13+14 for macOS/iOS/iPadOS, Opera
