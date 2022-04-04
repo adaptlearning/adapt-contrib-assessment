@@ -230,7 +230,7 @@
                       "type": "string",
                       "required": false,
                       "enum": ["soft", "hard"],
-                      "default": "soft",
+                      "default": "hard",
                       "title": "Reset Type",
                       "inputType": {
                         "type": "Select",
