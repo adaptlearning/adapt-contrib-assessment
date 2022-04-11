@@ -1,4 +1,8 @@
 import Adapt from 'core/js/adapt';
+import data from 'core/js/data';
+import logging from 'core/js/logging';
+import location from 'core/js/location';
+import router from 'core/js/router';
 import QuestionBank from './adapt-assessmentQuestionBank';
 
 let givenIdCount = 0;
@@ -154,7 +158,7 @@ const AssessmentModel = {
       quizModels = this.getChildren().models;
     } else if (quizModels.length === 0) {
       quizModels = this.getChildren().models;
-      Adapt.log.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
+      logging.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
     }
 
     this.getChildren().models = quizModels;
@@ -489,7 +493,7 @@ const AssessmentModel = {
     if (!this.canResetInPage()) return false;
 
     const parentId = this.getParent().get('_id');
-    const currentLocation = Adapt.location._currentId;
+    const currentLocation = location._currentId;
 
     // check if on assessment page and should rerender page
     if (currentLocation !== parentId) return false;
@@ -503,12 +507,12 @@ const AssessmentModel = {
     this._forceResetOnRevisit = true;
     this.listenToOnce(Adapt, 'pageView:ready', async () => {
       if (assessmentConfig._scrollToOnReset) {
-        await Adapt.navigateToElement(this.get('_id'));
+        await router.navigateToElement(this.get('_id'));
       }
       callback();
     });
     _.delay(() => {
-      Backbone.history.navigate('#/id/' + Adapt.location._currentId, { replace: true, trigger: true });
+      Backbone.history.navigate('#/id/' + location._currentId, { replace: true, trigger: true });
     }, 250);
   },
 
@@ -539,7 +543,7 @@ const AssessmentModel = {
 
     const questions = this.get('_questions');
     for (const question of questions) {
-      const questionModel = Adapt.findById(question._id);
+      const questionModel = data.findById(question._id);
       if (questionModel.get('_isAvailable') && !questionModel.get('_isSubmitted')) {
         wereQuestionsRestored = false;
         break;
@@ -631,7 +635,7 @@ const AssessmentModel = {
       // include presentation blocks in save state so that blocks without questions aren't removed
       blocks = this.findDescendantModels('block');
     } else {
-      blocks = state.questions.map(question => Adapt.findById(question._id).getParent());
+      blocks = state.questions.map(question => data.findById(question._id).getParent());
     }
     blocks = [...new Set(blocks)]
       .filter(block => block.trackingPosition);
@@ -677,9 +681,9 @@ const AssessmentModel = {
     const blocks = blockData[0].map(trackingPosition => {
       if (typeof trackingPosition === 'number') {
         // Backwards compability for courses which use _trackingId at block level
-        return Adapt.data.findWhere({ _trackingId: trackingPosition });
+        return data.findWhere({ _trackingId: trackingPosition });
       }
-      return Adapt.data.findByTrackingPosition(trackingPosition);
+      return data.findByTrackingPosition(trackingPosition);
     });
 
     if (blocks.length) {
