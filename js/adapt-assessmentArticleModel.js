@@ -275,7 +275,7 @@ const AssessmentModel = {
   },
 
   _removeQuestionListeners() {
-    this.listenTo(this, 'bubble:change:_isInteractionComplete', this._onCompletionEvent);
+    this.stopListening(this, 'bubble:change:_isInteractionComplete', this._onCompletionEvent);
   },
 
   _onCompletionEvent(event) {
