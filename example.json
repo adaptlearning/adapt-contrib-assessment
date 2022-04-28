@@ -30,6 +30,7 @@
         },
         "_questions": {
             "_resetType": "hard",
+            "_comment": "For 'soft', when using trickle, please set the trickle Completion Attribute to `_isInteractionComplete'.",
             "_canShowFeedback": false,
             "_canShowMarking": false,
             "_canShowModelAnswer": false
