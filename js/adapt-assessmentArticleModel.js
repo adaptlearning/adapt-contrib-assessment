@@ -126,7 +126,8 @@ const AssessmentModel = {
     const assessmentConfig = this.getConfig();
     const state = this.getState();
     const hasAttemptsLeft = (state.attemptsLeft > 0 || state.attemptsLeft === 'infinite');
-    const shouldResetOnRevisit = assessmentConfig._isResetOnRevisit && !this.get('_attemptInProgress');
+    const isFirstAttempt = (state.attemptsSpent === 0);
+    const shouldResetOnRevisit = (isFirstAttempt || assessmentConfig._isResetOnRevisit) && !this.get('_attemptInProgress');
     const shouldResetAssessment = (shouldResetOnRevisit && !state.isPass && hasAttemptsLeft) || force === true;
     const shouldResetQuestions = (shouldResetOnRevisit && (state.allowResetIfPassed || !state.isPass)) || force === true;
 
