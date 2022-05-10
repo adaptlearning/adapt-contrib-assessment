@@ -20,10 +20,9 @@ class QuestionBank {
     const availableQuestionBlockIds = this._availableQuestionBlocks?.map(block => block.get('_id')) || [];
     const unusedQuestionBlockIds = this._unusedQuestionBlocks?.map(block => block.get('_id')) || [];
     const haveBlocksChanged = Boolean(_.difference(unusedQuestionBlockIds, availableQuestionBlockIds).length);
-    if (haveBlocksChanged) {
-      // Reset the unused question blocks if there are unused blocks which aren't available blocks
-      this._unusedQuestionBlocks = null;
-    }
+    if (!haveBlocksChanged) return;
+    // Reset the unused question blocks if there are unused blocks which aren't available blocks
+    this._unusedQuestionBlocks = null;
   }
 
   getRandomQuestionBlocks() {
