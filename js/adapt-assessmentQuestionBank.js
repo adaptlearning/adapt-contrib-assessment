@@ -1,5 +1,4 @@
 import data from 'core/js/data';
-import _ from 'underscore';
 
 class QuestionBank {
 
