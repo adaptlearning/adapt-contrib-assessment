@@ -1,66 +1,49 @@
-import logging from 'core/js/logging';
+import data from 'core/js/data';
 
 class QuestionBank {
 
-  constructor(quizBankid, articleId, numQuestionBlocks, uniqueQuestions) {
-    this._id = quizBankid;
+  constructor(quizBankId, articleId) {
+    this._bankId = quizBankId;
     this._articleId = articleId;
-    this._numQuestionBlocks = numQuestionBlocks;
-    this._uniqueQuestions = uniqueQuestions;
-    this.questionBlocks = [];
-    this.unUsedQuestionBlocks = undefined;
-    this.usedQuestionBlocks = [];
+    this._unusedQuestionBlocks = null;
+    this._count = null;
   }
 
-  getID() {
-    return this._id;
-  }
-
-  addBlock(block) {
-    this.questionBlocks.push(block);
+  calculateAvailableQuestionBlocks(count) {
+    this._count = parseInt(count);
+    const articleModel = data.findById(this._articleId);
+    const children = articleModel.getAvailableChildModels();
+    this._availableQuestionBlocks = children.map(blockModel => {
+      if (blockModel.get('_assessment')?._quizBankID !== this._bankId) return null;
+      return blockModel;
+    }).filter(Boolean);
+    const availableQuestionBlockIds = this._availableQuestionBlocks?.map(block => block.get('_id')) || [];
+    const unusedQuestionBlockIds = this._unusedQuestionBlocks?.map(block => block.get('_id')) || [];
+    const haveBlocksChanged = Boolean(_.difference(unusedQuestionBlockIds, availableQuestionBlockIds).length);
+    if (!haveBlocksChanged) return;
+    // Reset the unused question blocks if there are unused blocks which aren't available blocks
+    this._unusedQuestionBlocks = null;
   }
 
   getRandomQuestionBlocks() {
-    this.checkResetUnunsedBlocks();
-
     const questionBlocks = [];
-    const usedQuestionBlocks = this.usedQuestionBlocks.slice(0);
-
-    for (let i = 0; i < this._numQuestionBlocks; i++) {
-      let question = this.getRandomQuestion();
-      if (question !== undefined) {
-        questionBlocks.push(question);
-        continue;
-      }
-      if (usedQuestionBlocks.length === 0) break;
-      const index = Math.floor(Math.random() * (usedQuestionBlocks.length - 1));
-      question = usedQuestionBlocks.splice(index, 1)[0];
-      questionBlocks.push(question);
+    let i = 0;
+    while (i++ < this._count) {
+      const nextBlock = this.unusedQuestionBlocks.shift();
+      questionBlocks.push(nextBlock);
     }
-
     return questionBlocks;
   }
 
-  checkResetUnunsedBlocks() {
-    if (this.unUsedQuestionBlocks !== undefined && this._uniqueQuestions) return;
-
-    this.unUsedQuestionBlocks = this.questionBlocks.slice(0);
-  }
-
-  getRandomQuestion() {
-    if (this.unUsedQuestionBlocks !== undefined && this.unUsedQuestionBlocks.length < 1) {
-      logging.warn('assessment:' + this._articleId + ' No more unique questions for _assessment._quizBankID ' + this._id);
-      return undefined;
+  get unusedQuestionBlocks() {
+    const hasUnusedQuestion = Boolean(this._unusedQuestionBlocks?.length);
+    if (!hasUnusedQuestion) {
+      // Start again with all questions blocks, shuffled
+      this._unusedQuestionBlocks = _.shuffle(this._availableQuestionBlocks.slice(0));
     }
-
-    const index = Math.round(Math.random() * (this.unUsedQuestionBlocks.length - 1));
-    const questionBlock = this.unUsedQuestionBlocks[index];
-    this.usedQuestionBlocks.push(questionBlock);
-
-    this.unUsedQuestionBlocks.splice(index, 1);
-
-    return questionBlock;
+    return this._unusedQuestionBlocks;
   }
+
 }
 
 export default QuestionBank;

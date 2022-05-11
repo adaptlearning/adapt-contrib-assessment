@@ -191,47 +191,32 @@ const AssessmentModel = {
 
   _setupBankedAssessment() {
     const assessmentConfig = this.getConfig();
-
     this._setupBanks();
-
-    // get random questions from banks
-    let questionModels = [];
-    this._questionBanks.forEach(questionBank => {
-      questionModels.push(...questionBank.getRandomQuestionBlocks());
-    });
-
-    // if overall question order should be randomized
+    // Get random questions from banks
+    let questionModels = this._questionBanks.flatMap(questionBank => questionBank.getRandomQuestionBlocks());
+    // If overall question order should be randomized
     if (assessmentConfig._banks._randomisation) {
       questionModels = _.shuffle(questionModels);
     }
-
     return questionModels;
   },
 
   _setupBanks() {
     const assessmentConfig = this.getConfig();
-    const banks = assessmentConfig._banks._split.split(',');
-    let bankId;
-
-    this._questionBanks = [];
-
-    // build fresh banks
-    for (let i = 0, l = banks.length; i < l; i++) {
-      const bank = banks[i];
-      bankId = (i + 1);
-      const questionBank = new QuestionBank(bankId, this.get('_id'), bank, true);
-
-      this._questionBanks[bankId] = questionBank;
+    const bankSplits = assessmentConfig._banks._split.split(',');
+    const hasBankSplitsChanged = (bankSplits.length !== this._questionBanks?.length);
+    if (hasBankSplitsChanged) {
+      // Generate new question banks if the split has changed
+      this._questionBanks = [];
     }
-
-    // add blocks to banks
-    const children = this.getChildren().models;
-    for (const blockModel of children) {
-      const blockAssessmentConfig = blockModel.get('_assessment');
-      if (!blockAssessmentConfig) continue;
-      bankId = blockAssessmentConfig._quizBankID;
-      this._questionBanks[bankId].addBlock(blockModel);
-    }
+    bankSplits.forEach((count, index) => {
+      const bankId = (index + 1);
+      const articleId = this.get('_id');
+      // Keep question bank instances to preserve unused blocks over multi asessment attempts inside a session
+      this._questionBanks[bankId] = (this._questionBanks[bankId] || new QuestionBank(bankId, articleId));
+      // Recalculate available blocks incase they have changed or the count has changed in the split
+      this._questionBanks[bankId].calculateAvailableQuestionBlocks(count);
+    });
   },
 
   _setupRandomisedAssessment() {
