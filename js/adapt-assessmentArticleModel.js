@@ -130,30 +130,31 @@ const AssessmentModel = {
     const shouldResetOnRevisit = (isFirstAttempt || assessmentConfig._isResetOnRevisit) && !this.get('_attemptInProgress');
     const shouldResetAssessment = (shouldResetOnRevisit && !state.isPass && hasAttemptsLeft) || force === true;
     const shouldResetQuestions = (shouldResetOnRevisit && (state.allowResetIfPassed || !state.isPass)) || force === true;
-
     if (shouldResetAssessment || shouldResetQuestions) {
       Adapt.trigger('assessments:preReset', this.getState(), this);
     }
-
     let quizModels;
     if (shouldResetAssessment) {
-      this.set({
-        _numberOfQuestionsAnswered: 0,
-        _isAssessmentComplete: false,
-        _assessmentCompleteInSession: false,
-        _score: 0
-      });
+      if (isFirstAttempt || assessmentConfig?._questions?._resetType === 'hard') {
+        this.set({
+          _numberOfQuestionsAnswered: 0,
+          _isAssessmentComplete: false,
+          _assessmentCompleteInSession: false,
+          _score: 0
+        });
+      } else {
+        this.set({
+          _assessmentCompleteInSession: false
+        });
+      }
       this.getChildren().models = this._originalChildModels;
       if (assessmentConfig?._banks._isEnabled &&
         assessmentConfig?._banks._split.length > 1) {
-
         quizModels = this._setupBankedAssessment();
       } else if (assessmentConfig?._randomisation._isEnabled) {
-
         quizModels = this._setupRandomisedAssessment();
       }
     }
-
     if (!quizModels) {
       // leave the order as before, completed or not
       quizModels = this.getChildren().models;
@@ -161,29 +162,22 @@ const AssessmentModel = {
       quizModels = this.getChildren().models;
       logging.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
     }
-
     this.getChildren().models = quizModels;
-
     this.setupCurrentQuestionComponents();
     if (shouldResetAssessment || shouldResetQuestions) {
       this._resetQuestions();
       this.set('_attemptInProgress', true);
       Adapt.trigger('assessments:reset', this.getState(), this);
     }
-
     if (!state.isComplete) {
       this.set('_attemptInProgress', true);
     }
-
     this._overrideQuestionComponentSettings();
     this._setupQuestionListeners();
     this._checkNumberOfQuestionsAnswered();
     this._updateQuestionsState();
-
     Adapt.assessment.saveState();
-
     this.trigger('reset');
-
     if (shouldResetAssessment || shouldResetQuestions) {
       Adapt.trigger('assessments:postReset', this.getState(), this);
     }
@@ -304,10 +298,8 @@ const AssessmentModel = {
   _onAssessmentComplete() {
     const wasAttemptInProgess = this.get('_attemptInProgress');
     if (!wasAttemptInProgess) return;
-
     this.set('_attemptInProgress', false);
     this._spendAttempt();
-
     const _scoreAsPercent = this._getScoreAsPercent();
     const _score = this._getScore();
     const _maxScore = this._getMaxScore();
@@ -315,7 +307,6 @@ const AssessmentModel = {
     const _correctCount = this._getCorrectCount();
     const _correctAsPercent = this._getCorrectAsPercent();
     const _questionCount = this._getQuestionCount();
-
     this.set({
       _scoreAsPercent,
       _score,
@@ -328,20 +319,15 @@ const AssessmentModel = {
       _assessmentCompleteInSession: true,
       _isAssessmentComplete: true
     });
-
     this._updateQuestionsState();
-
     this._checkIsPass();
-
     this._removeQuestionListeners();
-
-    if (this._isMarkingSuppressionEnabled() && !this._isAttemptsLeft()) {
+    if (this._isMarkingSuppressionEnabled() && (!this._isAttemptsLeft() || this._isPassed())) {
       _.defer(() => {
         this._overrideMarkingSettings();
         this._refreshQuestions();
       });
     }
-
     Adapt.trigger('assessments:complete', this.getState(), this);
   },
 
@@ -408,7 +394,7 @@ const AssessmentModel = {
   },
 
   _shouldSuppressMarking() {
-    return this._isMarkingSuppressionEnabled() && this._isAttemptsLeft();
+    return this._isMarkingSuppressionEnabled() && this._isAttemptsLeft() && !this._isPassed();
   },
 
   _isMarkingSuppressionEnabled() {
@@ -417,9 +403,12 @@ const AssessmentModel = {
   },
 
   _isAttemptsLeft() {
-    if (this.get('_isAssessmentComplete') && this.get('_isPass')) return false;
     if (this.get('_attemptsLeft') === 0) return false;
     return true;
+  },
+
+  _isPassed() {
+    return this.get('_isAssessmentComplete') && this.get('_isPass');
   },
 
   _spendAttempt() {
