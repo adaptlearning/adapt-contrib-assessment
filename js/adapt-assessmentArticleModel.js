@@ -260,7 +260,7 @@ const AssessmentModel = {
 
   _onCompletionEvent(event) {
     if (event.target?.isTypeGroup('block')) return this._onBlockCompleted(event.target, event.value);
-    if (event.target?.isTypeGroup('questions')) return this._onQuestionCompleted(event.target, event.value);
+    if (event.target?.isTypeGroup('question')) return this._onQuestionCompleted(event.target, event.value);
   },
 
   _onBlockCompleted(blockModel, value) {
@@ -564,7 +564,7 @@ const AssessmentModel = {
       !assessmentConfig._isResetOnRevisit &&
       !isPageReload &&
       !force) {
-      // eslint-disable-next-line node/no-callback-literal
+      // eslint-disable-next-line n/no-callback-literal
       if (typeof callback === 'function') callback(false);
       return false;
     }
@@ -584,18 +584,18 @@ const AssessmentModel = {
     const allowResetIfPassed = this.get('_assessment')._allowResetIfPassed;
     // stop resetting if no attempts left and allowResetIfPassed is false
     if (!this._isAttemptsLeft() && !force && !allowResetIfPassed) {
-      // eslint-disable-next-line node/no-callback-literal
+      // eslint-disable-next-line n/no-callback-literal
       if (typeof callback === 'function') callback(false);
       return false;
     }
 
     if (!isPageReload) {
       this._setupAssessmentData(force);
-      // eslint-disable-next-line node/no-callback-literal
+      // eslint-disable-next-line n/no-callback-literal
       if (typeof callback === 'function') callback(true);
     } else {
       this._reloadPage(() => {
-        // eslint-disable-next-line node/no-callback-literal
+        // eslint-disable-next-line n/no-callback-literal
         if (typeof callback === 'function') callback(true);
       });
     }
