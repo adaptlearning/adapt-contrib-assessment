@@ -200,14 +200,12 @@ const AssessmentModel = {
     const bankSplits = assessmentConfig._banks._split.split(',');
 
     this.findDescendantModels('block')
+      .filter(block => block.get('_isAvailable'))
       .filter(block => block.findDescendantModels('question').length > 0)).forEach(block => {
-        if (isNaN(block._quizBankId) || block._quizBankId < 1) {
-          logging.warn(`Bank ID ${block._quizBankId} is not a valid number`);
-        }
-
-        if (block._quizBankId > bankSplits.length) {
-          logging.warn(`Bank ID ${block._quizBankId} exceeds the number of available splits (${bankSplits.length})`);
-        }
+        const isInvalidNumber = (isNaN(block._quizBankId) || block._quizBankId < 1);
+        const isOutOfBounds = (block._quizBankId > bankSplits.length);
+        if (isInvalidNumber) logging.warn(`Bank ID ${block._quizBankId} is not a valid number`);
+        if (isOutOfBounds) logging.warn(`Bank ID ${block._quizBankId} exceeds the number of available splits (${bankSplits.length})`);
     });
 
     const hasBankSplitsChanged = (bankSplits.length !== this._questionBanks?.length);
