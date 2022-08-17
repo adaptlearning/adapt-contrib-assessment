@@ -27,14 +27,17 @@ class QuestionBank {
   }
 
   getRandomQuestionBlocks() {
-    if (this._count > this.unusedQuestionBlocks.length) {
-      logging.warn(`Bank ID ${this._bankId}: Attempting to display ${this._count} question(s), but only ${this.unusedQuestionBlocks.length} available`);
+    let count = this._count;
+
+    if (count > this.unusedQuestionBlocks.length) {
+      logging.warn(`Bank ID ${this._bankId}: Attempting to display ${count} question(s), but only ${this.unusedQuestionBlocks.length} available`);
+      count = this.unusedQuestionBlocks.length;
     }
 
     const questionBlocks = [];
     let i = 0;
 
-    while (i++ < this._count) {
+    while (i++ < count) {
       const nextBlock = this.unusedQuestionBlocks.shift();
       questionBlocks.push(nextBlock);
     }
