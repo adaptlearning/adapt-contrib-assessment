@@ -199,10 +199,12 @@ class Assessment extends Backbone.Controller {
 
     for (const [ id, assessments ] of Object.entries(this._assessments._byPageId)) {
 
-      const assessmentsTotal = assessments.length;
+      const availableAssessments = assessments.filter(model => model.get('_isAvailable'));
+
+      const assessmentsTotal = availableAssessments.length;
       let assessmentsPassed = 0;
 
-      for (const assessment of assessments) {
+      for (const assessment of availableAssessments) {
         const assessmentState = assessment.getState();
 
         if (assessmentState.includeInTotalScore && !assessmentState.isPass) continue;
