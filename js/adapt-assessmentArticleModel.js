@@ -200,7 +200,7 @@ const AssessmentModel = {
     const bankSplits = assessmentConfig._banks._split.split(',');
 
     this.findDescendantModels('block')
-      .filter(block => block.get('_isAvailable') && block.findDescendantModels('question').length > 0)).forEach(block => {
+      .filter(block => block.get('_isAvailable') && block.findDescendantModels('question').length > 0).forEach(block => {
         const quizBankId = block.get('_assessment')?._quizBankId;
 
         const isInvalidNumber = (isNaN(quizBankId) || quizBankId < 1);
