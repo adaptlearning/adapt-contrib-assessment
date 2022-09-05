@@ -198,6 +198,17 @@ const AssessmentModel = {
   _setupBanks() {
     const assessmentConfig = this.getConfig();
     const bankSplits = assessmentConfig._banks._split.split(',');
+
+    this.findDescendantModels('block')
+      .filter(block => block.get('_isAvailable') && block.findDescendantModels('question').length > 0).forEach(block => {
+        const quizBankId = block.get('_assessment')?._quizBankId;
+
+        const isInvalidNumber = (isNaN(quizBankId) || quizBankId < 1);
+        const isOutOfBounds = (quizBankId > bankSplits.length);
+        if (isInvalidNumber) logging.warn(`Bank ID ${quizBankId} is not a valid number`);
+        if (isOutOfBounds) logging.warn(`Bank ID ${quizBankId} exceeds the number of available splits (${bankSplits.length})`);
+    });
+
     const hasBankSplitsChanged = (bankSplits.length !== this._questionBanks?.length);
     if (hasBankSplitsChanged) {
       // Generate new question banks if the split has changed

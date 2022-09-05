@@ -1,4 +1,5 @@
 import data from 'core/js/data';
+import logging from 'core/js/logging';
 
 class QuestionBank {
 
@@ -26,9 +27,17 @@ class QuestionBank {
   }
 
   getRandomQuestionBlocks() {
+    let count = this._count;
+
+    if (count > this.unusedQuestionBlocks.length) {
+      logging.warn(`Bank ID ${this._bankId}: Attempting to display ${count} question(s), but only ${this.unusedQuestionBlocks.length} available`);
+      count = this.unusedQuestionBlocks.length;
+    }
+
     const questionBlocks = [];
     let i = 0;
-    while (i++ < this._count) {
+
+    while (i++ < count) {
       const nextBlock = this.unusedQuestionBlocks.shift();
       questionBlocks.push(nextBlock);
     }
