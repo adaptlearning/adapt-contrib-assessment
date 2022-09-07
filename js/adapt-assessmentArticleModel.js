@@ -120,6 +120,12 @@ const AssessmentModel = {
   _onDataReady() {
     // register assessment
     Adapt.assessment.register(this);
+    
+    // sanity check the data
+    const questions = this._getCurrentQuestionComponents();
+    if (this.get('_attemptInProgress') && questions.every(q => q.get('_isSubmitted'))) {
+      this.set('_attemptInProgress', false);
+    }
   },
 
   _setupAssessmentData(force, callback) {
