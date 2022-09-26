@@ -125,7 +125,7 @@ const AssessmentModel = {
     const questions = this._getCurrentQuestionComponents();
     if (this.get('_attemptInProgress') && questions.every(q => q.get('_isSubmitted')) && this.get('_requireCompletionOf') !== Number.POSITIVE_INFINITY) {
       this.set('_attemptInProgress', false);
-      logging.warn(`Assessment ${this.get('_id') _attemptInProgress corrected as all questions are submitted`);
+      logging.warn(`Assessment ${this.get('_id')} _attemptInProgress corrected as all questions are submitted`);
     }
   },
 
