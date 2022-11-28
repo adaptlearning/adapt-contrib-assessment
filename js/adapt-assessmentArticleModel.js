@@ -120,7 +120,7 @@ const AssessmentModel = {
   _onDataReady() {
     // register assessment
     Adapt.assessment.register(this);
-    
+
     // sanity check the data
     const questions = this._getCurrentQuestionComponents();
     if (this.get('_attemptInProgress') && questions.every(q => q.get('_isSubmitted')) && this.get('_requireCompletionOf') !== Number.POSITIVE_INFINITY) {
@@ -154,7 +154,7 @@ const AssessmentModel = {
           _assessmentCompleteInSession: false
         });
       }
-      this.getChildren().models = this._originalChildModels;
+      this.getChildren().reset(this._originalChildModels);
       if (assessmentConfig?._banks._isEnabled &&
         assessmentConfig?._banks._split.length > 1) {
         quizModels = this._setupBankedAssessment();
@@ -169,7 +169,7 @@ const AssessmentModel = {
       quizModels = this.getChildren().models;
       logging.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
     }
-    this.getChildren().models = quizModels;
+    this.getChildren().reset(quizModels);
     this.setupCurrentQuestionComponents();
     if (shouldResetAssessment || shouldResetQuestions) {
       this._resetQuestions();
@@ -685,7 +685,7 @@ const AssessmentModel = {
 
     if (blocks.length) {
       const nonBlockChildren = this.getChildren().models.filter(model => !model.isTypeGroup('block'));
-      this.getChildren().models = blocks.concat(nonBlockChildren);
+      this.getChildren().reset(blocks.concat(nonBlockChildren));
     }
 
     const _questions = [];
