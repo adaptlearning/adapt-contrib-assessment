@@ -155,6 +155,7 @@ const AssessmentModel = {
         });
       }
       this.getChildren().reset(this._originalChildModels);
+      this._resetFilter();
       if (assessmentConfig?._banks._isEnabled &&
         assessmentConfig?._banks._split.length > 1) {
         quizModels = this._setupBankedAssessment();
@@ -172,6 +173,7 @@ const AssessmentModel = {
     this.getChildren().reset(quizModels);
     this.setupCurrentQuestionComponents();
     if (shouldResetAssessment || shouldResetQuestions) {
+      this._resetFilter();
       this._resetQuestions();
       this.set('_attemptInProgress', true);
       Adapt.trigger('assessments:reset', this.getState(), this);
@@ -194,12 +196,12 @@ const AssessmentModel = {
     const assessmentConfig = this.getConfig();
     this._setupBanks();
     // Get random questions from banks
-    let questionModels = this._questionBanks.flatMap(questionBank => questionBank.getRandomQuestionBlocks());
+    let blockModels = this._questionBanks.flatMap(questionBank => questionBank.getRandomQuestionBlocks());
     // If overall question order should be randomized
     if (assessmentConfig._banks._randomisation) {
-      questionModels = _.shuffle(questionModels);
+      blockModels = _.shuffle(blockModels);
     }
-    return questionModels;
+    return blockModels;
   },
 
   _setupBanks() {
@@ -214,7 +216,7 @@ const AssessmentModel = {
         const isOutOfBounds = (quizBankId > bankSplits.length);
         if (isInvalidNumber) logging.warn(`Bank ID ${quizBankId} is not a valid number`);
         if (isOutOfBounds) logging.warn(`Bank ID ${quizBankId} exceeds the number of available splits (${bankSplits.length})`);
-    });
+      });
 
     const hasBankSplitsChanged = (bankSplits.length !== this._questionBanks?.length);
     if (hasBankSplitsChanged) {
@@ -513,10 +515,25 @@ const AssessmentModel = {
     }, 250);
   },
 
+  _resetFilter() {
+    const assessmentConfig = this.getConfig();
+    if (!assessmentConfig?._questions?._resetIncorrectOnly) return;
+    let blocks = this.getChildren().models;
+    blocks = blocks.filter(model => {
+      const questions = model.findDescendantModels('question');
+      if (!questions.length) return true;
+      return questions.every(model => !model.isCorrect());
+    });
+    this.getChildren().reset(blocks);
+  },
+
   _resetQuestions() {
     const assessmentConfig = this.getConfig();
     const questionModels = this._getCurrentQuestionComponents();
-    questionModels.forEach(model => model.reset(assessmentConfig._questions._resetType, true));
+    questionModels.forEach(model => {
+      if (assessmentConfig?._questions?._resetIncorrectOnly && model?.isCorrect()) return;
+      model.reset(assessmentConfig._questions._resetType, true);
+    });
   },
 
   _onRemove() {
