@@ -77,12 +77,17 @@ const AssessmentModel = {
   },
 
   init() {
-    // save original children
-    this._originalChildModels = this.getChildren().models;
-
+    Object.defineProperty(this, '_originalChildModels', {
+      get() {
+        // Perform this upon request as trickle button addition will change the children
+        if (this._originalChildModelsStore) return this._originalChildModelsStore;
+        // save original children
+        this._originalChildModelsStore = this.getChildren().models;
+        this._setAssessmentOwnershipOnChildrenModels();
+        return this._originalChildModelsStore;
+      }
+    });
     this.setupCurrentQuestionComponents();
-
-    this._setAssessmentOwnershipOnChildrenModels();
 
     // ensure the _questions attribute is set up (see https://github.com/adaptlearning/adapt_framework/issues/2971)
     this._updateQuestionsState();
@@ -214,7 +219,7 @@ const AssessmentModel = {
         const isOutOfBounds = (quizBankId > bankSplits.length);
         if (isInvalidNumber) logging.warn(`Bank ID ${quizBankId} is not a valid number`);
         if (isOutOfBounds) logging.warn(`Bank ID ${quizBankId} exceeds the number of available splits (${bankSplits.length})`);
-    });
+      });
 
     const hasBankSplitsChanged = (bankSplits.length !== this._questionBanks?.length);
     if (hasBankSplitsChanged) {
