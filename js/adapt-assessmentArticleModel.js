@@ -71,21 +71,9 @@ const AssessmentModel = {
       _attemptsSpent: 0
     });
 
-    this.listenToOnce(Adapt, 'app:dataReady', this._onDataReady);
+    this.listenToOnce(data, 'ready', this._onDataReady);
     this.listenTo(Adapt, 'remove', this._onRemove);
 
-  },
-
-  init() {
-    // save original children
-    this._originalChildModels = this.getChildren().models;
-
-    this.setupCurrentQuestionComponents();
-
-    this._setAssessmentOwnershipOnChildrenModels();
-
-    // ensure the _questions attribute is set up (see https://github.com/adaptlearning/adapt_framework/issues/2971)
-    this._updateQuestionsState();
   },
 
   setupCurrentQuestionComponents() {
@@ -118,6 +106,13 @@ const AssessmentModel = {
   checkIfResetOnRevisit() {},
 
   _onDataReady() {
+    // save original children
+    this._originalChildModels = this.getChildren().models;
+    this._setAssessmentOwnershipOnChildrenModels();
+    this.setupCurrentQuestionComponents();
+    // ensure the _questions attribute is set up (see https://github.com/adaptlearning/adapt_framework/issues/2971)
+    this._updateQuestionsState();
+
     // register assessment
     Adapt.assessment.register(this);
 
