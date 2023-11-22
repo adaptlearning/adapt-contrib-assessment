@@ -26,6 +26,15 @@ class Assessment extends Backbone.Controller {
       'router:plugin': this._handleRoute,
       'app:dataReady': this._onDataReady
     });
+
+    this.triggerAssessmentsRestored();
+  }
+
+  async triggerAssessmentsRestored() {
+    await data.whenReady();
+
+    // all assessments have now registered and we can determine state
+    Adapt.trigger('assessment:restored', this.getState());
   }
 
   _onAssessmentsComplete(state) {
@@ -287,12 +296,6 @@ class Assessment extends Backbone.Controller {
     this._setPageProgress();
 
     this._setupQuestionNumbering();
-
-    if (this._restoredCount === this._assessments.length) {
-      // Since all assessments have been stored, broadcast an
-      // event which has the collated state.
-      Adapt.trigger('assessment:restored', this.getState());
-    }
   }
 
   get(id) {
