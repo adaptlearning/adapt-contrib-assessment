@@ -173,6 +173,10 @@ const AssessmentModel = {
     } else if (quizModels.length === 0) {
       quizModels = this.getChildren().models;
       logging.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
+    } else {
+      // reattach any removed non-block children, trickle buttons etc
+      const outsideModels = this._originalChildModels.filter(model => model.get('_type') !== 'block')
+      quizModels = quizModels.concat(outsideModels)
     }
     this.getChildren().reset(quizModels);
     this.setupCurrentQuestionComponents();
@@ -240,7 +244,7 @@ const AssessmentModel = {
     const assessmentConfig = this.getConfig();
 
     const randomisationModel = assessmentConfig._randomisation;
-    const blockModels = this.getChildren().models;
+    const blockModels = this.findDescendantModels('block');
 
     let questionModels = _.shuffle(blockModels);
 
