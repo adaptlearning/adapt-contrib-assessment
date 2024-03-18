@@ -29,6 +29,7 @@
             "_blockCount": 1
         },
         "_questions": {
+            "_resetIncorrectOnly": true,
             "_resetType": "hard",
             "_comment": "For 'soft', when using trickle, please set the trickle Completion Attribute to `_isInteractionComplete'.",
             "_canShowFeedback": false,
