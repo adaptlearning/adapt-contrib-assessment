@@ -80,7 +80,11 @@ const AssessmentModel = {
     Object.defineProperty(this, '_originalChildModels', {
       get() {
         // Perform this upon request as trickle button addition will change the children
-        if (this._originalChildModelsStore) return this._originalChildModelsStore;
+        if (this._originalChildModelsStore) {
+          // Remove any models that were removed globally
+          this._originalChildModelsStore = this._originalChildModelsStore.filter(model => data.hasId(model.get('_id')));
+          return this._originalChildModelsStore;
+        }
         // save original children
         this._originalChildModelsStore = this.getChildren().models;
         this._setAssessmentOwnershipOnChildrenModels();
@@ -176,8 +180,8 @@ const AssessmentModel = {
       logging.warn('assessment: Not enough unique questions to create a fresh assessment, using last selection');
     } else {
       // reattach any removed non-block children, trickle buttons etc
-      const outsideModels = this._originalChildModels.filter(model => model.get('_type') !== 'block')
-      quizModels = quizModels.concat(outsideModels)
+      const outsideModels = this._originalChildModels.filter(model => model.get('_type') !== 'block');
+      quizModels = quizModels.concat(outsideModels);
     }
     this.getChildren().reset(quizModels);
     this.setupCurrentQuestionComponents();
