@@ -82,7 +82,7 @@ const AssessmentModel = {
         // Perform this upon request as trickle button addition will change the children
         if (this._originalChildModelsStore) {
           // Remove any models that were removed globally
-          this._originalChildModelsStore = this._originalChildModelsStore.filter(model => data.hasId(model.get('_id')));
+          this._originalChildModelsStore = this._originalChildModelsStore.filter(model => (data.hasId(model.get('_id')) || model.get('_type') !== 'block'));
           return this._originalChildModelsStore;
         }
         // save original children
