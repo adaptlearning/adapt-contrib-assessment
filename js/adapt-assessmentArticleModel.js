@@ -749,6 +749,8 @@ const AssessmentModel = {
 
     if (_isAssessmentComplete) this._checkIsPass();
 
+    this._setAssessmentOwnershipOnChildrenModels();
+
     Adapt.trigger('assessments:restored', this.getState(), this);
 
   },
