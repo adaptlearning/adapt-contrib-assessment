@@ -184,6 +184,7 @@ const AssessmentModel = {
       quizModels = quizModels.concat(outsideModels);
     }
     this.getChildren().reset(quizModels);
+    this._setAssessmentOwnershipOnChildrenModels();
     this.setupCurrentQuestionComponents();
     if (shouldResetAssessment || shouldResetQuestions) {
       this._resetFilter();
