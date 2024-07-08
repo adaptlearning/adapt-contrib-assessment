@@ -87,7 +87,7 @@ const AssessmentModel = {
         }
         // save original children
         this._originalChildModelsStore = this.getChildren().models;
-        this._setAssessmentOwnershipOnChildrenModels();
+        this._setAssessmentOwnershipOnChildrenModels(this._originalChildModelsStore);
         return this._originalChildModelsStore;
       }
     });
@@ -108,7 +108,7 @@ const AssessmentModel = {
     });
   },
 
-  _setAssessmentOwnershipOnChildrenModels() {
+  _setAssessmentOwnershipOnChildrenModels(childModels) {
     // mark all children components as belonging to an assessment
     const assessmentConfig = this.get('_assessment');
     const childConfig = {
@@ -116,10 +116,10 @@ const AssessmentModel = {
       _assessmentId: assessmentConfig._id
     };
 
-    for (const blockModel of this._originalChildModels) {
-      blockModel.set(childConfig);
+    for (const childModel of childModels) {
+      childModel.set(childConfig);
       // make sure components are set to _isPartOfAssessment for plp checking
-      blockModel.setOnChildren(childConfig);
+      childModel.setOnChildren(childConfig);
     }
   },
 
@@ -184,6 +184,7 @@ const AssessmentModel = {
       quizModels = quizModels.concat(outsideModels);
     }
     this.getChildren().reset(quizModels);
+    this._setAssessmentOwnershipOnChildrenModels(quizModels);
     this.setupCurrentQuestionComponents();
     if (shouldResetAssessment || shouldResetQuestions) {
       this._resetFilter();
@@ -747,6 +748,8 @@ const AssessmentModel = {
     });
 
     if (_isAssessmentComplete) this._checkIsPass();
+
+    this._setAssessmentOwnershipOnChildrenModels(blocks);
 
     Adapt.trigger('assessments:restored', this.getState(), this);
 
