@@ -140,6 +140,7 @@ class Assessment extends Backbone.Controller {
       _byAssessmentId: {}
     });
 
+    this._saveStateModel = null;
     this._restoredCount = 0;
   }
 
