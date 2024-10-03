@@ -607,11 +607,13 @@ const AssessmentModel = {
     this._forceResetOnRevisit = false;
 
     const isPageReload = this._checkReloadPage();
+    const isNavigating = this.get('_parentId') !== location._currentId;
 
     // stop resetting if not complete or not allowed
     if (this.get('_assessmentCompleteInSession') &&
       !assessmentConfig._isResetOnRevisit &&
       !isPageReload &&
+      !isNavigating &&
       !force) {
       // eslint-disable-next-line n/no-callback-literal
       if (typeof callback === 'function') callback(false);
@@ -637,6 +639,8 @@ const AssessmentModel = {
       if (typeof callback === 'function') callback(false);
       return false;
     }
+
+    if (isNavigating) this._forceResetOnRevisit = true;
 
     if (!isPageReload) {
       this._setupAssessmentData(force);
