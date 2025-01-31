@@ -3,7 +3,7 @@ import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, u
 describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
   let articles, assessments;
 
-  whereFromPlugin('adapt-contrib-assessment - from v2', { name: 'adapt-contrib-assessment', version: '<=2.0.3' });
+  whereFromPlugin('adapt-contrib-assessment - from v2.0.0', { name: 'adapt-contrib-assessment', version: '<=2.0.3' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     articles = content.filter(({ _type }) => _type === 'article');
@@ -12,11 +12,13 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
   });
 
   /**
-   * * Add JSON field and set attribute.
+   * * Add field to each item in a JSON array and set blank.
    */
-  mutateContent('adapt-contrib-assessment - add assessment._questions._canShowModelAnswer', async () => {
+  mutateContent('adapt-contrib-assessment - add assessment._questions._canShowModelAnswer attribute', async () => {
     assessments.forEach(assessment => {
-      assessment._canShowModelAnswer = false;
+      assessment._questions.forEach(item => {
+        item._canShowModelAnswer = true;
+      });
     });
     return true;
   });
@@ -31,7 +33,39 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
     return true;
   });
 
-  updatePlugin('adapt-contrib-assessment - update to v2.0.3', { name: 'adapt-contrib-assessment', version: '2.0.3', framework: '>=2' });
+  updatePlugin('adapt-contrib-assessment - update to v2.0.3', { name: 'adapt-contrib-assessment', version: '2.0.3', framework: '>=2.0.0' });
+});
+
+describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
+  let articles, assessments;
+
+  whereFromPlugin('adapt-contrib-assessment - from v2.0.3', { name: 'adapt-contrib-assessment', version: '<=2.1.0' });
+
+  whereContent('adapt-contrib-assessment - where assessment', async content => {
+    articles = content.filter(({ _type }) => _type === 'article');
+    assessments = articles.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
+    if (assessments.length > 0) return true;
+  });
+
+  /**
+   * * Add JSON field and set attribute.
+   */
+  mutateContent('adapt-contrib-assessment - add assessment._suppressMarking', async () => {
+    assessments.forEach(assessment => {
+      assessment._suppressMarking = true;
+    });
+    return true;
+  });
+
+  checkContent('adapt-contrib-assessment - check assessment._suppressMarking attribute', async () => {
+    const isValid = assessments.every(assessment =>
+      assessment._suppressMarking === true
+    );
+    if (!isValid) throw new Error('adapt-contrib-assessment - _suppressMarking not added to every instance of assessment as true.');
+    return true;
+  });
+
+  updatePlugin('adapt-contrib-assessment - update to v2.1.0', { name: 'adapt-contrib-assessment', version: '2.1.0', framework: '>=2.0.18' });
 });
 
 describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
@@ -135,7 +169,7 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
     return true;
   });
 
-  updatePlugin('adapt-contrib-assessment - update to v2.1.1', { name: 'adapt-contrib-assessment', version: '2.1.1', framework: '>=2' });
+  updatePlugin('adapt-contrib-assessment - update to v2.1.1', { name: 'adapt-contrib-assessment', version: '2.1.1', framework: '>=2.0.18' });
 });
 
 describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
@@ -170,7 +204,9 @@ describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
    */
   mutateContent('adapt-contrib-assessment - add assessment._allowResetIfPassed', async () => {
     assessments.forEach(assessment => {
-      assessment._allowResetIfPassed = false;
+      assessment._questions.forEach(item => {
+        item._allowResetIfPassed = false;
+      });
     });
     return true;
   });
@@ -185,5 +221,5 @@ describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
     return true;
   });
 
-  updatePlugin('adapt-contrib-assessment - update to v2.2.0', { name: 'adapt-contrib-assessment', version: 'v2.2.0', framework: '>=2' });
+  updatePlugin('adapt-contrib-assessment - update to v2.2.0', { name: 'adapt-contrib-assessment', version: 'v2.2.0', framework: '>=2.2.0' });
 });
