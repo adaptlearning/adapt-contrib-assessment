@@ -3,12 +3,12 @@ import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, u
 describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
   let articles, assessments;
 
-  whereFromPlugin('adapt-contrib-assessment - from v2.0.0', { name: 'adapt-contrib-assessment', version: '<=2.0.3' });
+  whereFromPlugin('adapt-contrib-assessment - from v2.0.0', { name: 'adapt-contrib-assessment', version: '<2.0.3' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     articles = content.filter(({ _type }) => _type === 'article');
     assessments = articles.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
-    if (assessments.length > 0) return true;
+    return assessments.length;
   });
 
   /**
@@ -39,12 +39,12 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
 describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
   let articles, assessments;
 
-  whereFromPlugin('adapt-contrib-assessment - from v2.0.3', { name: 'adapt-contrib-assessment', version: '<=2.1.0' });
+  whereFromPlugin('adapt-contrib-assessment - from v2.0.3', { name: 'adapt-contrib-assessment', version: '<2.1.0' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     articles = content.filter(({ _type }) => _type === 'article');
     assessments = articles.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
-    if (assessments.length > 0) return true;
+    return assessments.length;
   });
 
   /**
@@ -71,7 +71,7 @@ describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
 describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
   let articles, assessments;
 
-  whereFromPlugin('adapt-contrib-assessment - from v2.1.0', { name: 'adapt-contrib-assessment', version: '<=2.1.1' });
+  whereFromPlugin('adapt-contrib-assessment - from v2.1.0', { name: 'adapt-contrib-assessment', version: '<2.1.1' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     articles = content.filter(({ _type }) => _type === 'article');
@@ -175,7 +175,7 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
 describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
   let articles, assessments;
 
-  whereFromPlugin('adapt-contrib-assessment - from v2.1.1', { name: 'adapt-contrib-assessment', version: '<=2.2.0' });
+  whereFromPlugin('adapt-contrib-assessment - from v2.1.1', { name: 'adapt-contrib-assessment', version: '<2.2.0' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     articles = content.filter(({ _type }) => _type === 'article');

@@ -3,12 +3,12 @@ import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, u
 describe('adapt-contrib-assessment - v3.0.0 > v4.3.0', async () => {
   let articles, assessments;
 
-  whereFromPlugin('adapt-contrib-assessment - from v3.0.0', { name: 'adapt-contrib-assessment', version: '<=4.3.0' });
+  whereFromPlugin('adapt-contrib-assessment - from v3.0.0', { name: 'adapt-contrib-assessment', version: '<4.3.0' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     articles = content.filter(({ _type }) => _type === 'article');
     assessments = articles.filter(({ _assessment }) => _assessment !== undefined);
-    if (assessments.length > 0) return true;
+    return assessments.length;
   });
 
   /**
@@ -35,7 +35,7 @@ describe('adapt-contrib-assessment - v3.0.0 > v4.3.0', async () => {
 describe('adapt-contrib-assessment - v4.3.0 > v4.4.0', async () => {
   let course, assessmentConfig, assessments;
 
-  whereFromPlugin('adapt-contrib-assessment - from v4.3.0', { name: 'adapt-contrib-assessment', version: '<=4.4.0' });
+  whereFromPlugin('adapt-contrib-assessment - from v4.3.0', { name: 'adapt-contrib-assessment', version: '<4.4.0' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     course = content.filter(({ _type }) => _type === 'course');
@@ -85,12 +85,12 @@ describe('adapt-contrib-assessment - v4.3.0 > v4.4.0', async () => {
 describe('adapt-contrib-assessment - v4.4.0 > v4.6.1', async () => {
   let articles, assessments;
 
-  whereFromPlugin('adapt-contrib-assessment - from v4.4.0', { name: 'adapt-contrib-assessment', version: '<=4.6.1' });
+  whereFromPlugin('adapt-contrib-assessment - from v4.4.0', { name: 'adapt-contrib-assessment', version: '<4.6.1' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     articles = content.filter(({ _type }) => _type === 'article');
     assessments = articles.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
-    if (assessments.length > 0) return true;
+    return assessments.length;
   });
 
   /**
