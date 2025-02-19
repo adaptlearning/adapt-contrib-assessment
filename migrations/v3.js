@@ -11,16 +11,13 @@ describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
     if (assessmentConfig) return true;
   });
 
-  /**
-   * * Remove JSON attribute from Course file.
-   */
   mutateContent('adapt-contrib-assessment - remove course._postTotalScoreToLms attribute', async () => {
     delete assessmentConfig._postTotalScoreToLms;
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check course._postTotalScoreToLms attribute', async () => {
-    const isValid = !assessmentConfig._postTotalScoreToLms;
+    const isValid = !_.has(assessmentConfig, '_postTotalScoreToLms');
     if (!isValid) throw new Error('adapt-contrib-assessment - _postTotalScoreToLms removed from course file.');
     return true;
   });

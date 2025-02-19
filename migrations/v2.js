@@ -11,9 +11,6 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
     return assessments.length;
   });
 
-  /**
-   * * Add field to each item in a JSON array and set blank.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._questions._canShowModelAnswer attribute', async () => {
     assessments.forEach(assessment => {
       assessment._questions.forEach(item => {
@@ -25,9 +22,7 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
 
   checkContent('adapt-contrib-assessment - check assessment._questions._canShowModelAnswer attribute', async () => {
     const isValid = assessments.every(assessment =>
-      assessment._questions.every(item =>
-        item._canShowModelAnswer !== false
-      )
+      assessment._questions.every(item => item._canShowModelAnswer)
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _canShowModelAnswer not added to every instance of assessment._questions');
     return true;
@@ -47,9 +42,6 @@ describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
     return assessments.length;
   });
 
-  /**
-   * * Add JSON field and set attribute.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._suppressMarking', async () => {
     assessments.forEach(assessment => {
       assessment._suppressMarking = true;
@@ -65,7 +57,7 @@ describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
     return true;
   });
 
-  updatePlugin('adapt-contrib-assessment - update to v2.1.0', { name: 'adapt-contrib-assessment', version: '2.1.0', framework: '>=2.0.18' });
+  updatePlugin('adapt-contrib-assessment - update to v2.1.0', { name: 'adapt-contrib-assessment', version: '2.1.0', framework: '>=2.1.3' });
 });
 
 describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
@@ -79,9 +71,6 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
     if (assessments) return true;
   });
 
-  /**
-   * * Modify existing attribute to new value.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._isPercentageBased', async () => {
     assessments.forEach(assessment => {
       if (assessment._isPercentageBased !== true) assessment._isPercentageBased = true;
@@ -97,9 +86,6 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
     return true;
   });
 
-  /**
-   * * Modify existing attribute to new value.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._canShowFeedback', async () => {
     assessments.forEach(assessment => {
       if (assessment._canShowFeedback !== false) assessment._canShowFeedback = false;
@@ -115,9 +101,6 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
     return true;
   });
 
-  /**
-   * * Modify existing attribute to new value.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._canShowMarking', async () => {
     assessments.forEach(assessment => {
       if (assessment._canShowMarking !== false) assessment._canShowMarking = false;
@@ -133,9 +116,6 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
     return true;
   });
 
-  /**
-   * * Modify existing attribute to new value.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._canShowModelAnswer', async () => {
     assessments.forEach(assessment => {
       if (assessment._canShowModelAnswer !== false) assessment._canShowModelAnswer = false;
@@ -151,9 +131,6 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
     return true;
   });
 
-  /**
-   * * Remove existing attribute.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._requireAssessmentPassed', async () => {
     assessments.forEach(assessment => {
       delete assessment._requireAssessmentPassed;
@@ -162,14 +139,12 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
   });
 
   checkContent('adapt-contrib-assessment - check assessment._requireAssessmentPassed attribute', async () => {
-    const isValid = assessments.every(assessment =>
-      assessment._requireAssessmentPassed === undefined
-    );
+    const isValid = assessments.every(assessment => !_.has(assessment, '_requireAssessmentPassed'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _requireAssessmentPassed has been removed');
     return true;
   });
 
-  updatePlugin('adapt-contrib-assessment - update to v2.1.1', { name: 'adapt-contrib-assessment', version: '2.1.1', framework: '>=2.0.18' });
+  updatePlugin('adapt-contrib-assessment - update to v2.1.1', { name: 'adapt-contrib-assessment', version: '2.1.1', framework: '>=2.2.0' });
 });
 
 describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
@@ -183,25 +158,6 @@ describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
     if (assessments) return true;
   });
 
-  /**
-   * * Modify Attribute
-   */
-  mutateContent('adapt-contrib-assessment - add assessment._includeInTotalScore attribute', async () => {
-    assessments.forEach(assessment => {
-      assessment._includeInTotalScore = true;
-    });
-    return true;
-  });
-
-  checkContent('adapt-contrib-assessment - check assessment._includeInTotalScore attribute', async () => {
-    const isValid = assessments.every(({ _includeInTotalScore }) => _includeInTotalScore === true);
-    if (!isValid) throw new Error('adapt-contrib-assessment - _includeInTotalScore not modified to true in every assessment instance.');
-    return true;
-  });
-
-  /**
-   * * Add JSON field and set attribute.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._allowResetIfPassed', async () => {
     assessments.forEach(assessment => {
       assessment._questions.forEach(item => {

@@ -11,9 +11,6 @@ describe('adapt-contrib-assessment - v3.0.0 > v4.3.0', async () => {
     return assessments.length;
   });
 
-  /**
-   * * Add JSON field and set attribute.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._scrollToOnReset', async () => {
     assessments.forEach(assessment => {
       assessment._scrollToOnReset = false;
@@ -43,9 +40,6 @@ describe('adapt-contrib-assessment - v4.3.0 > v4.4.0', async () => {
     if (assessmentConfig) return true;
   });
 
-  /**
-   * * Add JSON field and set attribute.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._scoreToPass', async () => {
     assessments.forEach(assessment => {
       assessment._scoreToPass = 60;
@@ -61,9 +55,6 @@ describe('adapt-contrib-assessment - v4.3.0 > v4.4.0', async () => {
     return true;
   });
 
-  /**
-   * * Add JSON field and set attribute.
-   */
   mutateContent('adapt-contrib-assessment - add assessment._correctToPass', async () => {
     assessments.forEach(assessment => {
       assessment._correctToPass = 60;
@@ -93,9 +84,6 @@ describe('adapt-contrib-assessment - v4.4.0 > v4.6.1', async () => {
     return assessments.length;
   });
 
-  /**
-   * * Add JSON field and set attribute.
-   */
   mutateContent('adapt-contrib-assessment - modify assessment._questions._resetType value', async () => {
     /**
      * ? Changing _resetType globally to 'hard' might have unintended consequences.
