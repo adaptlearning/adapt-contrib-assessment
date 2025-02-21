@@ -1,25 +1,24 @@
 import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, updatePlugin } from 'adapt-migrations';
 
 describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
-  let articles, assessments;
+  let assessmentArticles;
 
-  whereFromPlugin('adapt-contrib-assessment - from v2.0.0', { name: 'adapt-contrib-assessment', version: '>=2.0.0 <2.0.3' });
+  whereFromPlugin('adapt-contrib-assessment - from v2.0.0', { name: 'adapt-contrib-assessment', version: '<2.0.0' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
-    articles = content.filter(({ _type }) => _type === 'article');
-    assessments = articles.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
-    return assessments.length;
+    assessmentArticles = content.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
+    return assessmentArticles.length;
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._questions._canShowModelAnswer attribute', async () => {
-    assessments.forEach(assessment => {
+    assessmentArticles.forEach(assessment => {
       assessment._assessment._questions._canShowModelAnswer = true;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._questions._canShowModelAnswer attribute', async () => {
-    const isValid = assessments.every(assessment => _.has(assessment, '_assessment._questions._canShowModelAnswer'));
+    const isValid = assessmentArticles.every(assessment => _.has(assessment, '_assessment._questions._canShowModelAnswer'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _canShowModelAnswer not added to every instance of assessment._questions');
     return true;
   });
@@ -28,25 +27,24 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
 });
 
 describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
-  let articles, assessments;
+  let assessmentArticles;
 
   whereFromPlugin('adapt-contrib-assessment - from v2.0.3', { name: 'adapt-contrib-assessment', version: '<2.1.0' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
-    articles = content.filter(({ _type }) => _type === 'article');
-    assessments = articles.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
-    return assessments.length;
+    assessmentArticles = content.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
+    return assessmentArticles.length;
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._suppressMarking', async () => {
-    assessments.forEach(assessment => {
+    assessmentArticles.forEach(assessment => {
       assessment._assessment._suppressMarking = true;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._suppressMarking attribute', async () => {
-    const isValid = assessments.every(assessment =>
+    const isValid = assessmentArticles.every(assessment =>
       assessment._assessment._suppressMarking === true
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _suppressMarking not added to every instance of assessment as true.');
@@ -57,25 +55,24 @@ describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
 });
 
 describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
-  let articles, assessments;
+  let assessmentArticles;
 
   whereFromPlugin('adapt-contrib-assessment - from v2.1.0', { name: 'adapt-contrib-assessment', version: '<2.1.1' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
-    articles = content.filter(({ _type }) => _type === 'article');
-    assessments = articles.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
-    if (assessments) return true;
+    assessmentArticles = content.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
+    if (assessmentArticles) return true;
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._isPercentageBased', async () => {
-    assessments.forEach(assessment => {
+    assessmentArticles.forEach(assessment => {
       if (assessment._isPercentageBased !== true) assessment._isPercentageBased = true;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._isPercentageBased attribute', async () => {
-    const isValid = assessments.every(assessment =>
+    const isValid = assessmentArticles.every(assessment =>
       assessment._isPercentageBased === true
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _isPercentageBased has been modified to true');
@@ -83,14 +80,14 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._canShowFeedback', async () => {
-    assessments.forEach(assessment => {
+    assessmentArticles.forEach(assessment => {
       if (assessment._canShowFeedback !== false) assessment._canShowFeedback = false;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._canShowFeedback attribute', async () => {
-    const isValid = assessments.every(assessment =>
+    const isValid = assessmentArticles.every(assessment =>
       assessment._canShowFeedback === false
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _canShowFeedback has been modified to false');
@@ -98,14 +95,14 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._canShowMarking', async () => {
-    assessments.forEach(assessment => {
+    assessmentArticles.forEach(assessment => {
       if (assessment._canShowMarking !== false) assessment._canShowMarking = false;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._canShowMarking attribute', async () => {
-    const isValid = assessments.every(assessment =>
+    const isValid = assessmentArticles.every(assessment =>
       assessment._canShowMarking === false
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _canShowMarking has been modified to false');
@@ -113,14 +110,14 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._canShowModelAnswer', async () => {
-    assessments.forEach(assessment => {
+    assessmentArticles.forEach(assessment => {
       if (assessment._canShowModelAnswer !== false) assessment._canShowModelAnswer = false;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._canShowModelAnswer attribute', async () => {
-    const isValid = assessments.every(assessment =>
+    const isValid = assessmentArticles.every(assessment =>
       assessment._canShowModelAnswer === false
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _canShowModelAnswer has been modified to false');
@@ -128,14 +125,14 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._requireAssessmentPassed', async () => {
-    assessments.forEach(assessment => {
+    assessmentArticles.forEach(assessment => {
       delete assessment._requireAssessmentPassed;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._requireAssessmentPassed attribute', async () => {
-    const isValid = assessments.every(assessment => !_.has(assessment, '_requireAssessmentPassed'));
+    const isValid = assessmentArticles.every(assessment => !_.has(assessment, '_requireAssessmentPassed'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _requireAssessmentPassed has been removed');
     return true;
   });
@@ -144,25 +141,24 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
 });
 
 describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
-  let articles, assessments;
+  let assessmentArticles;
 
   whereFromPlugin('adapt-contrib-assessment - from v2.1.1', { name: 'adapt-contrib-assessment', version: '<2.2.0' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
-    articles = content.filter(({ _type }) => _type === 'article');
-    assessments = articles.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
-    if (assessments) return true;
+    assessmentArticles = content.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
+    if (assessmentArticles) return true;
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._allowResetIfPassed', async () => {
-    assessments.forEach(assessment => {
+    assessmentArticles.forEach(assessment => {
       assessment._assessment_questions._allowResetIfPassed = false;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._allowResetIfPassed attribute', async () => {
-    const isValid = assessments.every(assessment => _.has(assessment, '_assessment._questions._allowResetIfPassed'));
+    const isValid = assessmentArticles.every(assessment => _.has(assessment, '_assessment._questions._allowResetIfPassed'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _allowResetIfPassed not added to every instance of assessment._questions');
     return true;
   });

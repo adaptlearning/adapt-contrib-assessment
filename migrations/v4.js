@@ -1,25 +1,24 @@
 import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, updatePlugin } from 'adapt-migrations';
 
 describe('adapt-contrib-assessment - v3.0.0 > v4.3.0', async () => {
-  let articles, assessments;
+  let assessmentArticles;
 
   whereFromPlugin('adapt-contrib-assessment - from v3.0.0', { name: 'adapt-contrib-assessment', version: '<4.3.0' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
-    articles = content.filter(({ _type }) => _type === 'article');
-    assessments = articles.filter(({ _assessment }) => _assessment !== undefined);
-    return assessments.length;
+    assessmentArticles = content.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
+    return assessmentArticles.length;
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._scrollToOnReset', async () => {
-    assessments.forEach(({ _assessment }) => {
+    assessmentArticles.forEach(({ _assessment }) => {
       _assessment._scrollToOnReset = false;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._scrollToOnReset attribute', async () => {
-    const isValid = assessments.every(assessment =>
+    const isValid = assessmentArticles.every(assessment =>
       assessment._scrollToOnReset === false
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _scrollToOnReset not added to every instance of assessment');
