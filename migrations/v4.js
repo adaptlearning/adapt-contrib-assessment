@@ -12,8 +12,8 @@ describe('adapt-contrib-assessment - v3.0.0 > v4.3.0', async () => {
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._scrollToOnReset', async () => {
-    assessments.forEach(assessment => {
-      assessment._scrollToOnReset = false;
+    assessments.forEach(({ _assessment }) => {
+      _assessment._scrollToOnReset = false;
     });
     return true;
   });
