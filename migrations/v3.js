@@ -1,4 +1,5 @@
 import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, updatePlugin } from 'adapt-migrations';
+import _ from 'lodash';
 
 describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
   let course, assessmentConfig;
@@ -8,17 +9,20 @@ describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     course = content.filter(({ _type }) => _type === 'course');
     assessmentConfig = course.find(({ _assessment }) => _assessment);
-    if (assessmentConfig) return true;
+    if (!assessmentConfig) throw new Error('No assessment configuration found.');
+    return true;
   });
 
-  mutateContent('adapt-contrib-assessment - remove course._postTotalScoreToLms attribute', async () => {
-    delete assessmentConfig._postTotalScoreToLms;
+  mutateContent('adapt-contrib-assessment - add assessment._allowResetIfPassed', async () => {
+    if (assessmentConfig) {
+      delete assessmentConfig._postTotalScoreToLms;
+    }
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check course._postTotalScoreToLms attribute', async () => {
     const isValid = !_.has(assessmentConfig, '_postTotalScoreToLms');
-    if (!isValid) throw new Error('adapt-contrib-assessment - _postTotalScoreToLms removed from course file.');
+    if (!isValid) throw new Error('adapt-contrib-assessment - _postTotalScoreToLms attribute was not removed from course file.');
     return true;
   });
 
