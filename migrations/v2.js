@@ -51,7 +51,7 @@ describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
 
   checkContent('adapt-contrib-assessment - check assessment._suppressMarking attribute', async () => {
     const isValid = assessments.every(assessment =>
-      assessment._suppressMarking === true
+      assessment._assessment._suppressMarking === true
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _suppressMarking not added to every instance of assessment as true.');
     return true;
