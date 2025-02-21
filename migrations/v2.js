@@ -3,7 +3,7 @@ import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, u
 describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
   let articles, assessments;
 
-  whereFromPlugin('adapt-contrib-assessment - from v2.0.0', { name: 'adapt-contrib-assessment', version: '<2.0.3' });
+  whereFromPlugin('adapt-contrib-assessment - from v2.0.0', { name: 'adapt-contrib-assessment', version: '>=2.0.0 <2.0.3' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     articles = content.filter(({ _type }) => _type === 'article');
