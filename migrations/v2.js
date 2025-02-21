@@ -21,9 +21,7 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
   });
 
   checkContent('adapt-contrib-assessment - check assessment._questions._canShowModelAnswer attribute', async () => {
-    const isValid = assessments.every(assessment =>
-      assessment._questions.every(item => item._canShowModelAnswer)
-    );
+    const isValid = assessments.every(assessment => _.has(assessment, '_assessment._questions._canShowModelAnswer'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _canShowModelAnswer not added to every instance of assessment._questions');
     return true;
   });
