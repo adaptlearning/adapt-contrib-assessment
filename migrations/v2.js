@@ -13,9 +13,7 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._questions._canShowModelAnswer attribute', async () => {
     assessments.forEach(assessment => {
-      assessment._questions.forEach(item => {
-        item._canShowModelAnswer = true;
-      });
+      assessment._assessment._questions._canShowModelAnswer = true;
     });
     return true;
   });
