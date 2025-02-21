@@ -160,9 +160,7 @@ describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._allowResetIfPassed', async () => {
     assessments.forEach(assessment => {
-      assessment._questions.forEach(item => {
-        item._allowResetIfPassed = false;
-      });
+      assessment._assessment_questions._allowResetIfPassed = false;
     });
     return true;
   });
