@@ -44,7 +44,7 @@ describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._suppressMarking', async () => {
     assessments.forEach(assessment => {
-      assessment._suppressMarking = true;
+      assessment._assessment._suppressMarking = true;
     });
     return true;
   });
