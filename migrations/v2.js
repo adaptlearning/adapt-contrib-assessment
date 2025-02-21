@@ -164,11 +164,7 @@ describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
   });
 
   checkContent('adapt-contrib-assessment - check assessment._allowResetIfPassed attribute', async () => {
-    const isValid = assessments.every(assessment =>
-      assessment._questions.every(item =>
-        item._allowResetIfPassed === false
-      )
-    );
+    const isValid = assessments.every(assessment => _.has(assessment, '_assessment._questions._allowResetIfPassed'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _allowResetIfPassed not added to every instance of assessment._questions');
     return true;
   });
