@@ -1,4 +1,5 @@
 import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, updatePlugin } from 'adapt-migrations';
+import _ from 'lodash';
 
 describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
   let assessmentArticles;
@@ -17,8 +18,8 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
     return true;
   });
 
-  checkContent('adapt-contrib-assessment - check assessment._questions._canShowModelAnswer attribute', async () => {
-    const isValid = assessmentArticles.every(assessment => _.has(assessment, '_assessment._questions._canShowModelAnswer'));
+  checkContent('adapt-contrib-assessment - check assessment._assessment._questions._canShowModelAnswer attribute', async () => {
+    const isValid = assessmentArticles.every(assessment => _.has(assessment, 'assessment._assessment._questions._canShowModelAnswer'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _canShowModelAnswer not added to every instance of assessment._questions');
     return true;
   });
@@ -38,14 +39,14 @@ describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._suppressMarking', async () => {
     assessmentArticles.forEach(assessment => {
-      assessment._assessment._suppressMarking = true;
+      assessment._suppressMarking = true;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._suppressMarking attribute', async () => {
     const isValid = assessmentArticles.every(assessment =>
-      assessment._assessment._suppressMarking === true
+      assessment._suppressMarking === true
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _suppressMarking not added to every instance of assessment as true.');
     return true;
@@ -61,7 +62,7 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     assessmentArticles = content.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
-    if (assessmentArticles) return true;
+    if (assessmentArticles.length > 0) return true;
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._isPercentageBased', async () => {
@@ -133,7 +134,7 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
 
   checkContent('adapt-contrib-assessment - check assessment._requireAssessmentPassed attribute', async () => {
     const isValid = assessmentArticles.every(assessment => !_.has(assessment, '_requireAssessmentPassed'));
-    if (!isValid) throw new Error('adapt-contrib-assessment - _requireAssessmentPassed has been removed');
+    if (!isValid) throw new Error('adapt-contrib-assessment - _requireAssessmentPassed has not been removed');
     return true;
   });
 
@@ -152,16 +153,16 @@ describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._allowResetIfPassed', async () => {
     assessmentArticles.forEach(assessment => {
-      assessment._assessment_questions._allowResetIfPassed = false;
+      assessment._allowResetIfPassed = false;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._allowResetIfPassed attribute', async () => {
-    const isValid = assessmentArticles.every(assessment => _.has(assessment, '_assessment._questions._allowResetIfPassed'));
-    if (!isValid) throw new Error('adapt-contrib-assessment - _allowResetIfPassed not added to every instance of assessment._questions');
+    const isValid = assessmentArticles.every(assessment => assessment._allowResetIfPassed !== undefined);
+    if (!isValid) throw new Error('adapt-contrib-assessment - _allowResetIfPassed not added to every instance of assessment');
     return true;
   });
 
-  updatePlugin('adapt-contrib-assessment - update to v2.2.0', { name: 'adapt-contrib-assessment', version: 'v2.2.0', framework: '>=2.2.0' });
+  updatePlugin('adapt-contrib-assessment - update to v2.2.0', { name: 'adapt-contrib-assessment', version: '2.2.0', framework: '>=2.2.0' });
 });
