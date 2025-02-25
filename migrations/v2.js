@@ -4,7 +4,7 @@ import _ from 'lodash';
 describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
   let assessmentArticles;
 
-  whereFromPlugin('adapt-contrib-assessment - from v2.0.0', { name: 'adapt-contrib-assessment', version: '<2.0.0' });
+  whereFromPlugin('adapt-contrib-assessment - from v2.0.0', { name: 'adapt-contrib-assessment', version: '<2.0.3' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     assessmentArticles = content.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
@@ -19,8 +19,8 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
   });
 
   checkContent('adapt-contrib-assessment - check assessment._assessment._questions._canShowModelAnswer attribute', async () => {
-    const isValid = assessmentArticles.every(assessment => _.has(assessment, 'assessment._assessment._questions._canShowModelAnswer'));
-    if (!isValid) throw new Error('adapt-contrib-assessment - _canShowModelAnswer not added to every instance of assessment._questions');
+    const isValid = assessmentArticles.every(assessment => assessment._assessment._questions._canShowModelAnswer !== undefined);
+    if (!isValid) throw new Error('adapt-contrib-assessment - _canShowModelAnswer not added to every instance of _assessment._questions');
     return true;
   });
 
