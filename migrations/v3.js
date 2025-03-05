@@ -1,4 +1,4 @@
-import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, updatePlugin } from 'adapt-migrations';
+import { describe, whereContent, whereFromPlugin, mutateContent, checkContent, updatePlugin, getCourse, testStopWhere, testSuccessWhere } from 'adapt-migrations';
 import _ from 'lodash';
 
 describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
@@ -7,16 +7,13 @@ describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
   whereFromPlugin('adapt-contrib-assessment - from v2.2.0', { name: 'adapt-contrib-assessment', version: '<3.0.0' });
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
-    course = content.filter(({ _type }) => _type === 'course');
-    assessmentConfig = course.find(({ _assessment }) => _assessment);
-    if (!assessmentConfig) throw new Error('No assessment configuration found.');
-    return true;
+    course = getCourse();
+    assessmentConfig = _.get(course, '_assessment');
+    return assessmentConfig;
   });
 
   mutateContent('adapt-contrib-assessment - add assessment._allowResetIfPassed', async () => {
-    if (assessmentConfig) {
-      delete assessmentConfig._postTotalScoreToLms;
-    }
+    delete assessmentConfig._postTotalScoreToLms;
     return true;
   });
 
@@ -27,4 +24,22 @@ describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
   });
 
   updatePlugin('adapt-contrib-assessment - update to v3.0.0', { name: 'adapt-contrib-assessment', version: '3.0.0', framework: '>=3.2.0' });
+
+  testSuccessWhere('correct version with assessment config', {
+    fromPlugins: [{ name: 'adapt-contrib-assessment', version: '2.1.1' }],
+    content: [
+      { _type: 'article', _id: 'c-100', _assessment: {} },
+      { _type: 'article', _id: 'c-105' },
+      { _type: 'course', _assessment: {} }
+    ]
+  });
+
+  testStopWhere('no assessment config', {
+    fromPlugins: [{ name: 'adapt-contrib-assessment', version: '2.1.1' }],
+    content: [{ _type: 'article' }]
+  });
+
+  testStopWhere('incorrect version', {
+    fromPlugins: [{ name: 'adapt-contrib-assessment', version: '3.0.0' }]
+  });
 });
