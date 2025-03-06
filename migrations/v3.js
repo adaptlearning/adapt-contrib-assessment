@@ -12,7 +12,7 @@ describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
     return assessmentConfig;
   });
 
-  mutateContent('adapt-contrib-assessment - add assessment._allowResetIfPassed', async () => {
+  mutateContent('adapt-contrib-assessment - remove assessment._allowResetIfPassed', async () => {
     delete assessmentConfig._postTotalScoreToLms;
     return true;
   });
