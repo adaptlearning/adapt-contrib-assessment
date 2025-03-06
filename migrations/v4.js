@@ -77,7 +77,7 @@ describe('adapt-contrib-assessment - v4.3.0 > v4.4.0', async () => {
   checkContent('adapt-contrib-assessment - check course._scoreToPass attribute', async () => {
     if (!assessmentConfig) return true;
     const isValid = assessmentConfig._scoreToPass === 60;
-    if (!isValid) throw new Error('adapt-contrib-assessment - _scoreToPass not added to every instance of assessment and set as 60.');
+    if (!isValid) throw new Error('adapt-contrib-assessment - _scoreToPass not added to assessment config and set as 60.');
     return true;
   });
 
