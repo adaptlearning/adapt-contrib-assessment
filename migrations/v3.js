@@ -26,7 +26,7 @@ describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
   updatePlugin('adapt-contrib-assessment - update to v3.0.0', { name: 'adapt-contrib-assessment', version: '3.0.0', framework: '>=3.2.0' });
 
   testSuccessWhere('correct version with assessment config', {
-    fromPlugins: [{ name: 'adapt-contrib-assessment', version: '2.1.1' }],
+    fromPlugins: [{ name: 'adapt-contrib-assessment', version: '2.2.0' }],
     content: [
       { _type: 'article', _id: 'c-100', _assessment: {} },
       { _type: 'article', _id: 'c-105' },
@@ -35,7 +35,7 @@ describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
   });
 
   testStopWhere('no assessment config', {
-    fromPlugins: [{ name: 'adapt-contrib-assessment', version: '2.1.1' }],
+    fromPlugins: [{ name: 'adapt-contrib-assessment', version: '2.2.0' }],
     content: [{ _type: 'article' }]
   });
 
