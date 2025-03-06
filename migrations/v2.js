@@ -99,7 +99,7 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
     return assessmentArticles.length;
   });
 
-  mutateContent('adapt-contrib-assessment - add assessment._requireAssessmentPassed', async () => {
+  mutateContent('adapt-contrib-assessment - remove assessment._requireAssessmentPassed', async () => {
     assessmentArticles.forEach(assessment => {
       delete assessment._requireAssessmentPassed;
     });
