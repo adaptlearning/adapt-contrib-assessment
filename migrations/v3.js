@@ -12,7 +12,7 @@ describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
     return assessmentConfig;
   });
 
-  mutateContent('adapt-contrib-assessment - remove assessment._allowResetIfPassed', async () => {
+  mutateContent('adapt-contrib-assessment - remove course._postTotalScoreToLms', async () => {
     delete assessmentConfig._postTotalScoreToLms;
     return true;
   });
@@ -26,6 +26,15 @@ describe('adapt-contrib-assessment - v2.2.0 > v3.0.0', async () => {
   updatePlugin('adapt-contrib-assessment - update to v3.0.0', { name: 'adapt-contrib-assessment', version: '3.0.0', framework: '>=3.2.0' });
 
   testSuccessWhere('correct version with assessment config', {
+    fromPlugins: [{ name: 'adapt-contrib-assessment', version: '2.2.0' }],
+    content: [
+      { _type: 'article', _id: 'c-100', _assessment: {} },
+      { _type: 'article', _id: 'c-105' },
+      { _type: 'course', _assessment: { _postTotalScoreToLms: true } }
+    ]
+  });
+
+  testSuccessWhere('correct version with empty assessment config', {
     fromPlugins: [{ name: 'adapt-contrib-assessment', version: '2.2.0' }],
     content: [
       { _type: 'article', _id: 'c-100', _assessment: {} },

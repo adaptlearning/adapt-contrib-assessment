@@ -70,7 +70,9 @@ describe('adapt-contrib-assessment - v4.3.0 > v4.4.0', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._correctToPass attribute', async () => {
     if (!assessmentArticles.length) return true;
-    assessmentArticles._correctToPass = 60;
+    assessmentArticles.forEach(assessment => {
+      assessment._correctToPass = 60;
+    });
     return true;
   });
 

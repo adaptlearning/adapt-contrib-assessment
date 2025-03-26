@@ -117,8 +117,9 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
   testSuccessWhere('correct version with/without assessment articles', {
     fromPlugins: [{ name: 'adapt-contrib-assessment', version: '2.1.0' }],
     content: [
-      { _type: 'article', _id: 'c-100', _assessment: {} },
-      { _type: 'article', _id: 'c-105' }
+      { _type: 'article', _id: 'c-100', _assessment: { _requireAssessmentPassed: true } },
+      { _type: 'article', _id: 'c-105', _assessment: {} },
+      { _type: 'article', _id: 'c-110' }
     ]
   });
 
