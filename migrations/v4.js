@@ -13,13 +13,13 @@ describe('adapt-contrib-assessment - v3.0.0 > v4.3.0', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._scrollToOnReset', async () => {
     assessmentArticles.forEach(assessment => {
-      assessment._scrollToOnReset = false;
+      assessment._assessment._scrollToOnReset = false;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._scrollToOnReset attribute', async () => {
-    const isValid = assessmentArticles.every(assessment => assessment._scrollToOnReset !== undefined);
+    const isValid = assessmentArticles.every(assessment => assessment._assessment._scrollToOnReset !== undefined);
     if (!isValid) throw new Error('adapt-contrib-assessment - _scrollToOnReset not added to every instance of assessment');
     return true;
   });
@@ -71,7 +71,7 @@ describe('adapt-contrib-assessment - v4.3.0 > v4.4.0', async () => {
   mutateContent('adapt-contrib-assessment - add assessment._correctToPass attribute', async () => {
     if (!assessmentArticles.length) return true;
     assessmentArticles.forEach(assessment => {
-      assessment._correctToPass = 60;
+      assessment._assessment._correctToPass = 60;
     });
     return true;
   });
@@ -92,7 +92,7 @@ describe('adapt-contrib-assessment - v4.3.0 > v4.4.0', async () => {
 
   checkContent('adapt-contrib-assessment - check assessment._correctToPass attribute', async () => {
     if (!assessmentArticles.length) return true;
-    const isValid = assessmentArticles._correctToPass === 60;
+    const isValid = assessmentArticles.every(assessment => assessment._assessment._correctToPass === 60);
     if (!isValid) throw new Error('adapt-contrib-assessment - _correctToPass not added to every instance of assessment and set as 60.');
     return true;
   });

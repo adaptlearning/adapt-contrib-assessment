@@ -8,6 +8,7 @@ describe('adapt-contrib-assessment - v2.0.0 > v2.0.3', async () => {
 
   whereContent('adapt-contrib-assessment - where assessment', async content => {
     assessmentArticles = content.filter(({ _type, _assessment }) => _type === 'article' && _assessment !== undefined);
+    console.log(assessmentArticles);
     return assessmentArticles.length;
   });
 
@@ -56,14 +57,14 @@ describe('adapt-contrib-assessment - v2.0.3 > v2.1.0', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._suppressMarking', async () => {
     assessmentArticles.forEach(assessment => {
-      assessment._suppressMarking = true;
+      assessment._assessment._suppressMarking = true;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._suppressMarking attribute', async () => {
     const isValid = assessmentArticles.every(assessment =>
-      assessment._suppressMarking === true
+      assessment._assessment._suppressMarking === true
     );
     if (!isValid) throw new Error('adapt-contrib-assessment - _suppressMarking not added to every instance of assessment as true.');
     return true;
@@ -101,13 +102,13 @@ describe('adapt-contrib-assessment - v2.1.0 > v2.1.1', async () => {
 
   mutateContent('adapt-contrib-assessment - remove assessment._requireAssessmentPassed', async () => {
     assessmentArticles.forEach(assessment => {
-      delete assessment._requireAssessmentPassed;
+      _.unset(assessment, '_assessment._requireAssessmentPassed');
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._requireAssessmentPassed attribute', async () => {
-    const isValid = assessmentArticles.every(assessment => !_.has(assessment, '_requireAssessmentPassed'));
+    const isValid = assessmentArticles.every(assessment => !_.has(assessment, '_assessment._requireAssessmentPassed'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _requireAssessmentPassed has not been removed');
     return true;
   });
@@ -145,13 +146,13 @@ describe('adapt-contrib-assessment - v2.1.1 > v2.2.0', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._allowResetIfPassed', async () => {
     assessmentArticles.forEach(assessment => {
-      assessment._allowResetIfPassed = false;
+      assessment._assessment._allowResetIfPassed = false;
     });
     return true;
   });
 
   checkContent('adapt-contrib-assessment - check assessment._allowResetIfPassed attribute', async () => {
-    const isValid = assessmentArticles.every(assessment => _.has(assessment, '_allowResetIfPassed'));
+    const isValid = assessmentArticles.every(assessment => _.has(assessment, '_assessment._allowResetIfPassed'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _allowResetIfPassed not added to every instance of assessment');
     return true;
   });
