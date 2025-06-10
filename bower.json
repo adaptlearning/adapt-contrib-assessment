@@ -22,7 +22,8 @@
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
     "conventional-changelog-eslint": "^3.0.9",
-    "semantic-release": "^21.0.1"
+    "semantic-release": "^21.0.1",
+    "semantic-release-replace-plugin": "^1.2.7"
   },
   "scripts": {
     "postversion": "cp package.json bower.json"
@@ -48,7 +49,8 @@
         {
           "assets": [
             "package.json",
-            "bower.json"
+            "bower.json",
+            "migrations/*.js"
           ],
           "message": "Chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
