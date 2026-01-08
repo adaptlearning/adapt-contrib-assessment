@@ -160,7 +160,8 @@ const AssessmentModel = {
         });
       } else {
         this.set({
-          _assessmentCompleteInSession: false
+          _assessmentCompleteInSession: false,
+          _isAssessmentComplete: false
         });
       }
       this.getChildren().reset(this._originalChildModels);
