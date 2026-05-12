@@ -97,7 +97,8 @@ const AssessmentModel = {
   setupCurrentQuestionComponents() {
     const assessmentQuestionsConfig = this.getConfig()._questions;
     const newSettings = {};
-    ['_canShowFeedback', '_canShowMarking', '_canShowModelAnswer'].forEach(key => {
+    const questionDisplayProperties = ['_canShowFeedback', '_canShowMarking', '_canShowModelAnswer'];
+    questionDisplayProperties.forEach(key => {
       if (Object.prototype.hasOwnProperty.call(assessmentQuestionsConfig, key)) {
         newSettings[key] = assessmentQuestionsConfig[key];
       }
