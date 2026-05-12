@@ -244,8 +244,7 @@
                       "required": false,
                       "title": "Show Feedback",
                       "inputType": "Checkbox",
-                      "default": false,
-                      "help": "Allows the user to view feedback on their answer.",
+                      "help": "Allows the user to view feedback on their answer. If not set, defers to the question component's own setting (which defaults to true).",
                       "validators": []
                     },
                     "_canShowMarking": {
@@ -253,8 +252,7 @@
                       "required": false,
                       "title": "Show Marking",
                       "inputType": "Checkbox",
-                      "default": false,
-                      "help": "Displays ticks and crosses on question completion.",
+                      "help": "Displays ticks and crosses on question completion. If not set, defers to the question component's own setting (which defaults to true).",
                       "validators": []
                     },
                     "_canShowModelAnswer": {
@@ -262,8 +260,7 @@
                       "required": false,
                       "title": "Show Model Answer",
                       "inputType": "Checkbox",
-                      "default": false,
-                      "help": "Allows the user to view the 'model answer' should they answer the question incorrectly.",
+                      "help": "Allows the user to view the 'model answer' should they answer the question incorrectly. If not set, defers to the question component's own setting (which defaults to true).",
                       "validators": []
                     }
                   }

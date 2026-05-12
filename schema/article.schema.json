@@ -147,20 +147,17 @@
                 "_canShowFeedback": {
                   "type": "boolean",
                   "title": "Enable feedback",
-                  "description": "Allows the user to view feedback on their answer",
-                  "default": false
+                  "description": "Allows the user to view feedback on their answer. If not set, defers to the question component's own setting (which defaults to true)."
                 },
                 "_canShowMarking": {
                   "type": "boolean",
                   "title": "Enable marking",
-                  "description": "Displays ticks and crosses on question completion",
-                  "default": false
+                  "description": "Displays ticks and crosses on question completion. If not set, defers to the question component's own setting (which defaults to true)."
                 },
                 "_canShowModelAnswer": {
                   "type": "boolean",
                   "title": "Enable correct answer toggle",
-                  "description": "Allows the user to view the 'model answer' should they answer the question incorrectly",
-                  "default": false
+                  "description": "Allows the user to view the 'model answer' should they answer the question incorrectly. If not set, defers to the question component's own setting (which defaults to true)."
                 }
               }
             }
