@@ -9,10 +9,7 @@ let givenIdCount = 0;
 const assessmentConfigDefaults = {
   _isEnabled: true,
   _questions: {
-    _resetType: 'soft',
-    _canShowFeedback: false,
-    _canShowMarking: false,
-    _canShowModelAnswer: false
+    _resetType: 'soft'
   },
   _suppressMarking: false,
   _isPercentageBased: true,
@@ -99,13 +96,14 @@ const AssessmentModel = {
 
   setupCurrentQuestionComponents() {
     const assessmentQuestionsConfig = this.getConfig()._questions;
-    this._getAllQuestionComponents().forEach(component => {
-      component.set({
-        _canShowFeedback: assessmentQuestionsConfig._canShowFeedback,
-        _canShowMarking: assessmentQuestionsConfig._canShowMarking,
-        _canShowModelAnswer: assessmentQuestionsConfig._canShowModelAnswer
-      });
+    const newSettings = {};
+    ['_canShowFeedback', '_canShowMarking', '_canShowModelAnswer'].forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(assessmentQuestionsConfig, key)) {
+        newSettings[key] = assessmentQuestionsConfig[key];
+      }
     });
+    if (Object.keys(newSettings).length === 0) return;
+    this._getAllQuestionComponents().forEach(component => component.set(newSettings));
   },
 
   _setAssessmentOwnershipOnChildrenModels(childModels) {
