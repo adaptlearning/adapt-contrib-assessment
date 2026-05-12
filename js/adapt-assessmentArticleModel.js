@@ -9,7 +9,11 @@ let givenIdCount = 0;
 const assessmentConfigDefaults = {
   _isEnabled: true,
   _questions: {
-    _resetType: 'soft'
+    _resetType: 'soft',
+    _canShowFeedback: false,
+    _canShowMarking: false,
+    _canShowModelAnswer: false,
+    _allowComponentOverrides: false
   },
   _suppressMarking: false,
   _isPercentageBased: true,
@@ -22,6 +26,8 @@ const assessmentConfigDefaults = {
   _attempts: 'infinite',
   _allowResetIfPassed: false
 };
+
+const questionDisplayProperties = ['_canShowFeedback', '_canShowMarking', '_canShowModelAnswer'];
 
 const AssessmentModel = {
 
@@ -97,7 +103,6 @@ const AssessmentModel = {
   setupCurrentQuestionComponents() {
     const assessmentQuestionsConfig = this.getConfig()._questions;
     const newSettings = {};
-    const questionDisplayProperties = ['_canShowFeedback', '_canShowMarking', '_canShowModelAnswer'];
     questionDisplayProperties.forEach(key => {
       if (Object.prototype.hasOwnProperty.call(assessmentQuestionsConfig, key)) {
         newSettings[key] = assessmentQuestionsConfig[key];
@@ -797,10 +802,16 @@ const AssessmentModel = {
   getConfig() {
     let assessmentConfig = this.get('_assessment');
 
+    let defaults = assessmentConfigDefaults;
+    if (assessmentConfig?._questions?._allowComponentOverrides === true) {
+      defaults = $.extend(true, {}, assessmentConfigDefaults);
+      questionDisplayProperties.forEach(key => delete defaults._questions[key]);
+    }
+
     if (!assessmentConfig) {
-      assessmentConfig = $.extend(true, {}, assessmentConfigDefaults);
+      assessmentConfig = $.extend(true, {}, defaults);
     } else {
-      assessmentConfig = $.extend(true, {}, assessmentConfigDefaults, assessmentConfig);
+      assessmentConfig = $.extend(true, {}, defaults, assessmentConfig);
     }
 
     if (assessmentConfig._id === undefined) {
