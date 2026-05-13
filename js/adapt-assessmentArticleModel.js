@@ -102,6 +102,7 @@ const AssessmentModel = {
 
   setupCurrentQuestionComponents() {
     const assessmentQuestionsConfig = this.getConfig()._questions;
+    if (assessmentQuestionsConfig._allowComponentOverrides) return;
     const newSettings = {};
     questionDisplayProperties.forEach(key => {
       if (Object.prototype.hasOwnProperty.call(assessmentQuestionsConfig, key)) {
@@ -272,7 +273,7 @@ const AssessmentModel = {
 
     // Add any additional setting overrides here
     const questionConfig = this.getConfig()._questions;
-    if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowFeedback')) {
+    if (!questionConfig._allowComponentOverrides && Object.prototype.hasOwnProperty.call(questionConfig, '_canShowFeedback')) {
       newSettings._canShowFeedback = questionConfig._canShowFeedback;
     }
 
@@ -408,13 +409,14 @@ const AssessmentModel = {
       };
     } else {
       const questionConfig = this.getConfig()._questions;
+      if (!questionConfig._allowComponentOverrides) {
+        if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowModelAnswer')) {
+          markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
+        }
 
-      if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowModelAnswer')) {
-        markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
-      }
-
-      if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowMarking')) {
-        markingSettings._canShowMarking = questionConfig._canShowMarking;
+        if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowMarking')) {
+          markingSettings._canShowMarking = questionConfig._canShowMarking;
+        }
       }
     }
 
