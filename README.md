@@ -92,7 +92,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >>**\_blockCount** (number): The number of blocks to present to the learner. (Questions are presented by blocks. If one component occupies a block, it will be presented alone. If multiple components occupy a block, they will always appear together.)
 
->**\_questions** (object): Contains attributes for overriding question component behaviours. Contains values for **\_resetType**, **\_canShowFeedback**, **\_canShowMarking** and **\_canShowModelAnswer**.
+>**\_questions** (object): Contains attributes for overriding question component behaviours. Contains values for **\_resetType**, **\_canShowFeedback**, **\_canShowMarking**, **\_canShowModelAnswer** and **\_allowComponentOverrides**.
 
 >>**\_resetType** (string): Determines whether the question component will register as completed when reset. When assigned a value of `soft`, the learner may continue to interact with it, but the component's `_isComplete` attribute remains set to `true`. When assigned `hard`, `_isComplete` is set to `false`, and the learner will be forced to complete it again if it is reset. Other plug-ins, such as [Page Level  Progress](https://github.com/adaptlearning/adapt-contrib-pageLevelProgress) and [Trickle](https://github.com/adaptlearning/adapt-contrib-trickle), base their behavior on the value of a component's `_isComplete` attribute. Acceptable values are `hard` or `soft`. For 'soft', when using trickle, please set the trickle Completion Attribute to `_isInteractionComplete'.
 
@@ -101,6 +101,8 @@ The following attributes are appended to a particular article within *articles.j
 >>**\_canShowMarking** (boolean): Determines whether question components within the assessment will show the marking after the user has answered. Acceptable values are `true` or `false`.
 
 >>**\_canShowModelAnswer** (boolean): Determines whether question components within the assessment will show the [**_showCorrectAnswer** button](https://github.com/adaptlearning/adapt_framework/wiki/Core-Buttons) or not if the user answers incorrectly. Acceptable values are `true` or `false`.
+
+>>**\_allowComponentOverrides** (boolean): When set to `true`, article-level values for **\_canShowFeedback**, **\_canShowMarking**, and **\_canShowModelAnswer** are not pushed to question components. Each component's own values apply instead. Defaults to `false`, which preserves legacy behaviour where article-level values always override component values.
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
@@ -197,7 +199,7 @@ If data is required to be passed to a SCORM conformant LMS, the [Spoor](https://
 
 ----------------------------
 <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a>
-**Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)
-**Accessibility support:** WAI AA
-**RTL support:** Yes
-**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, IE11, Safari 13+14 for macOS/iOS/iPadOS, Opera
+**Author / maintainer:** Adapt Core Team with [contributors](https://github.com/adaptlearning/adapt-contrib-assessment/graphs/contributors)<br>
+**Accessibility support:** WAI AA<br>
+**RTL support:** Yes<br>
+**Cross-platform coverage:** Chrome, Chrome for Android, Firefox (ESR + latest version), Edge, Safari for macOS/iOS/iPadOS, Opera<br>

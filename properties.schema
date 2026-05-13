@@ -245,7 +245,7 @@
                       "title": "Show Feedback",
                       "inputType": "Checkbox",
                       "default": false,
-                      "help": "Allows the user to view feedback on their answer.",
+                      "help": "Allows the user to view feedback on their answer. When 'Allow per-question overrides' is enabled, this value is only applied to question components if explicitly set; otherwise the component's own setting is preserved.",
                       "validators": []
                     },
                     "_canShowMarking": {
@@ -254,7 +254,7 @@
                       "title": "Show Marking",
                       "inputType": "Checkbox",
                       "default": false,
-                      "help": "Displays ticks and crosses on question completion.",
+                      "help": "Displays ticks and crosses on question completion. When 'Allow per-question overrides' is enabled, this value is only applied to question components if explicitly set; otherwise the component's own setting is preserved.",
                       "validators": []
                     },
                     "_canShowModelAnswer": {
@@ -263,7 +263,16 @@
                       "title": "Show Model Answer",
                       "inputType": "Checkbox",
                       "default": false,
-                      "help": "Allows the user to view the 'model answer' should they answer the question incorrectly.",
+                      "help": "Allows the user to view the 'model answer' should they answer the question incorrectly. When 'Allow per-question overrides' is enabled, this value is only applied to question components if explicitly set; otherwise the component's own setting is preserved.",
+                      "validators": []
+                    },
+                    "_allowComponentOverrides": {
+                      "type": "boolean",
+                      "required": false,
+                      "title": "Allow per-question overrides",
+                      "inputType": "Checkbox",
+                      "default": false,
+                      "help": "When enabled, the article-level Show Feedback, Show Marking, and Show Model Answer settings are only applied to question components if explicitly set in the article config. When disabled (default), the article-level values are always applied to every question, ignoring any component-level setting.",
                       "validators": []
                     }
                   }

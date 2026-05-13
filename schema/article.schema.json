@@ -147,19 +147,25 @@
                 "_canShowFeedback": {
                   "type": "boolean",
                   "title": "Enable feedback",
-                  "description": "Allows the user to view feedback on their answer",
+                  "description": "Allows the user to view feedback on their answer. When `_allowComponentOverrides` is enabled, this value is only applied to question components if explicitly set; otherwise the component's own setting is preserved.",
                   "default": false
                 },
                 "_canShowMarking": {
                   "type": "boolean",
                   "title": "Enable marking",
-                  "description": "Displays ticks and crosses on question completion",
+                  "description": "Displays ticks and crosses on question completion. When `_allowComponentOverrides` is enabled, this value is only applied to question components if explicitly set; otherwise the component's own setting is preserved.",
                   "default": false
                 },
                 "_canShowModelAnswer": {
                   "type": "boolean",
                   "title": "Enable correct answer toggle",
-                  "description": "Allows the user to view the 'model answer' should they answer the question incorrectly",
+                  "description": "Allows the user to view the 'model answer' should they answer the question incorrectly. When `_allowComponentOverrides` is enabled, this value is only applied to question components if explicitly set; otherwise the component's own setting is preserved.",
+                  "default": false
+                },
+                "_allowComponentOverrides": {
+                  "type": "boolean",
+                  "title": "Allow per-question overrides",
+                  "description": "When enabled, the article-level `_canShowFeedback`, `_canShowMarking`, and `_canShowModelAnswer` settings only apply to question components if explicitly set in the article config. When disabled (default), the article-level values are always applied to every question, ignoring any component-level setting.",
                   "default": false
                 }
               }
