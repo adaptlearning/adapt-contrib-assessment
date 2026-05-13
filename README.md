@@ -102,7 +102,7 @@ The following attributes are appended to a particular article within *articles.j
 
 >>**\_canShowModelAnswer** (boolean): Determines whether question components within the assessment will show the [**_showCorrectAnswer** button](https://github.com/adaptlearning/adapt_framework/wiki/Core-Buttons) or not if the user answers incorrectly. Acceptable values are `true` or `false`.
 
->>**\_allowComponentOverrides** (boolean): When set to `true`, article-level values for **\_canShowFeedback**, **\_canShowMarking**, and **\_canShowModelAnswer** are not pushed to question components - each component's own values apply instead. Defaults to `false`, which preserves legacy behaviour where article-level values always override component values.
+>>**\_allowComponentOverrides** (boolean): When set to `true`, article-level values for **\_canShowFeedback**, **\_canShowMarking**, and **\_canShowModelAnswer** are not pushed to question components. Each component's own values apply instead. Defaults to `false`, which preserves legacy behaviour where article-level values always override component values.
 
 <div float align=right><a href="#top">Back to Top</a></div>
 
