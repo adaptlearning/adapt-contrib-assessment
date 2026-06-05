@@ -32,6 +32,7 @@
             "_resetIncorrectOnly": true,
             "_resetType": "hard",
             "_comment": "For 'soft', when using trickle, please set the trickle Completion Attribute to `_isInteractionComplete'.",
+            "_allowComponentOverrides": false,
             "_canShowFeedback": false,
             "_canShowMarking": false,
             "_canShowModelAnswer": false

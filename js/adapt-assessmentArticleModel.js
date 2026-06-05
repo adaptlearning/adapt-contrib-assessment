@@ -12,7 +12,8 @@ const assessmentConfigDefaults = {
     _resetType: 'soft',
     _canShowFeedback: false,
     _canShowMarking: false,
-    _canShowModelAnswer: false
+    _canShowModelAnswer: false,
+    _allowComponentOverrides: false
   },
   _suppressMarking: false,
   _isPercentageBased: true,
@@ -25,6 +26,8 @@ const assessmentConfigDefaults = {
   _attempts: 'infinite',
   _allowResetIfPassed: false
 };
+
+const questionDisplayProperties = ['_canShowFeedback', '_canShowMarking', '_canShowModelAnswer'];
 
 const AssessmentModel = {
 
@@ -99,13 +102,15 @@ const AssessmentModel = {
 
   setupCurrentQuestionComponents() {
     const assessmentQuestionsConfig = this.getConfig()._questions;
-    this._getAllQuestionComponents().forEach(component => {
-      component.set({
-        _canShowFeedback: assessmentQuestionsConfig._canShowFeedback,
-        _canShowMarking: assessmentQuestionsConfig._canShowMarking,
-        _canShowModelAnswer: assessmentQuestionsConfig._canShowModelAnswer
-      });
+    if (assessmentQuestionsConfig._allowComponentOverrides) return;
+    const newSettings = {};
+    questionDisplayProperties.forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(assessmentQuestionsConfig, key)) {
+        newSettings[key] = assessmentQuestionsConfig[key];
+      }
     });
+    if (Object.keys(newSettings).length === 0) return;
+    this._getAllQuestionComponents().forEach(component => component.set(newSettings));
   },
 
   _setAssessmentOwnershipOnChildrenModels(childModels) {
@@ -268,7 +273,7 @@ const AssessmentModel = {
 
     // Add any additional setting overrides here
     const questionConfig = this.getConfig()._questions;
-    if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowFeedback')) {
+    if (!questionConfig._allowComponentOverrides && Object.prototype.hasOwnProperty.call(questionConfig, '_canShowFeedback')) {
       newSettings._canShowFeedback = questionConfig._canShowFeedback;
     }
 
@@ -404,13 +409,14 @@ const AssessmentModel = {
       };
     } else {
       const questionConfig = this.getConfig()._questions;
+      if (!questionConfig._allowComponentOverrides) {
+        if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowModelAnswer')) {
+          markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
+        }
 
-      if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowModelAnswer')) {
-        markingSettings._canShowModelAnswer = questionConfig._canShowModelAnswer;
-      }
-
-      if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowMarking')) {
-        markingSettings._canShowMarking = questionConfig._canShowMarking;
+        if (Object.prototype.hasOwnProperty.call(questionConfig, '_canShowMarking')) {
+          markingSettings._canShowMarking = questionConfig._canShowMarking;
+        }
       }
     }
 
@@ -798,10 +804,16 @@ const AssessmentModel = {
   getConfig() {
     let assessmentConfig = this.get('_assessment');
 
+    let defaults = assessmentConfigDefaults;
+    if (assessmentConfig?._questions?._allowComponentOverrides === true) {
+      defaults = $.extend(true, {}, assessmentConfigDefaults);
+      questionDisplayProperties.forEach(key => delete defaults._questions[key]);
+    }
+
     if (!assessmentConfig) {
-      assessmentConfig = $.extend(true, {}, assessmentConfigDefaults);
+      assessmentConfig = $.extend(true, {}, defaults);
     } else {
-      assessmentConfig = $.extend(true, {}, assessmentConfigDefaults, assessmentConfig);
+      assessmentConfig = $.extend(true, {}, defaults, assessmentConfig);
     }
 
     if (assessmentConfig._id === undefined) {
