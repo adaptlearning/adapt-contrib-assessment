@@ -136,8 +136,8 @@
                 "_resetIncorrectOnly": {
                   "type": "boolean",
                   "title": "Reset incorrect only",
-                  "description": "If enabled, only questions that were answered incorrectly will be reset when the assessment is retried. Correctly answered questions will remain in their completed state",
-                  "default": false
+                  "description": "If enabled, only blocks where every question was answered incorrectly will be reset when the assessment is retried. Blocks containing at least one correctly answered question will not be reset. Note: if a block contains multiple questions and at least one is correct, the entire block — including any incorrectly answered questions within it — will be excluded from the retry.",
+                  "default": true
                 },
                 "_resetType": {
                   "type": "string",
