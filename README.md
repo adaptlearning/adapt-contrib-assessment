@@ -92,7 +92,9 @@ The following attributes are appended to a particular article within *articles.j
 
 >>**\_blockCount** (number): The number of blocks to present to the learner. (Questions are presented by blocks. If one component occupies a block, it will be presented alone. If multiple components occupy a block, they will always appear together.)
 
->**\_questions** (object): Contains attributes for overriding question component behaviours. Contains values for **\_resetType**, **\_canShowFeedback**, **\_canShowMarking** and **\_canShowModelAnswer**.
+>**\_questions** (object): Contains attributes for overriding question component behaviours. Contains values for **\_resetIncorrectOnly**, **\_resetType**, **\_canShowFeedback**, **\_canShowMarking** and **\_canShowModelAnswer**.
+
+>>**\_resetIncorrectOnly** (boolean): If set to `true`, only questions that were answered incorrectly will be reset when the assessment is retried. Correctly answered questions will remain in their completed state and will not be presented again. Acceptable values are `true` or `false`.
 
 >>**\_resetType** (string): Determines whether the question component will register as completed when reset. When assigned a value of `soft`, the learner may continue to interact with it, but the component's `_isComplete` attribute remains set to `true`. When assigned `hard`, `_isComplete` is set to `false`, and the learner will be forced to complete it again if it is reset. Other plug-ins, such as [Page Level  Progress](https://github.com/adaptlearning/adapt-contrib-pageLevelProgress) and [Trickle](https://github.com/adaptlearning/adapt-contrib-trickle), base their behavior on the value of a component's `_isComplete` attribute. Acceptable values are `hard` or `soft`. For 'soft', when using trickle, please set the trickle Completion Attribute to `_isInteractionComplete'.
 

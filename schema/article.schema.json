@@ -133,6 +133,12 @@
               "title": "Question overrides",
               "default": {},
               "properties": {
+                "_resetIncorrectOnly": {
+                  "type": "boolean",
+                  "title": "Reset incorrect only",
+                  "description": "If enabled, only questions that were answered incorrectly will be reset when the assessment is retried. Correctly answered questions will remain in their completed state",
+                  "default": false
+                },
                 "_resetType": {
                   "type": "string",
                   "title": "Reset type",
