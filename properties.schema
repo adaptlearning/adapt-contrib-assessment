@@ -231,7 +231,7 @@
                       "required": false,
                       "title": "Reset Incorrect Only",
                       "inputType": "Checkbox",
-                      "default": true,
+                      "default": false,
                       "help": "If enabled, only blocks where every question was answered incorrectly will be reset on retry. A block with at least one correct answer is excluded in full.",
                       "validators": []
                     },
