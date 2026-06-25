@@ -13,7 +13,7 @@ describe('adapt-contrib-assessment - v4.4.0 > v5.2.0', async () => {
 
   mutateContent('adapt-contrib-assessment - add assessment._questions._resetIncorrectOnly attribute', async () => {
     assessmentArticles.forEach(assessment => {
-      _.set(assessment, '_assessment._questions._resetIncorrectOnly', true);
+      _.set(assessment, '_assessment._questions._resetIncorrectOnly', false);
     });
     return true;
   });
