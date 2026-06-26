@@ -11,7 +11,7 @@ describe('adapt-contrib-assessment - v4.4.0 > v5.2.0', async () => {
     return assessmentArticles.length;
   });
 
-  mutateContent('adapt-contrib-assessment - add assessment._questions._resetIncorrectOnly if not already set', async () => {
+  mutateContent('adapt-contrib-assessment - add _assessment._questions._resetIncorrectOnly if not already set', async () => {
     assessmentArticles.forEach(assessment => {
       if (!_.has(assessment, '_assessment._questions._resetIncorrectOnly')) {
         // default false matches the schema default; existing values are preserved by the guard above
