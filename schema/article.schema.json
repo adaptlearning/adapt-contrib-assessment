@@ -133,6 +133,12 @@
               "title": "Question overrides",
               "default": {},
               "properties": {
+                "_resetIncorrectOnly": {
+                  "type": "boolean",
+                  "title": "Reset incorrect only",
+                  "description": "If enabled, only blocks where every question was not answered correctly will be reset when the assessment is retried. Blocks containing at least one correctly answered question will not be reset. Note: if a block contains multiple questions and at least one is correct, the entire block will be excluded from the retry: this includes any questions within it that were not answered correctly.",
+                  "default": false
+                },
                 "_resetType": {
                   "type": "string",
                   "title": "Reset type",

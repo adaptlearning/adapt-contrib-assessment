@@ -11,14 +11,17 @@ describe('adapt-contrib-assessment - v4.4.0 > v5.2.0', async () => {
     return assessmentArticles.length;
   });
 
-  mutateContent('adapt-contrib-assessment - add assessment._questions._resetIncorrectOnly attribute', async () => {
+  mutateContent('adapt-contrib-assessment - add _assessment._questions._resetIncorrectOnly if not already set', async () => {
     assessmentArticles.forEach(assessment => {
-      _.set(assessment, '_assessment._questions._resetIncorrectOnly', true);
+      if (!_.has(assessment, '_assessment._questions._resetIncorrectOnly')) {
+        // default false matches the schema default; existing values are preserved by the guard above
+        _.set(assessment, '_assessment._questions._resetIncorrectOnly', false);
+      }
     });
     return true;
   });
 
-  checkContent('adapt-contrib-assessment - check assessment._assessment._questions._resetIncorrectOnly attribute', async () => {
+  checkContent('adapt-contrib-assessment - check assessment._questions._resetIncorrectOnly attribute', async () => {
     const isValid = assessmentArticles.every(assessment => _.has(assessment, '_assessment._questions._resetIncorrectOnly'));
     if (!isValid) throw new Error('adapt-contrib-assessment - _resetIncorrectOnly not added to every instance of _assessment._questions');
     return true;
@@ -26,10 +29,11 @@ describe('adapt-contrib-assessment - v4.4.0 > v5.2.0', async () => {
 
   updatePlugin('adapt-contrib-assessment - update to v5.2.0', { name: 'adapt-contrib-assessment', version: '5.2.0', framework: '>=5.19.1' });
 
-  testSuccessWhere('correct version with/without article assessment', {
+  testSuccessWhere('correct version, assessment with _questions but no _resetIncorrectOnly', {
     fromPlugins: [{ name: 'adapt-contrib-assessment', version: '5.1.0' }],
+    toPlugins: [{ name: 'adapt-contrib-assessment', version: '5.2.0' }],
     content: [
-      { _type: 'article', _id: 'c-100', _assessment: {} },
+      { _type: 'article', _id: 'c-100', _assessment: { _questions: {} } },
       { _type: 'article', _id: 'c-105' }
     ]
   });

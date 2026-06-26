@@ -226,6 +226,15 @@
                   "required": false,
                   "title": "Question Behaviour",
                   "properties": {
+                    "_resetIncorrectOnly": {
+                      "type": "boolean",
+                      "required": false,
+                      "title": "Reset Incorrect Only",
+                      "inputType": "Checkbox",
+                      "default": false,
+                      "help": "If enabled, only blocks where every question was not answered correctly will be reset on retry. A block with at least one correct answer is excluded in full: this includes any questions within it that were not answered correctly.",
+                      "validators": []
+                    },
                     "_resetType": {
                       "type": "string",
                       "required": false,
