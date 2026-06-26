@@ -29,7 +29,7 @@ describe('adapt-contrib-assessment - v4.4.0 > v5.2.0', async () => {
 
   updatePlugin('adapt-contrib-assessment - update to v5.2.0', { name: 'adapt-contrib-assessment', version: '5.2.0', framework: '>=5.19.1' });
 
-  testSuccessWhere('correct version with/without article assessment', {
+  testSuccessWhere('correct version, assessment with _questions but no _resetIncorrectOnly', {
     fromPlugins: [{ name: 'adapt-contrib-assessment', version: '5.1.0' }],
     toPlugins: [{ name: 'adapt-contrib-assessment', version: '5.2.0' }],
     content: [
