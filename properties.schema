@@ -232,7 +232,7 @@
                       "title": "Reset Incorrect Only",
                       "inputType": "Checkbox",
                       "default": false,
-                      "help": "If enabled, only blocks where every question was answered incorrectly will be reset on retry. A block with at least one correct answer is excluded in full.",
+                      "help": "If enabled, only blocks where every question was answered incorrectly will be reset on retry. A block with at least one correct answer is excluded in full — including any incorrectly answered questions within it.",
                       "validators": []
                     },
                     "_resetType": {
